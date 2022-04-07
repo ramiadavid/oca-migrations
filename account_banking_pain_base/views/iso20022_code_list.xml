@@ -22,9 +22,6 @@
                             <field name="name" />
                             <field name="active" invisible="1" />
                         </group>
-                        <group name="extra">
-                            <field name="field" />
-                        </group>
                         <field name="description" />
                     </group>
                 </sheet>
@@ -35,10 +32,7 @@
         <field name="model">iso20022.code.list</field>
         <field name="arch" type="xml">
             <tree>
-                <field
-                    name="field"
-                    invisible="not context.get('iso20022_code_list_main_view')"
-                />
+
                 <field name="code" />
                 <field name="name" />
                 <field name="description" optional="show" />
@@ -55,20 +49,12 @@
                     filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"
                 />
                 <field name="code" />
-                <field name="field" />
                 <separator />
                 <filter
                     string="Archived"
                     name="inactive"
                     domain="[('active', '=', False)]"
                 />
-                <group string="Group By" name="groupby">
-                    <filter
-                        name="field_groupby"
-                        string="Field"
-                        context="{'group_by': 'field'}"
-                    />
-                </group>
             </search>
         </field>
     </record>

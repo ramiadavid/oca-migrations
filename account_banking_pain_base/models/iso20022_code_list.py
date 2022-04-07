@@ -12,24 +12,10 @@ class Iso20022CodeList(models.Model):
 
     code = fields.Char(required=True, copy=False, help="The code mustn't be modified.")
     name = fields.Char(required=True, copy=False)
-    field = fields.Selection(
-        [
-            ("purpose", "Purpose"),
-            ("category_purpose", "Category Purpose"),
-        ],
-        required=True,
-        index=True,
-    )
+
     description = fields.Text(copy=False)
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [
-        (
-            "field_code_uniq",
-            "unique(field, code)",
-            "This code already exists for this field.",
-        )
-    ]
 
     @api.depends("code", "name")
     def name_get(self):

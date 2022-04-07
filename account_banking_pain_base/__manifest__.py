@@ -17,7 +17,6 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "data/iso20022.code.list.csv",
         "views/account_payment_line.xml",
         "views/account_payment_order.xml",
         "views/bank_payment_line.xml",
