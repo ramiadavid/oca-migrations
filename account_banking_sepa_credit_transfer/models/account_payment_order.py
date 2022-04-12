@@ -1,5 +1,5 @@
-# Copyright 2010-2022 Akretion (www.akretion.com)
-# Copyright 2014-2022 Tecnativa - Pedro M. Baeza
+# Copyright 2010-2020 Akretion (www.akretion.com)
+# Copyright 2014-2020 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from lxml import etree
@@ -81,7 +81,7 @@ class AccountPaymentOrder(models.Model):
         for line in self.bank_line_ids:
             priority = line.priority
             local_instrument = line.local_instrument
-            categ_purpose = line.category_purpose_id.code or False
+            categ_purpose = line.category_purpose
             # The field line.date is the requested payment date
             # taking into account the 'date_prefered' setting
             # cf account_banking_payment_export/models/account_payment.py
@@ -178,12 +178,10 @@ class AccountPaymentOrder(models.Model):
                     raise UserError(
                         _(
                             "Bank account is missing on the bank payment line "
-                            "'{pay_line}' of partner '{partner}'."
-                        ).format(
-                            pay_line=line.display_name,
-                            partner=line.partner_id.display_name,
-                        )
+                            "of partner '{partner}' (reference '{reference}')."
+                        ).format(partner=line.partner_id.name, reference=line.name)
                     )
+
                 self.generate_party_block(
                     credit_transfer_transaction_info,
                     "Cdtr",
@@ -192,9 +190,9 @@ class AccountPaymentOrder(models.Model):
                     gen_args,
                     line,
                 )
-                if line.purpose_id:
+                if line.purpose:
                     purpose = etree.SubElement(credit_transfer_transaction_info, "Purp")
-                    etree.SubElement(purpose, "Cd").text = line.purpose_id.code
+                    etree.SubElement(purpose, "Cd").text = line.purpose
                 self.generate_remittance_info_block(
                     credit_transfer_transaction_info, line, gen_args
                 )

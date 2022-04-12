@@ -1,5 +1,5 @@
-# Copyright 2013-2022 Akretion (www.akretion.com)
-# Copyright 2014-2022 Tecnativa - Pedro M. Baeza & Antonio Espinosa
+# Copyright 2013-2020 Akretion (www.akretion.com)
+# Copyright 2014-2020 Tecnativa - Pedro M. Baeza & Antonio Espinosa
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 {
@@ -7,12 +7,15 @@
     "summary": "Create SEPA files for Direct Debit",
     "version": "15.0.1.0.0",
     "license": "AGPL-3",
-    "author": "Akretion, Tecnativa, Odoo Community Association (OCA)",
-    "maintainers": ["alexis-via"],
+    "author": "Akretion, " "Tecnativa, " "Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/bank-payment",
     "category": "Banking addons",
     "depends": ["account_banking_pain_base", "account_banking_mandate"],
-    "external_dependencies": {"python": ["stdnum"]},
+    "external_dependencies": {
+        "python": [
+            "stdnum",
+        ],
+    },
     "assets": {
         "web.assets_backend": [
             "/account_banking_sepa_direct_debit/static/src/css/report.css"
@@ -29,5 +32,6 @@
         "views/report_sepa_direct_debit_mandate.xml",
     ],
     "demo": ["demo/sepa_direct_debit_demo.xml"],
+    "post_init_hook": "update_bank_journals",
     "installable": True,
 }

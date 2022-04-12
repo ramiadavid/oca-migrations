@@ -43,19 +43,6 @@ class TestSCT(TransactionCase):
                 "company_id": cls.main_company.id,
             }
         )
-        cls.payment_account = cls.account_model.create(
-            {
-                "user_type_id": cls.env.ref(
-                    "account.data_account_type_current_assets"
-                ).id,
-                "name": "Test payment account",
-                "code": "TPAY",
-                "company_id": cls.main_company.id,
-            }
-        )
-        cls.main_company.write(
-            {"account_journal_payment_credit_account_id": cls.payment_account.id}
-        )
         cls.account_expense = cls.account_model.create(
             {
                 "user_type_id": cls.env.ref("account.data_account_type_expenses").id,
@@ -109,17 +96,27 @@ class TestSCT(TransactionCase):
                 "bank_account_id": cls.partner_bank.id,
                 "bank_id": cls.partner_bank.bank_id.id,
                 "company_id": cls.main_company.id,
+                "outbound_payment_method_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "payment_method_id": cls.env.ref(
+                                "account_banking_sepa_credit_transfer.sepa_credit_transfer"
+                            ).id,
+                            "payment_account_id": cls.account_payable.id,
+                        },
+                    )
+                ],
             }
         )
+
         # update payment mode
         cls.payment_mode = cls.env.ref(
             "account_banking_sepa_credit_transfer.payment_mode_outbound_sepa_ct1"
-        ).copy(
-            {
-                "company_id": cls.main_company.id,
-                "bank_account_link": "fixed",
-                "fixed_journal_id": cls.bank_journal.id,
-            }
+        ).copy({"company_id": cls.main_company.id})
+        cls.payment_mode.write(
+            {"bank_account_link": "fixed", "fixed_journal_id": cls.bank_journal.id}
         )
         # Trigger the recompute of account type on res.partner.bank
         cls.partner_bank_model.search([])._compute_acc_type()
