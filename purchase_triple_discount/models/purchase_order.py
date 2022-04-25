@@ -24,16 +24,16 @@ class PurchaseOrderLine(models.Model):
 
     discount = fields.Float(
         'Desc.(%)',
-        digits=(4, 2)
+        digits='Discount'
     )
     discount2 = fields.Float(
         'Desc. 2 (%)',
-        digits=(4, 2)
+        digits='Discount'
     )
 
     discount3 = fields.Float(
         'Desc. 3 (%)',
-        digits=(4, 2)
+        digits='Discount'
     )
 
     _sql_constraints = [
@@ -75,15 +75,15 @@ class AccountMoveLine(models.Model):
 
     discount = fields.Float(
         'Desc.(%)',
-        digits=(4, 2)
+        digits='Discount'
     )
     discount2 = fields.Float(
         'Desc. 2 (%)',
-        digits=(4, 2)
+        digits='Discount'
     )
     discount3 = fields.Float(
         'Desc. 3 (%)',
-        digits=(4, 2)
+        digits='Discount'
     )
 
     @api.model

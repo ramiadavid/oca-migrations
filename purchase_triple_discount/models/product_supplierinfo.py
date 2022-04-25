@@ -9,15 +9,15 @@ class ProductSupplierInfo(models.Model):
 
     discount = fields.Float(
         'Desc.(%)',
-        digits=(4, 2)
+        digits='Discount'
     )
     discount2 = fields.Float(
         string='Discount 2 (%)',
-        digits=(4, 2)
+        digits='Discount'
     )
     discount3 = fields.Float(
         string='Discount 3 (%)',
-        digits=(4, 2)
+        digits='Discount'
     )
 
     @api.onchange('name')
