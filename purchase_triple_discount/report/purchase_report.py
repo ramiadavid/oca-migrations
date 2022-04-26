@@ -10,11 +10,13 @@ class PurchaseReport(models.Model):
     _inherit = "purchase.report"
 
     discount2 = fields.Float(
-        string='Discount 2 (%)', digits='Discount',
+        string="Discount 2 (%)",
+        digits="Discount",
         group_operator="avg",
     )
     discount3 = fields.Float(
-        string='Discount 3 (%)', digits='Discount',
+        string="Discount 3 (%)",
+        digits="Discount",
         group_operator="avg",
     )
 
