@@ -1,6 +1,6 @@
 # Copyright 2016 Akretion (Alexis de Lattre <alexis.delattre@akretion.com>)
-# Copyright 2018 Tecnativa - Pedro M. Baeza
 # Copyright 2020 Sygel Technology - Valentin Vinagre
+# Copyright 2018-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import base64
@@ -8,7 +8,8 @@ import time
 
 from lxml import etree
 
-from odoo.exceptions import UserError
+from odoo import _
+from odoo.exceptions import UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
 
@@ -21,19 +22,16 @@ class TestSCT(TransactionCase):
         cls.journal_model = cls.env["account.journal"]
         cls.payment_order_model = cls.env["account.payment.order"]
         cls.payment_line_model = cls.env["account.payment.line"]
-        cls.bank_line_model = cls.env["bank.payment.line"]
         cls.partner_bank_model = cls.env["res.partner.bank"]
         cls.attachment_model = cls.env["ir.attachment"]
         cls.invoice_model = cls.env["account.move"]
         cls.invoice_line_model = cls.env["account.move.line"]
-        cls.partner_agrolait = cls.env.ref("base.res_partner_2").copy()
-        cls.partner_asus = cls.env.ref("base.res_partner_1").copy()
-        cls.partner_c2c = cls.env.ref("base.res_partner_12").copy()
+        cls.partner_agrolait = cls.env.ref("base.res_partner_2")
+        cls.partner_asus = cls.env.ref("base.res_partner_1")
+        cls.partner_c2c = cls.env.ref("base.res_partner_12")
         cls.eur_currency = cls.env.ref("base.EUR")
         cls.usd_currency = cls.env.ref("base.USD")
-        cls.main_company = cls.env["res.company"].create(
-            {"name": "Test EUR company", "currency_id": cls.eur_currency.id}
-        )
+        cls.main_company = cls.env["res.company"].create({"name": "Test EUR company"})
         cls.partner_agrolait.company_id = cls.main_company.id
         cls.partner_asus.company_id = cls.main_company.id
         cls.partner_c2c.company_id = cls.main_company.id
@@ -43,21 +41,28 @@ class TestSCT(TransactionCase):
                 "company_id": cls.main_company.id,
             }
         )
+
+        charts = cls.env["account.chart.template"].search([])
+        if charts:
+            cls.chart = charts[0]
+        else:
+            raise ValidationError(_("No Chart of Account Template has been defined !"))
+        cls.chart.try_loading()
+
         cls.account_expense = cls.account_model.create(
             {
                 "account_type": "expense",
-                "name": "Test expense account",
-                "code": "TEA",
                 "company_id": cls.main_company.id,
+                "name": "Test expense",
+                "code": "TE.1",
             }
         )
         cls.account_payable = cls.account_model.create(
             {
                 "account_type": "liability_payable",
-                "name": "Test payable account",
-                "code": "TTA",
                 "company_id": cls.main_company.id,
-                "reconcile": True,
+                "name": "Test payable",
+                "code": "TP.1",
             }
         )
         (cls.partner_asus + cls.partner_c2c + cls.partner_agrolait).with_company(
@@ -96,21 +101,8 @@ class TestSCT(TransactionCase):
                 "bank_account_id": cls.partner_bank.id,
                 "bank_id": cls.partner_bank.bank_id.id,
                 "company_id": cls.main_company.id,
-                "outbound_payment_method_line_ids": [
-                    (
-                        0,
-                        0,
-                        {
-                            "payment_method_id": cls.env.ref(
-                                "account_banking_sepa_credit_transfer.sepa_credit_transfer"
-                            ).id,
-                            "payment_account_id": cls.account_payable.id,
-                        },
-                    )
-                ],
             }
         )
-
         # update payment mode
         cls.payment_mode = cls.env.ref(
             "account_banking_sepa_credit_transfer.payment_mode_outbound_sepa_ct1"
@@ -120,6 +112,11 @@ class TestSCT(TransactionCase):
         )
         # Trigger the recompute of account type on res.partner.bank
         cls.partner_bank_model.search([])._compute_acc_type()
+
+        # cls.main_company.write({
+        #     'account_journal_payment_debit_account_id': cls.payment_debit_account_id.id,
+        #     'account_journal_payment_credit_account_id': cls.payment_credit_account_id.id
+        # })
 
     def test_no_pain(self):
         self.payment_mode.payment_method_id.pain_version = False
@@ -207,20 +204,16 @@ class TestSCT(TransactionCase):
         self.payment_order.draft2open()
         self.assertEqual(self.payment_order.state, "open")
         self.assertEqual(self.payment_order.sepa, True)
-        bank_lines = self.bank_line_model.search(
-            [("partner_id", "=", self.partner_agrolait.id)]
-        )
-        self.assertEqual(len(bank_lines), 1)
-        agrolait_bank_line = bank_lines[0]
+        self.assertTrue(self.payment_order.payment_ids)
+        agrolait_bank_line = self.payment_order.payment_ids[0]
         self.assertEqual(agrolait_bank_line.currency_id, self.eur_currency)
         self.assertEqual(
             agrolait_bank_line.currency_id.compare_amounts(
-                agrolait_bank_line.amount_currency, 49.0
+                agrolait_bank_line.amount, 49.0
             ),
             0,
         )
-        self.assertEqual(agrolait_bank_line.communication_type, "normal")
-        self.assertEqual(agrolait_bank_line.communication, "F1341-F1342-A1301")
+        self.assertEqual(agrolait_bank_line.payment_reference, "F1341-F1342-A1301")
         self.assertEqual(agrolait_bank_line.partner_bank_id, invoice1.partner_bank_id)
 
         action = self.payment_order.open2generated()
@@ -299,20 +292,14 @@ class TestSCT(TransactionCase):
         self.payment_order.draft2open()
         self.assertEqual(self.payment_order.state, "open")
         self.assertEqual(self.payment_order.sepa, False)
-        bank_lines = self.bank_line_model.search(
-            [("partner_id", "=", self.partner_asus.id)]
-        )
-        self.assertEqual(len(bank_lines), 1)
-        asus_bank_line = bank_lines[0]
+        self.assertEqual(self.payment_order.payment_count, 1)
+        asus_bank_line = self.payment_order.payment_ids[0]
         self.assertEqual(asus_bank_line.currency_id, self.usd_currency)
         self.assertEqual(
-            asus_bank_line.currency_id.compare_amounts(
-                asus_bank_line.amount_currency, 3054.0
-            ),
+            asus_bank_line.currency_id.compare_amounts(asus_bank_line.amount, 3054.0),
             0,
         )
-        self.assertEqual(asus_bank_line.communication_type, "normal")
-        self.assertEqual(asus_bank_line.communication, "Inv9032-Inv9033")
+        self.assertEqual(asus_bank_line.payment_reference, "Inv9032-Inv9033")
         self.assertEqual(asus_bank_line.partner_bank_id, invoice1.partner_bank_id)
 
         action = self.payment_order.open2generated()
@@ -377,6 +364,7 @@ class TestSCT(TransactionCase):
             "account_id": cls.account_expense.id,
             "price_unit": price_unit,
             "quantity": 1,
+            "tax_ids": [],  # no tax
         }
         data["invoice_line_ids"].append((0, 0, line_data))
         inv = cls.env["account.move"].create(data)

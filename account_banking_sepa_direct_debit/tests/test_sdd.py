@@ -1,5 +1,5 @@
 # Copyright 2016 Akretion (Alexis de Lattre <alexis.delattre@akretion.com>)
-# Copyright 2018-2020 Tecnativa - Pedro M. Baeza
+# Copyright 2018-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import base64
@@ -40,7 +40,6 @@ class TestSDDBase(TransactionCase):
         cls.payment_order_model = cls.env["account.payment.order"]
         cls.payment_line_model = cls.env["account.payment.line"]
         cls.mandate_model = cls.env["account.banking.mandate"]
-        cls.bank_line_model = cls.env["bank.payment.line"]
         cls.partner_bank_model = cls.env["res.partner.bank"]
         cls.attachment_model = cls.env["ir.attachment"]
         cls.invoice_model = cls.env["account.move"]
@@ -66,6 +65,8 @@ class TestSDDBase(TransactionCase):
         (cls.partner_agrolait + cls.partner_c2c).write(
             {
                 "company_id": cls.main_company.id,
+                "supplier_payment_mode_id": False,
+                "customer_payment_mode_id": False,
                 "property_account_payable_id": cls.account_payable_company_B.id,
                 "property_account_receivable_id": cls.account_receivable_company_B.id,
             }
@@ -77,6 +78,7 @@ class TestSDDBase(TransactionCase):
                 "bank_id": (
                     cls.env.ref("account_payment_mode.bank_la_banque_postale").id
                 ),
+                "acc_number": "ES52 0182 2782 5688 3882 1868",
             }
         )
         # create journal
@@ -84,7 +86,8 @@ class TestSDDBase(TransactionCase):
             {
                 "name": "Company Bank journal",
                 "type": "bank",
-                "code": "BNKFC",
+                "code": "BNKF",
+                "payment_sequence": False,
                 "bank_account_id": cls.company_bank.id,
                 "bank_id": cls.company_bank.bank_id.id,
                 "inbound_payment_method_line_ids": [
@@ -112,7 +115,8 @@ class TestSDDBase(TransactionCase):
         bank1 = cls.env.ref("account_payment_mode.res_partner_12_iban").copy(
             {
                 "company_id": cls.main_company.id,
-                "acc_number": "FR76 1212 1212 1212 1212 1212 232",
+                "partner_id": cls.partner_c2c.id,
+                "acc_type": "iban",
             }
         )
         cls.mandate12 = cls.env.ref(
@@ -126,7 +130,11 @@ class TestSDDBase(TransactionCase):
             }
         )
         bank2 = cls.env.ref("account_payment_mode.res_partner_2_iban").copy(
-            {"company_id": cls.main_company.id, "acc_number": "BE34 9988 7766 5690"}
+            {
+                "company_id": cls.main_company.id,
+                "partner_id": cls.partner_agrolait.id,
+                "acc_type": "iban",
+            }
         )
         cls.mandate2 = cls.env.ref(
             "account_banking_sepa_direct_debit.res_partner_2_mandate"
@@ -148,7 +156,7 @@ class TestSDDBase(TransactionCase):
             {
                 "code": "NC1112",
                 "name": "Sale - Test Account",
-                "account_type": "expense_direct_cost",
+                "account_type": "asset_current",
             }
         )
         cls.account_expense = cls.env["account.account"].create(
@@ -162,7 +170,7 @@ class TestSDDBase(TransactionCase):
             {
                 "code": "NC1114",
                 "name": "Sales - Test Sales Account",
-                "account_type": "income_other",
+                "account_type": "expense_direct_cost",
                 "reconcile": True,
             }
         )
@@ -186,7 +194,7 @@ class TestSDDBase(TransactionCase):
             {
                 "code": "NC1114",
                 "name": "Sales - Test Sales Account Company B",
-                "account_type": "income_other",
+                "account_type": "expense_direct_cost",
                 "reconcile": True,
                 "company_id": cls.company_B.id,
             }
@@ -200,6 +208,7 @@ class TestSDDBase(TransactionCase):
                 "name": "Purchase Journal Company B - Test",
                 "code": "AJ-PURC",
                 "type": "purchase",
+                "payment_sequence": False,
                 "company_id": cls.company_B.id,
                 "default_account_id": cls.account_expense_company_B.id,
             }
@@ -209,6 +218,7 @@ class TestSDDBase(TransactionCase):
                 "name": "Sale Journal Company B - Test",
                 "code": "AJ-SALE",
                 "type": "sale",
+                "payment_sequence": False,
                 "company_id": cls.company_B.id,
                 "default_account_id": cls.account_income_company_B.id,
             }
@@ -218,6 +228,7 @@ class TestSDDBase(TransactionCase):
                 "name": "General Journal Company B - Test",
                 "code": "AJ-GENERAL",
                 "type": "general",
+                "payment_sequence": False,
                 "company_id": cls.company_B.id,
             }
         )
@@ -227,6 +238,7 @@ class TestSDDBase(TransactionCase):
         invoice1 = self.create_invoice(self.partner_agrolait.id, self.mandate2, 42.0)
         self.mandate12.type = "oneoff"
         invoice2 = self.create_invoice(self.partner_c2c.id, self.mandate12, 11.0)
+        self.payment_mode.payment_method_id.mandate_required = True
         for inv in [invoice1, invoice2]:
             action = inv.create_account_payment_line()
         self.assertEqual(action["res_model"], "account.payment.order")
@@ -257,25 +269,18 @@ class TestSDDBase(TransactionCase):
         )
         self.assertEqual(agrolait_pay_line1.communication_type, "normal")
         self.assertEqual(agrolait_pay_line1.communication, invoice1.name)
+        payment_order._compute_sepa()
         payment_order.draft2open()
         self.assertEqual(payment_order.state, "open")
         self.assertEqual(payment_order.sepa, True)
-        # Check bank payment line
-        bank_lines = self.bank_line_model.search(
-            [("partner_id", "=", self.partner_agrolait.id)]
-        )
-        self.assertEqual(len(bank_lines), 1)
-        agrolait_bank_line = bank_lines[0]
+        # Check account payment
+        agrolait_bank_line = payment_order.payment_ids[0]
         self.assertEqual(agrolait_bank_line.currency_id, self.eur_currency)
         self.assertEqual(
-            float_compare(
-                agrolait_bank_line.amount_currency, 42.0, precision_digits=accpre
-            ),
+            float_compare(agrolait_bank_line.amount, 42.0, precision_digits=accpre),
             0,
         )
-        self.assertEqual(agrolait_bank_line.communication_type, "normal")
-        self.assertEqual(agrolait_bank_line.communication, invoice1.name)
-        self.assertEqual(agrolait_bank_line.mandate_id, invoice1.mandate_id)
+        self.assertEqual(agrolait_bank_line.payment_reference, invoice1.name)
         self.assertEqual(
             agrolait_bank_line.partner_bank_id, invoice1.mandate_id.partner_bank_id
         )
@@ -328,6 +333,7 @@ class TestSDDBase(TransactionCase):
                 "reference_type": "none",
                 "currency_id": self.env.ref("base.EUR").id,
                 "move_type": inv_type,
+                "journal_id": self.journal_sale_company_B.id,
                 "date": fields.Date.today(),
                 "payment_mode_id": self.payment_mode.id,
                 "mandate_id": mandate.id,
