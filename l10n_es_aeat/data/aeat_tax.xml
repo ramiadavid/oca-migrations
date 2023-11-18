@@ -1,0 +1,3 @@
+<odoo>
+    <function model="aeat.tax" name="update_taxes"/>
+</odoo>

@@ -1,0 +1,3 @@
+<odoo>
+    <function model="aeat.account" name="update_accounts"/>
+</odoo>
