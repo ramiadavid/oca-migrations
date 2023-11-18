@@ -143,6 +143,7 @@ import datetime
 import logging
 import os
 import selectors
+import socket
 import threading
 import time
 from contextlib import closing, contextmanager
@@ -365,7 +366,7 @@ class QueueJobRunner(object):
         self.channel_manager.simple_configure(channel_config_string)
         self.db_by_name = {}
         self._stop = False
-        self._stop_pipe = os.pipe()
+        self._stop_pipe = socket.socketpair()
 
     @classmethod
     def from_environ_or_config(cls):
@@ -502,7 +503,7 @@ class QueueJobRunner(object):
         _logger.info("graceful stop requested")
         self._stop = True
         # wakeup the select() in wait_notification
-        os.write(self._stop_pipe[1], b".")
+        self._stop_pipe[1].send(b".")
 
     def run(self):
         _logger.info("starting")
