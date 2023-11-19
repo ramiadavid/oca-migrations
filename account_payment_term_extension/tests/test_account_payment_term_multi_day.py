@@ -31,9 +31,10 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 5,
+                            "value": "percent",
+                            "nb_days": 5,
                             "payment_days": "5",
+                            "value_amount": 100,
                         },
                     )
                 ],
@@ -44,7 +45,16 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                 "name": "Payment for days 5 and 10",
                 "active": True,
                 "line_ids": [
-                    (0, 0, {"value": "balance", "days": 0, "payment_days": "5,10"})
+                    (
+                        0,
+                        0,
+                        {
+                            "value": "percent",
+                            "nb_days": 0,
+                            "payment_days": "5,10",
+                            "value_amount": 100,
+                        },
+                    )
                 ],
             }
         )
@@ -60,7 +70,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         {
                             "value": "percent",
                             "value_amount": 50.0,
-                            "days": 0,
+                            "nb_days": 0,
                             "payment_days": "15,20",
                         },
                     ),
@@ -68,9 +78,10 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 0,
+                            "value": "percent",
+                            "nb_days": 0,
                             "payment_days": "10-5",
+                            "value_amount": 50,
                         },
                     ),
                 ],
@@ -89,7 +100,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                             "value": "percent",
                             "value_amount": 50.0,
                             "amount_round": 1,
-                            "days": 10,
+                            "nb_days": 10,
                             "payment_days": "15,20",
                         },
                     ),
@@ -97,9 +108,10 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 10,
+                            "value": "percent",
+                            "nb_days": 10,
                             "payment_days": "10-5",
+                            "value_amount": 50,
                         },
                     ),
                 ],
@@ -125,13 +137,13 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         {
                             "value": "percent_amount_untaxed",
                             "value_amount": 40.0,
-                            "days": 1,
+                            "nb_days": 1,
                         },
                     ),
                     (
                         0,
                         0,
-                        {"value": "balance", "days": 1},
+                        {"value": "percent", "nb_days": 10, "value_amount": 100},
                     ),
                 ],
             }

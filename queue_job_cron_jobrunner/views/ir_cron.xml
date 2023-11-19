@@ -13,7 +13,7 @@
             <field name="doall" position="after">
                 <field
                     name="queue_job_runner"
-                    attrs="{'invisible': [('model_name', '!=', 'queue.job')]}"
+                    invisible="model_name != 'queue_job'"
                 />
             </field>
         </field>

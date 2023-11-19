@@ -5,8 +5,7 @@
 from odoo import SUPERUSER_ID, api
 
 
-def set_default_initiating_party(cr, registry):
-    env = api.Environment(cr, SUPERUSER_ID, {})
+def set_default_initiating_party(env):
     for company in env["res.company"].search([]):
         company._default_initiating_party()
     return

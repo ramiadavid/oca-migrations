@@ -72,6 +72,7 @@ class AccountPaymentTermLine(models.Model):
         help="Sets the amount so that it is a multiple of this value.",
     )
     weeks = fields.Integer()
+    nb_months = fields.Integer(string="Months")
     value = fields.Selection(
         selection_add=[
             ("percent_amount_untaxed", "Percent (Untaxed amount)"),
@@ -81,16 +82,14 @@ class AccountPaymentTermLine(models.Model):
     )
 
     def _get_due_date(self, date_ref):
-        """override to support weeks"""
+        """override to support weeks, months, apply holidays and payment days"""
         self.ensure_one()
-        due_date = fields.Date.from_string(date_ref)
-        due_date += relativedelta(months=self.months)
-        due_date += relativedelta(weeks=self.weeks)
-        due_date += relativedelta(days=self.days)
-        if self.end_month:
-            due_date += relativedelta(day=31)
-            due_date += relativedelta(days=self.days_after)
-        return due_date
+        due_date = super()._get_due_date(date_ref) - relativedelta(days=self.nb_days)
+        due_date = due_date + relativedelta(weeks=self.weeks)
+        due_date = due_date + relativedelta(months=self.nb_months)
+        due_date = due_date + relativedelta(days=self.nb_days)
+        due_date = self.payment_id.apply_holidays(due_date)
+        return self.payment_id.apply_payment_days(self, due_date)
 
     @api.constrains("value", "value_amount")
     def _check_value_amount_untaxed(self):
@@ -121,11 +120,16 @@ class AccountPaymentTermLine(models.Model):
             return float_round(self.value_amount, precision_digits=precision_digits)
         elif self.value in ("percent", "percent_amount_untaxed"):
             amt = total_amount * self.value_amount / 100.0
+
+            if abs(amt) > abs(remaining_amount):
+                amt = remaining_amount
+
+            if self == self.payment_id.line_ids[-1]:
+                amt = remaining_amount
+
             if self.amount_round:
                 amt = float_round(amt, precision_rounding=self.amount_round)
             return float_round(amt, precision_digits=precision_digits)
-        elif self.value == "balance":
-            return float_round(remaining_amount, precision_digits=precision_digits)
         return None
 
     def _decode_payment_days(self, days_char):
@@ -201,20 +205,23 @@ class AccountPaymentTerm(models.Model):
         return date
 
     @api.depends(
+        "currency_id",
         "example_amount",
         "example_date",
         "line_ids.value",
         "line_ids.value_amount",
-        "line_ids.months",
-        "line_ids.days",
-        "line_ids.end_month",
-        "line_ids.days_after",
+        "line_ids.nb_days",
+        "line_ids.nb_months",
+        "line_ids.weeks",
+        "early_discount",
         "sequential_lines",
+        "discount_percentage",
+        "discount_days",
         "holiday_ids",
     )
     def _compute_example_preview(self):
         """adding depends for new customized fields"""
-        return super(AccountPaymentTerm, self)._compute_example_preview()
+        return super()._compute_example_preview()
 
     def _compute_terms(
         self,
@@ -227,12 +234,18 @@ class AccountPaymentTerm(models.Model):
         untaxed_amount,
         untaxed_amount_currency,
     ):
-        """Complete overwrite of compute method for adding extra options."""
-        # FIXME: Find an inheritable way of doing this
         self.ensure_one()
+        res = super()._compute_terms(
+            date_ref,
+            currency,
+            company,
+            tax_amount,
+            tax_amount_currency,
+            sign,
+            untaxed_amount,
+            untaxed_amount_currency,
+        )
         company_currency = company.currency_id
-        tax_amount_left = tax_amount
-        tax_amount_currency_left = tax_amount_currency
         untaxed_amount_left = untaxed_amount
         untaxed_amount_currency_left = untaxed_amount_currency
 
@@ -240,28 +253,16 @@ class AccountPaymentTerm(models.Model):
         total_amount_currency = remaining_amount_currency = (
             tax_amount_currency + untaxed_amount_currency
         )
-        result = []
+
         precision_digits = currency.decimal_places
         company_precision_digits = company_currency.decimal_places
         next_date = date_ref
-        for line in self.line_ids.sorted(lambda line: line.value == "balance"):
-            if not self.sequential_lines:
-                # For all lines, the beginning date is `date_ref`
-                next_date = line._get_due_date(date_ref)
-            else:
+
+        lines = {line: res["line_ids"][i] for i, line in enumerate(self.line_ids)}
+        for line, term_vals in lines.items():
+            if self.sequential_lines:
                 next_date = line._get_due_date(next_date)
-
-            next_date = self.apply_payment_days(line, next_date)
-            next_date = self.apply_holidays(next_date)
-
-            term_vals = {
-                "date": next_date,
-                "has_discount": line.discount_percentage,
-                "discount_date": None,
-                "discount_amount_currency": 0.0,
-                "discount_balance": 0.0,
-                "discount_percentage": line.discount_percentage,
-            }
+                term_vals["date"] = next_date
 
             if line.value == "fixed":
                 line_amount = line.compute_line_amount(
@@ -272,25 +273,8 @@ class AccountPaymentTerm(models.Model):
                 )
                 term_vals["company_amount"] = sign * company_line_amount
                 term_vals["foreign_amount"] = sign * line_amount
-                company_proportion = (
-                    tax_amount / untaxed_amount if untaxed_amount else 1
-                )
-                foreign_proportion = (
-                    tax_amount_currency / untaxed_amount_currency
-                    if untaxed_amount_currency
-                    else 1
-                )
-                line_tax_amount = (
-                    company_currency.round(line.value_amount * company_proportion)
-                    * sign
-                )
-                line_tax_amount_currency = (
-                    currency.round(line.value_amount * foreign_proportion) * sign
-                )
-                line_untaxed_amount = term_vals["company_amount"] - line_tax_amount
-                line_untaxed_amount_currency = (
-                    term_vals["foreign_amount"] - line_tax_amount_currency
-                )
+                remaining_amount -= line_amount
+                remaining_amount_currency -= company_line_amount
             elif line.value == "percent":
                 line_amount = line.compute_line_amount(
                     total_amount, remaining_amount, precision_digits
@@ -302,17 +286,8 @@ class AccountPaymentTerm(models.Model):
                 )
                 term_vals["company_amount"] = company_line_amount
                 term_vals["foreign_amount"] = line_amount
-                line_tax_amount = company_currency.round(
-                    tax_amount * (line.value_amount / 100.0)
-                )
-                line_tax_amount_currency = currency.round(
-                    tax_amount_currency * (line.value_amount / 100.0)
-                )
-                line_untaxed_amount = term_vals["company_amount"] - line_tax_amount
-                line_untaxed_amount_currency = (
-                    term_vals["foreign_amount"] - line_tax_amount_currency
-                )
-
+                remaining_amount -= line_amount
+                remaining_amount_currency -= company_line_amount
             elif line.value == "percent_amount_untaxed":
                 if company_currency != currency:
                     raise UserError(
@@ -321,6 +296,7 @@ class AccountPaymentTerm(models.Model):
                             "currencies"
                         )
                     )
+
                 line_amount = line.compute_line_amount(
                     untaxed_amount, untaxed_amount_left, precision_digits
                 )
@@ -331,64 +307,9 @@ class AccountPaymentTerm(models.Model):
                 )
                 term_vals["company_amount"] = company_line_amount
                 term_vals["foreign_amount"] = line_amount
-                line_tax_amount = company_currency.round(
-                    tax_amount * (line.value_amount / 100.0)
-                )
-                line_tax_amount_currency = currency.round(
-                    tax_amount_currency * (line.value_amount / 100.0)
-                )
-                line_untaxed_amount = term_vals["company_amount"] - line_tax_amount
-                line_untaxed_amount_currency = (
-                    term_vals["foreign_amount"] - line_tax_amount_currency
-                )
-            else:
-                line_tax_amount = (
-                    line_tax_amount_currency
-                ) = line_untaxed_amount = line_untaxed_amount_currency = 0.0
+                remaining_amount -= line_amount
+                remaining_amount_currency -= company_line_amount
+                untaxed_amount_left -= line_amount
+                untaxed_amount_currency_left -= company_line_amount
 
-            tax_amount_left -= line_tax_amount
-            tax_amount_currency_left -= line_tax_amount_currency
-            untaxed_amount_left -= line_untaxed_amount
-            untaxed_amount_currency_left -= line_untaxed_amount_currency
-            remaining_amount = tax_amount_left + untaxed_amount_left
-            remaining_amount_currency = (
-                tax_amount_currency_left + untaxed_amount_currency_left
-            )
-
-            if line.value == "balance":
-                term_vals["company_amount"] = tax_amount_left + untaxed_amount_left
-                term_vals["foreign_amount"] = (
-                    tax_amount_currency_left + untaxed_amount_currency_left
-                )
-                line_tax_amount = tax_amount_left
-                line_tax_amount_currency = tax_amount_currency_left
-                line_untaxed_amount = untaxed_amount_left
-                line_untaxed_amount_currency = untaxed_amount_currency_left
-
-            if line.discount_percentage:
-                if company.early_pay_discount_computation in ("excluded", "mixed"):
-                    term_vals["discount_balance"] = company_currency.round(
-                        term_vals["company_amount"]
-                        - line_untaxed_amount * line.discount_percentage / 100.0
-                    )
-                    term_vals["discount_amount_currency"] = currency.round(
-                        term_vals["foreign_amount"]
-                        - line_untaxed_amount_currency
-                        * line.discount_percentage
-                        / 100.0
-                    )
-                else:
-                    term_vals["discount_balance"] = company_currency.round(
-                        term_vals["company_amount"]
-                        * (1 - (line.discount_percentage / 100.0))
-                    )
-                    term_vals["discount_amount_currency"] = currency.round(
-                        term_vals["foreign_amount"]
-                        * (1 - (line.discount_percentage / 100.0))
-                    )
-                term_vals["discount_date"] = date_ref + relativedelta(
-                    days=line.discount_days
-                )
-
-            result.append(term_vals)
-        return result
+        return res

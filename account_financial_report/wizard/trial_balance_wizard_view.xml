@@ -14,7 +14,7 @@
                     />
                 </group>
                 <div
-                    attrs="{'invisible': [('not_only_one_unaffected_earnings_account', '=', True)]}"
+                    invisible="not_only_one_unaffected_earnings_account"
                 >
                     <group name="filters">
                         <group name="date_range">
@@ -29,26 +29,26 @@
                             <field name="show_partner_details" />
                             <field
                                 name="show_hierarchy"
-                                attrs="{'invisible':[('show_partner_details','=',True)]}"
+                                invisible="show_partner_details"
                             />
                             <field
                                 name="limit_hierarchy_level"
-                                attrs="{'invisible':['|', ('show_hierarchy','=',False),('show_partner_details','=',True)]}"
+                                invisible="not show_hierarchy or show_partner_details"
                             />
                             <field
                                 name="show_hierarchy_level"
-                                attrs="{'invisible':[('limit_hierarchy_level','=', False)]}"
+                                invisible="not limit_hierarchy_level"
                             />
                             <field
                                 name="hide_parent_hierarchy_level"
-                                attrs="{'invisible':[('limit_hierarchy_level','=', False)]}"
+                                invisible="not limit_hierarchy_level"
                             />
                             <field name="foreign_currency" />
                         </group>
                     </group>
                     <group
                         name="partner_filter"
-                        attrs="{'invisible':[('show_partner_details','!=',True)]}"
+                        invisible="not show_partner_details"
                         col="1"
                     >
                         <label for="partner_ids" />
@@ -66,7 +66,7 @@
                         nolabel="1"
                         options="{'no_create': True}"
                     />
-                    <group attrs="{'invisible':[('show_partner_details','!=',True)]}" />
+                    <group invisible="not show_partner_details" />
                     <div />
                     <group name="account_filter" col="4">
                         <label for="account_ids" colspan="4" />
@@ -98,7 +98,7 @@
                     </group>
                 </div>
                 <div
-                    attrs="{'invisible': [('not_only_one_unaffected_earnings_account', '=', False)]}"
+                    invisible="not not_only_one_unaffected_earnings_account"
                 >
                     <field
                         name="not_only_one_unaffected_earnings_account"
@@ -113,7 +113,7 @@
                 </div>
                 <footer>
                     <div
-                        attrs="{'invisible': [('not_only_one_unaffected_earnings_account', '=', True)]}"
+                        invisible="not_only_one_unaffected_earnings_account"
                     >
                         <button
                             name="button_export_html"
@@ -138,7 +138,7 @@
                         <button string="Cancel" class="oe_link" special="cancel" />
                     </div>
                     <div
-                        attrs="{'invisible': [('not_only_one_unaffected_earnings_account', '=', False)]}"
+                        invisible="not not_only_one_unaffected_earnings_account"
                     >
                         <button string="Cancel" class="oe_link" special="cancel" />
                     </div>

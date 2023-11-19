@@ -47,7 +47,7 @@ class TestAccountPaymentTerm(TransactionCase):
             untaxed_amount=10,
             untaxed_amount_currency=10,
         )
-        payment_term_date = self._get_date_payment_term_line(res[0])
+        payment_term_date = self._get_date_payment_term_line(res["line_ids"][0])
         self.assertEqual(
             payment_term_date,
             "2015-03-31",
@@ -63,9 +63,10 @@ class TestAccountPaymentTerm(TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 0,
+                            "value": "percent",
+                            "nb_days": 0,
                             "weeks": 2,
+                            "value_amount": 100,
                         },
                     )
                 ],
@@ -81,7 +82,7 @@ class TestAccountPaymentTerm(TransactionCase):
             untaxed_amount=100,
             untaxed_amount_currency=100,
         )
-        payment_term_date = self._get_date_payment_term_line(res[0])
+        payment_term_date = self._get_date_payment_term_line(res["line_ids"][0])
         self.assertEqual(
             payment_term_date,
             "2015-03-16",
@@ -100,7 +101,7 @@ class TestAccountPaymentTerm(TransactionCase):
             untaxed_amount=0.2,
             untaxed_amount_currency=0.2,
         )
-        payment_term_date = self._get_date_payment_term_line(res[0])
+        payment_term_date = self._get_date_payment_term_line(res["line_ids"][0])
 
         self.assertEqual(
             payment_term_date,
@@ -117,11 +118,11 @@ class TestAccountPaymentTerm(TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 0,
+                            "value": "percent",
+                            "nb_days": 0,
                             "weeks": 0,
-                            "months": 2,
-                            "end_month": True,
+                            "nb_months": 2,
+                            "delay_type": "days_after_end_of_month",
                         },
                     )
                 ],
@@ -137,7 +138,7 @@ class TestAccountPaymentTerm(TransactionCase):
             untaxed_amount=10,
             untaxed_amount_currency=10,
         )
-        payment_term_date = self._get_date_payment_term_line(res[0])
+        payment_term_date = self._get_date_payment_term_line(res["line_ids"][0])
         self.assertEqual(
             payment_term_date,
             "2015-05-31",
@@ -156,8 +157,8 @@ class TestAccountPaymentTerm(TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 0,
+                            "value": "percent",
+                            "nb_days": 0,
                             "weeks": 2,
                         },
                     )
@@ -184,7 +185,7 @@ class TestAccountPaymentTerm(TransactionCase):
             untaxed_amount=10,
             untaxed_amount_currency=10,
         )
-        payment_term_date = self._get_date_payment_term_line(res[0])
+        payment_term_date = self._get_date_payment_term_line(res["line_ids"][0])
         self.assertEqual(
             payment_term_date,
             str_date_postponed,
@@ -203,8 +204,8 @@ class TestAccountPaymentTerm(TransactionCase):
                         0,
                         0,
                         {
-                            "value": "balance",
-                            "days": 0,
+                            "value": "percent",
+                            "nb_days": 0,
                             "weeks": 2,
                         },
                     )
@@ -231,7 +232,7 @@ class TestAccountPaymentTerm(TransactionCase):
             untaxed_amount=10,
             untaxed_amount_currency=10,
         )
-        payment_term_date = self._get_date_payment_term_line(res[0])
+        payment_term_date = self._get_date_payment_term_line(res["line_ids"][0])
         self.assertNotEqual(
             payment_term_date,
             str_date_postponed,

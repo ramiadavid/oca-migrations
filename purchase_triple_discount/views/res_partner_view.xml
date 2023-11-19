@@ -7,11 +7,11 @@
             <field name="default_supplierinfo_discount" position="after">
                 <field
                     name="default_supplierinfo_discount2"
-                    attrs="{'invisible': [('is_company', '=', False), ('parent_id', '!=', False)]}"
+                    invisible="not is_company and parent_id"
                 />
                 <field
                     name="default_supplierinfo_discount3"
-                    attrs="{'invisible': [('is_company', '=', False), ('parent_id', '!=', False)]}"
+                    invisible="not is_company and parent_id"
                 />
             </field>
          </field>
