@@ -1,0 +1,9 @@
+# generated from manifests external_dependencies
+cryptography
+lxml
+pycountry
+requests
+unidecode
+xlrd
+xlsxwriter
+xmlsig
