@@ -253,7 +253,7 @@ class QueueJobFunction(models.Model):
 
     def write(self, values):
         res = super().write(values)
-        self.clear_caches()
+        self.env.registry.clear_cache()
         return res
 
     def unlink(self):

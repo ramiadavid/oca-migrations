@@ -175,7 +175,7 @@
                                 >Refund invoices</span> - Normal invoices</div>
                             <field
                                 name="move_record_ids"
-                                context="{'partner_record_id': active_id}"
+                                context="{'partner_record_id': id}"
                                 readonly="True"
                             >
                                 <tree
@@ -194,7 +194,7 @@
                             </field>
                             <field
                                 name="cash_record_ids"
-                                context="{'partner_record_id': active_id}"
+                                context="{'partner_record_id': id}"
                                 readonly="True"
                             >
                                 <tree>

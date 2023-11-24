@@ -26,8 +26,7 @@ class AeatTax(models.Model):
                     data = chart_template._get_chart_template_data(template)
                     processed.append(template)
                     for key in data["account.tax"]:
-
-                        taxes[key] = data["account.tax"][key].get('description@es') or data["account.tax"][key]['description']
+                        taxes[key] = data["account.tax"][key].get('description@es') or data["account.tax"][key].get('description') or data["account.tax"][key].get('name')
             self.create_or_remove_taxes(taxes)
         except:
             traceback.print_exc()
