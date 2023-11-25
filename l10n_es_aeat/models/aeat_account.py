@@ -18,15 +18,10 @@ class AeatTax(models.Model):
     def update_accounts(self):
         try:
             chart_template = self.env["account.chart.template"].sudo()
-            processed = []
             accounts = {}
-            for company in self.env["res.company"].search([]).sudo():
-                template = company.chart_template
-                if template and template not in processed:
-                    data = chart_template._get_chart_template_data(template)
-                    processed.append(template)
-                    for key in data["account.account"]:
-                        accounts[key] = "%s - %s" % (data["account.account"][key]['code'], data["account.account"][key].get('name@es') or data["account.account"][key]['name'])
+            data = chart_template._parse_csv("es_common", "account.account", "l10n_es")
+            for key in data:
+                accounts[key] = "%s - %s" % (data[key]['code'], data[key].get('name@es') or data[key]['name'])
             self.create_or_remove_accounts(accounts)
         except:
             traceback.print_exc()
