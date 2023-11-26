@@ -21,7 +21,7 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "date_range/static/src/js/date_range.esm.js",
+            "date_range/static/src/js/*.js",
             "date_range/static/src/xml/date_range.xml",
         ],
     },
