@@ -48,7 +48,6 @@
                                         </group>
                                         <group
                                             invisible="not parent.special_tax_group"
-                                            attrs="{'invisible': [('parent.special_tax_group', '=', False)]}"
                                         >
                                             <field name="special_tax_group" />
                                             <field name="special_tax_id" />
