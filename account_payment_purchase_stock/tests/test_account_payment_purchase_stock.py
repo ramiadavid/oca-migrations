@@ -15,7 +15,7 @@ class TestAccountPaymentPurchaseStock(TestAccountPaymentPurchase):
         self.purchase.button_confirm()
         picking = self.purchase.picking_ids[0]
         picking.action_confirm()
-        picking.move_ids.write({"quantity_done": 1.0})
+
         picking.button_validate()
 
         invoice = self.env["account.move"].create(

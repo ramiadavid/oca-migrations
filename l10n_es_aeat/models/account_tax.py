@@ -9,7 +9,7 @@ class AccountTax(models.Model):
 
     def _clear_tax_id_from_tax_template_cache(self):
         Company = self.env["res.company"]
-        #Company._get_tax_id_from_tax_template.clear_cache(Company)
+        Company._get_tax_id_from_tax_template.clear_cache(Company)
 
     @api.model_create_multi
     def create(self, vals_list):
