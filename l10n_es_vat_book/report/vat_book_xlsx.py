@@ -23,8 +23,11 @@ class VatNumberXlsx(models.AbstractModel):
 
     @ormcache("self.env")
     def _get_undeductible_taxes(self, book):
-        line = self.env.ref("l10n_es_vat_book.aeat_vat_book_map_line_p_iva_nd")
-        return book.get_taxes_from_templates(line.tax_tmpl_ids)
+        tax_xmlid = self.env.ref("l10n_es_vat_book.p_iva_nd")
+        tax_id = book.company_id._get_tax_id_from_xmlid(tax_xmlid.name)
+        if tax_id:
+            return self.env["account.tax"].browse(tax_id)
+        return self.env["account.tax"]
 
     def _get_vat_book_map_lines(self, book_type):
         return self.env["aeat.vat.book.map.line"].search(
@@ -83,13 +86,13 @@ class VatNumberXlsx(models.AbstractModel):
         last_col = "O"
         for line in self._get_vat_book_map_lines("issued"):
             sheet.merge_range(
-                "{0}6:{0}7".format(line.fee_type_xlsx_column),
-                "Tipo de {}".format(line.name),
+                f"{line.fee_type_xlsx_column}6:{line.fee_type_xlsx_column}7",
+                f"Tipo de {line.name}",
                 header_format,
             )
             sheet.merge_range(
-                "{0}6:{0}7".format(line.fee_amount_xlsx_column),
-                "Cuota {}".format(line.name),
+                f"{line.fee_amount_xlsx_column}6:{line.fee_amount_xlsx_column}7",
+                f"Cuota {line.name}",
                 header_format,
             )
             last_col = line.fee_amount_xlsx_column
@@ -241,13 +244,13 @@ class VatNumberXlsx(models.AbstractModel):
         last_col = "Q"
         for line in self._get_vat_book_map_lines("received"):
             sheet.merge_range(
-                "{0}6:{0}7".format(line.fee_type_xlsx_column),
-                "Tipo de {}".format(line.name),
+                f"{line.fee_type_xlsx_column}6:{line.fee_type_xlsx_column}7",
+                f"Tipo de {line.name}",
                 header_format,
             )
             sheet.merge_range(
-                "{0}6:{0}7".format(line.fee_amount_xlsx_column),
-                "Cuota {}".format(line.name),
+                f"{line.fee_amount_xlsx_column}6:{line.fee_amount_xlsx_column}7",
+                f"Cuota {line.name}",
                 header_format,
             )
             last_col = line.fee_amount_xlsx_column
@@ -354,7 +357,7 @@ class VatNumberXlsx(models.AbstractModel):
         # Issued
         issued_sheet = self.create_issued_sheet(workbook, book, draft_export)
         lines = book.issued_line_ids + book.rectification_issued_line_ids
-        lines = lines.sorted(key=lambda l: (l.invoice_date, l.ref))
+        lines = lines.sorted(key=lambda x: (x.invoice_date, x.ref))
         row = 8
         for line in lines:
             with_total = True
@@ -370,7 +373,7 @@ class VatNumberXlsx(models.AbstractModel):
         # Received
         received_sheet = self.create_received_sheet(workbook, book, draft_export)
         lines = book.received_line_ids + book.rectification_received_line_ids
-        lines = lines.sorted(key=lambda l: (l.invoice_date, l.ref))
+        lines = lines.sorted(key=lambda x: (x.invoice_date, x.ref))
         row = 8
         for line in lines:
             with_total = True

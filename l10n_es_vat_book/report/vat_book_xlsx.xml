@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="l10n_es_vat_book_xlsx" model="ir.actions.report">
         <field name="name">VAT book XLSX report</field>

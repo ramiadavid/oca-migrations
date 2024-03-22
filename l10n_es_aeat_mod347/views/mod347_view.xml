@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <!-- ##########################################
                AEAT MODEL 347 PARTNER RECORD
@@ -46,11 +47,7 @@
                     string="Set to invalid"
                 />
                 <field name="check_ok" />
-                <field
-                    name="error_text"
-                    optional="show"
-                    invisible="check_ok"
-                />
+                <field name="error_text" optional="show" invisible="check_ok" />
             </tree>
         </field>
     </record>

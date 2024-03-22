@@ -23,6 +23,7 @@
         "portal",
     ],
     "data": [
+        "data/l10n.es.aeat.map.tax.line.tax.csv",
         "data/aeat_export_mod347_partner_data.xml",
         "data/aeat_export_mod347_real_state_data.xml",
         "data/aeat_export_mod347_data.xml",

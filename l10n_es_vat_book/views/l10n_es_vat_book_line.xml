@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="view_vat_book_line_form" model="ir.ui.view">
         <field name="name">view.l10n_es_vat_book_line.form</field>
@@ -46,9 +47,7 @@
                                             <field name="tax_amount" />
                                             <field name="total_amount" />
                                         </group>
-                                        <group
-                                            invisible="not parent.special_tax_group"
-                                        >
+                                        <group invisible="not parent.special_tax_group">
                                             <field name="special_tax_group" />
                                             <field name="special_tax_id" />
                                             <field name="special_tax_amount" />

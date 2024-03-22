@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo noupdate="1">
     <record id="email_template_347" model="mail.template">
         <field name="name">Comprobación datos modelo 347</field>
@@ -16,7 +17,6 @@
         />
         <field name="auto_delete" eval="True" />
         <field name="report_template_ids" eval="[(4, ref('347_partner'))]" />
-        <field name="name">347_details</field>
         <field name="lang">{{object.partner_id.lang}}</field>
         <field
             name="body_html"

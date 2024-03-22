@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <template id="report_vat_book_invoices_issued_document">
         <div class="page">

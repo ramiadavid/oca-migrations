@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record model="ir.actions.act_window" id="action_aeat_vat_book_mapping">
         <field name="name">AEAT vat book map</field>
@@ -20,8 +21,9 @@
                 <field name="special_tax_group" />
                 <field name="fee_type_xlsx_column" />
                 <field name="fee_amount_xlsx_column" />
-                <field name="tax_tmpl_ids" widget="many2many_tags" />
-                <field name="tax_account_id" />
+                <field name="tax_xmlid_ids" widget="many2many_tags" />
+                <field name="account_xmlid_id" />
+                <field name="tax_agency_ids" widget="many2many_tags" />
             </tree>
         </field>
     </record>

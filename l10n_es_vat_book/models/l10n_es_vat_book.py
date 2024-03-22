@@ -334,12 +334,15 @@ class L10nEsVatBook(models.Model):
 
     @ormcache("self.id")
     def get_special_taxes_dic(self):
-        map_lines = self.env["aeat.vat.book.map.line"].search(
-            [("special_tax_group", "!=", False)]
-        )
+        domain = [("special_tax_group", "!=", False)]
+        if self.tax_agency_ids:
+            domain += [
+                ("tax_agency_ids", "in", [False] + self.tax_agency_ids.ids),
+            ]
+        map_lines = self.env["aeat.vat.book.map.line"].search(domain)
         special_dic = {}
         for map_line in map_lines:
-            for tax in map_line.get_taxes(self):
+            for tax in map_line.get_taxes_for_company(self.company_id):
                 special_dic[tax.id] = {
                     "name": map_line.name,
                     "book_type": map_line.book_type,
@@ -369,9 +372,7 @@ class L10nEsVatBook(models.Model):
             req_vat_identif_types = [
                 s_opt[0]
                 for s_opt in rp_model._fields["aeat_identification_type"].selection
-            ] + [
-                ""
-            ]  # "" is the identification type for Spain
+            ] + [""]  # "" is the identification type for Spain
             # Partner type requires VAT
             if (
                 identifier_type in req_vat_identif_types
@@ -437,16 +438,19 @@ class L10nEsVatBook(models.Model):
             # Searches for all possible usable lines to report
             moves = rec._get_account_move_lines()
             for book_type in ["issued", "received"]:
-                map_lines = self.env["aeat.vat.book.map.line"].search(
-                    [("book_type", "=", book_type)]
-                )
+                domain = [("book_type", "=", book_type)]
+                if rec.tax_agency_ids:
+                    domain += [
+                        ("tax_agency_ids", "in", [False] + rec.tax_agency_ids.ids),
+                    ]
+                map_lines = self.env["aeat.vat.book.map.line"].search(domain)
                 taxes = self.env["account.tax"]
                 accounts = {}
                 for map_line in map_lines:
-                    line_taxes = map_line.get_taxes(rec)
+                    line_taxes = map_line.get_taxes_for_company(rec.company_id)
                     taxes |= line_taxes
-                    if map_line.tax_account_id:
-                        account = rec.get_account_from_template(map_line.tax_account_id)
+                    if map_line.account_xmlid_id:
+                        account = map_line.get_accounts_for_company(rec.company_id)
                         accounts.update({tax: account for tax in line_taxes})
                 # Filter in all possible data using sets for improving performance
                 if accounts:
@@ -462,7 +466,8 @@ class L10nEsVatBook(models.Model):
                     lines = moves.filtered(
                         lambda line: (line.tax_ids | line.tax_line_id) & taxes
                     )
-                rec.create_vat_book_lines(lines, map_line.book_type, taxes)
+                if map_lines:
+                    rec.create_vat_book_lines(lines, map_lines[:1].book_type, taxes)
             # Issued
             book_type = "issued"
             issued_tax_lines = rec.issued_line_ids.mapped("tax_line_ids")
