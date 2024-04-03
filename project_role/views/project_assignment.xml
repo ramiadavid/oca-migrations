@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--
     Copyright 2018-2019 Brainbean Apps (https://brainbeanapps.com)
     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
@@ -183,8 +184,8 @@
         <field name="res_model">project.assignment</field>
         <field name="view_mode">kanban,tree,form,pivot,graph</field>
         <field name="search_view_id" ref="project_assignment_search" />
-        <field name="context">{'default_project_id': id}</field>
-        <field name="domain">[('project_id','=',id)]</field>
+        <field name="context">{'default_project_id': active_id}</field>
+        <field name="domain">[('project_id','=',active_id)]</field>
     </record>
     <menuitem
         name="Assignments"
