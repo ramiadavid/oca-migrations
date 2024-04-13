@@ -32,9 +32,9 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         {
                             "value": "percent",
+                            "value_amount": 100.0,
                             "nb_days": 5,
                             "payment_days": "5",
-                            "value_amount": 100,
                         },
                     )
                 ],
@@ -50,9 +50,9 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         {
                             "value": "percent",
+                            "value_amount": 100.0,
                             "nb_days": 0,
                             "payment_days": "5,10",
-                            "value_amount": 100,
                         },
                     )
                 ],
@@ -79,9 +79,9 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         {
                             "value": "percent",
+                            "value_amount": 50.0,
                             "nb_days": 0,
                             "payment_days": "10-5",
-                            "value_amount": 50,
                         },
                     ),
                 ],
@@ -109,9 +109,9 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                         0,
                         {
                             "value": "percent",
+                            "value_amount": 50.0,
                             "nb_days": 10,
                             "payment_days": "10-5",
-                            "value_amount": 50,
                         },
                     ),
                 ],
@@ -143,7 +143,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                     (
                         0,
                         0,
-                        {"value": "percent", "nb_days": 10, "value_amount": 100},
+                        {"value": "percent", "value_amount": 100.0, "nb_days": 1},
                     ),
                 ],
             }

@@ -19,25 +19,25 @@
             <field name="company_id" position="after">
                 <field name="sequential_lines" />
             </field>
-            <field name="line_ids" position="after">
-                <separator string="Holidays" />
-                <div class="text-muted" colspan="2">
-                    When a payment term coincides with a holiday, it is postponed to the chosen date.
-                </div>
-                <field name="holiday_ids" nolabel="1" colspan="2">
-                    <tree editable="top">
-                        <field name="holiday" />
-                        <field name="date_postponed" />
-                    </tree>
-                </field>
-            </field>
+            <data>
+                <xpath expr="//sheet" position="inside">
+                    <separator string="Holidays" col="12" />
+                    <p class="text-muted">
+                        When a payment term coincides with a holiday, it is postponed to the chosen date.
+                    </p>
+                    <field name="holiday_ids" colspan="12">
+                        <tree editable="top">
+                            <field name="holiday" />
+                            <field name="date_postponed" />
+                        </tree>
+                    </field>
+                </xpath>
+            </data>
 
-            <field name="nb_days" position="before">
+            <field name="value_amount" position="after">
                 <field name="amount_round" />
             </field>
-            <field name="nb_days" position="after">
-                <field name="nb_months" />
-                <field name="weeks" />
+            <field name="amount_round" position="after">
                 <field name="payment_days" />
             </field>
         </field>
