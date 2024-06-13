@@ -29,8 +29,8 @@ def migrate_discount_to_discount1(env):
         [
             (
                 "discount1",
-                "product_supplierinfo",
                 "product.supplierinfo",
+                "product_supplierinfo",
                 "float",
                 "numeric",
                 "purchase_triple_discount",
