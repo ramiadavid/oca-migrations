@@ -17,7 +17,7 @@
         <xpath expr="//th[@name='th_discount']" position="attributes">
             <attribute name="style">visibility: hidden;</attribute>
         </xpath>
-        <xpath expr="//th[@name='th_price_unit']" position="after">
+        <xpath expr="//th[@name='th_discount']" position="after">
             <th
                 name="th_discount1"
                 t-if="display_discount"
