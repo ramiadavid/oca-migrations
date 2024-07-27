@@ -12,12 +12,12 @@ class PurchaseReport(models.Model):
     discount2 = fields.Float(
         string="Discount 2 (%)",
         digits="Discount",
-        group_operator="avg",
+        aggregator="avg",
     )
     discount3 = fields.Float(
         string="Discount 3 (%)",
         digits="Discount",
-        group_operator="avg",
+        aggregator="avg",
     )
 
     def _select(self):
