@@ -7,6 +7,7 @@ from odoo import api, fields, models
 
 class TripleDiscountMixin(models.AbstractModel):
     _name = "purchase.triple.discount.mixin"
+    _description = "Triple Discount Mixin"
 
     discount = fields.Float(
         string="Total discount",
