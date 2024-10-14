@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 
 from odoo.fields import Date
 from odoo.tests import tagged
-from odoo.tests.common import Form
+from odoo.tests import Form
 
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 

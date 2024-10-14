@@ -42,6 +42,6 @@ class AccountAgeReportConfigurationLine(models.Model):
         (
             "unique_name_config_combination",
             "UNIQUE(name,account_age_report_config_id)",
-            _("Name must be unique per report configuration"),
+            "Name must be unique per report configuration",
         )
     ]

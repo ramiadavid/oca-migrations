@@ -7,7 +7,7 @@ import base64
 from lxml import etree
 
 from odoo import fields
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase
 from odoo.tools import float_compare
 
 

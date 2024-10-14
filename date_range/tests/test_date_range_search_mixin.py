@@ -4,7 +4,7 @@
 from dateutil.rrule import MONTHLY
 from odoo_test_helper import FakeModelLoader
 
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase
 
 
 class TestDateRangeearchMixin(TransactionCase):

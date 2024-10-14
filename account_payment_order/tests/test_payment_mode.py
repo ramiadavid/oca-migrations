@@ -3,7 +3,7 @@
 
 from unittest.mock import patch
 
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase
 
 from odoo.addons.account.models.account_payment_method import AccountPaymentMethod
 from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT

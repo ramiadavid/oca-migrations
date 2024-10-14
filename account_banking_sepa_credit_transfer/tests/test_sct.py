@@ -9,7 +9,7 @@ import time
 from lxml import etree
 
 from odoo.exceptions import UserError
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase
 
 
 class TestSCT(TransactionCase):

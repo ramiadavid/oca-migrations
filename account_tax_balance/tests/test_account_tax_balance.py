@@ -10,7 +10,7 @@ from dateutil.rrule import MONTHLY
 import odoo
 from odoo import fields
 from odoo.fields import Date
-from odoo.tests.common import Form, HttpCase
+from odoo.tests import Form, HttpCase
 
 from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 

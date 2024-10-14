@@ -7,7 +7,7 @@ from psycopg2 import IntegrityError
 
 from odoo import fields
 from odoo.exceptions import UserError
-from odoo.tests.common import TransactionCase
+from odoo.tests import TransactionCase
 from odoo.tools import mute_logger
 
 
