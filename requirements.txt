@@ -8,3 +8,4 @@ xlrd
 xlsxwriter
 xmlsig
 packaging
+schwifty==2024.4.0
