@@ -14,7 +14,6 @@ from odoo.service.model import PG_CONCURRENCY_ERRORS_TO_RETRY
 from odoo.addons.queue_job.controllers.main import PG_RETRY
 from odoo.addons.queue_job.exception import (
     FailedJobError,
-    NothingToDoJob,
     RetryableJobError,
 )
 from odoo.addons.queue_job.job import Job
@@ -79,7 +78,7 @@ class QueueJob(models.Model):
                 job.store()
                 _logger.debug("%s OperationalError, postponed", job)
 
-        except NothingToDoJob as err:
+        except AssertionError as err:
             if str(err):
                 msg = str(err)
             else:
