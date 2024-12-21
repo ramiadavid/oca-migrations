@@ -128,6 +128,6 @@
     <record id="agreement_action" model="ir.actions.act_window">
         <field name="name">Agreements</field>
         <field name="res_model">agreement</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

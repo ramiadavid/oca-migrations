@@ -135,7 +135,7 @@
                                 name="payment_ids"
                                 edit="0"
                                 create="0"
-                                context="{'tree_view_ref': 'account_payment_order.view_account_payment_tree_payment_order'}"
+                                context="{'list_view_ref': 'account_payment_order.view_account_payment_tree_payment_order'}"
                             />
                         </page>
                     </notebook>
