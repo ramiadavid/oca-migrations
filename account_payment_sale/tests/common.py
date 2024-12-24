@@ -57,14 +57,14 @@ class CommonTestCase(TransactionCase):
             "serv_order": cls.env["product.product"].create(
                 {
                     "name": "Test service product order",
-                    "type": "service",
+                    "detailed_type": "service",
                     "invoice_policy": "order",
                 }
             ),
             "serv_del": cls.env["product.product"].create(
                 {
                     "name": "Test service product delivery",
-                    "type": "service",
+                    "detailed_type": "service",
                     "invoice_policy": "delivery",
                 }
             ),
