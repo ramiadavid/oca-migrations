@@ -1,0 +1,109 @@
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.agreement</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="40" />
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app
+                    data-string="Agreements"
+                    string="Agreements"
+                    name="agreement_legal"
+                    groups="agreement_legal.group_agreement_manager"
+                >
+                    <block title="Operations">
+                        <setting
+                            help="Sell and purchase products in different units of measure"
+                        >
+                            <field name="group_uom" />
+                            <div class="mt16" invisible="not group_uom">
+                                <button
+                                    name="%(uom.product_uom_form_action)d"
+                                    icon="fa-arrow-right"
+                                    type="action"
+                                    string="Units Of Measure"
+                                    class="btn-link"
+                                />
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Advanced ">
+                        <setting
+                            help="Create an agreement when the sales order is confirmed"
+                        >
+                            <field name="module_agreement_sale" />
+                        </setting>
+                        <setting
+                            string="Sale Subscriptions"
+                            help="Link your subscriptions to an agreement"
+                            invisible="not module_agreement_sale"
+                        >
+                            <field name="module_agreement_sale_subscription" />
+                        </setting>
+                        <setting
+                            string="Field Services"
+                            help="Link your Field Service orders and equipments to an agreement"
+                        >
+                            <field name="module_fieldservice_agreement" />
+                        </setting>
+                        <setting
+                            string="Inventory"
+                            help="Link your transfers to an agreement"
+                        >
+                            <field name="module_agreement_stock" />
+                        </setting>
+                        <setting
+                            string="Returns"
+                            help="Link your returns to an agreement"
+                        >
+                            <field name="module_agreement_rma" />
+                        </setting>
+                        <setting
+                            string="Maintenance"
+                            help="Manage maintenance agreements and contracts"
+                        >
+                            <field name="module_agreement_maintenance" />
+                        </setting>
+                        <setting
+                            string="Manufacturing"
+                            help="Link your manufacturing orders to an agreement"
+                        >
+                            <field name="module_agreement_mrp" />
+                        </setting>
+                        <setting
+                            string="Repair"
+                            help="Link your repair orders to an agreement"
+                        >
+                            <field name="module_agreement_repair" />
+                        </setting>
+                        <setting
+                            string="Project"
+                            help="Link your projects and tasks to an agreement"
+                        >
+                            <field name="module_agreement_project" />
+                        </setting>
+                        <setting
+                            string="Helpdesk"
+                            help="Link your Helpdesk tickets to an agreement"
+                        >
+                            <field name="module_agreement_helpdesk" />
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_agreement_config" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_id" ref="res_config_settings_view_form" />
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'agreement_legal'}</field>
+    </record>
+
+</odoo>
