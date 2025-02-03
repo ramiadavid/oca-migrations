@@ -287,7 +287,7 @@ class SiiMixin(models.AbstractModel):
                 self._get_sii_triggers_field_name(),
                 [(4, trigger.id)],
             )
-            self.sii_send_date = sii_sending_time
+            record.sii_send_date = sii_sending_time
 
     def _bind_service(self, client, port_name, address=None):
         self.ensure_one()
