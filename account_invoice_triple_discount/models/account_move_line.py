@@ -54,6 +54,7 @@ class AccountMoveLine(models.Model):
     def _get_multiple_discount_field_names(self):
         return ["discount1", "discount2", "discount3"]
 
+    @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get("discount") and (
