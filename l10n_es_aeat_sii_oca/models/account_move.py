@@ -715,12 +715,9 @@ class AccountMove(models.Model):
             )
         for invoice in invoices:
             company = invoice.company_id
-            cron_trigger_obj = self.env["ir.cron.trigger"].sudo()
             sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
             sii_sending_time = company._get_sii_sending_time()
-            trigger = cron_trigger_obj.create(
-                {"cron_id": sii_send_cron.id, "call_at": sii_sending_time}
-            )
+            trigger = sii_send_cron.sudo()._trigger(sii_sending_time)
             invoice.sudo().invoice_cron_trigger_ids |= trigger
 
     def button_cancel(self):
@@ -878,7 +875,6 @@ class AccountMove(models.Model):
             ]
         )
         if documents:
-            cron_trigger_obj = self.env["ir.cron.trigger"].sudo()
             sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
             remaining_documents = False
             batch = (
@@ -902,7 +898,5 @@ class AccountMove(models.Model):
                 remaining_documents = all_documents - documents
             documents.confirm_one_document()
             for document in remaining_documents:
-                trigger = cron_trigger_obj.create(
-                    {"cron_id": sii_send_cron.id, "call_at": datetime.now()}
-                )
+                trigger = sii_send_cron.sudo()._trigger()
                 document.sudo().invoice_cron_trigger_ids |= trigger

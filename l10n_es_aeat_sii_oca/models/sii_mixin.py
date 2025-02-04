@@ -274,14 +274,11 @@ class SiiMixin(models.AbstractModel):
         configuration parameters and document availability for SII. If the
         document is to be sent the decides the send method: direct send or
         via cron depending on 'Use cron' configuration"""
-        cron_trigger_obj = self.env["ir.cron.trigger"].sudo()
         sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
         for record in self:
             company = record.company_id
             sii_sending_time = company._get_sii_sending_time()
-            trigger = cron_trigger_obj.create(
-                {"cron_id": sii_send_cron.id, "call_at": sii_sending_time}
-            )
+            trigger = trigger = sii_send_cron.sudo()._trigger(sii_sending_time)
             setattr(
                 record.sudo(),
                 self._get_sii_triggers_field_name(),

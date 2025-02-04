@@ -14,6 +14,7 @@ class IrCronTrigger(models.Model):
         )
         documents.write({"sii_send_date": fields.Datetime.now()})
         self.sudo().write({"call_at": fields.Datetime.now()})
+        self._cr.postcommit.add(self._notifydb)
 
     def cancel_now(self):
         documents = self.env["account.move"].search(
