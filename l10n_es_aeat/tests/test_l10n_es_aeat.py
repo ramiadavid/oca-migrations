@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import exceptions
-from odoo.tests import TransactionCase
+from odoo.tests.common import TransactionCase
 
 
 class TestL10nEsAeat(TransactionCase):

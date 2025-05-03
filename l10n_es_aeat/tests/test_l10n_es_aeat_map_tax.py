@@ -4,7 +4,7 @@
 import logging
 
 from odoo import exceptions
-from odoo.tests import TransactionCase
+from odoo.tests.common import TransactionCase
 
 _logger = logging.getLogger("aeat")
 _DATES_MAPPING = [

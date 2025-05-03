@@ -13,14 +13,14 @@ def create_column_thirdparty_invoice(cr):
         cr, "account_journal", "thirdparty_invoice"
     ) and not column_exists(cr, "account_move", "thirdparty_invoice"):
         _logger.info("Initializing column thirdparty_invoice on table account_move")
-        tools.sql.create_column(
+        tools.create_column(
             cr=cr,
             tablename="account_move",
             columnname="thirdparty_invoice",
             columntype="boolean",
             comment="Third-party invoice",
         )
-        tools.sql.create_column(
+        tools.create_column(
             cr=cr,
             tablename="account_journal",
             columnname="thirdparty_invoice",

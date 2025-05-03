@@ -18,7 +18,7 @@ class L10nEsAeatReport(models.AbstractModel):
     _name = "l10n.es.aeat.report"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "AEAT report base module"
-    _order = "date_start,id"
+    _order = "date_start desc,id desc"
     _rec_name = "name"
     _aeat_number = False
     _period_quarterly = True
@@ -123,6 +123,9 @@ class L10nEsAeatReport(models.AbstractModel):
         string="L.R. VAT number",
         size=9,
         help="Legal Representative VAT number.",
+        compute="_compute_representative_vat",
+        store=True,
+        readonly=False,
     )
     year = fields.Integer(
         default=_default_year,
@@ -313,6 +316,11 @@ class L10nEsAeatReport(models.AbstractModel):
                         f"{report.year}-{month}-{monthrange(report.year, month)[1]}"
                     )
 
+    @api.depends("company_id")
+    def _compute_representative_vat(self):
+        for report in self:
+            report.representative_vat = report.company_id.representative_vat
+
     @api.depends("date_start")
     def _compute_export_config_id(self):
         for report in self:
@@ -495,3 +503,12 @@ class L10nEsAeatReport(models.AbstractModel):
                 rcontext
             )
         return result
+
+    @api.model
+    def _view_move_lines(self, amls):
+        res = self.env.ref("account.action_account_moves_all_a").sudo().read()[0]
+        view = self.env.ref("l10n_es_aeat.view_move_line_tree")
+        res["context"] = {"create": 0}
+        res["views"] = [(view.id, "tree")]
+        res["domain"] = [("id", "in", amls.ids)]
+        return res
