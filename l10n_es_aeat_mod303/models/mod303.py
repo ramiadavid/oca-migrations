@@ -160,7 +160,7 @@ class L10nEsAeatMod303Report(models.Model):
         comodel_name="account.account",
         string="Counterpart account",
         compute="_compute_counterpart_account_id",
-        domain="[('company_id', '=', company_id)]",
+        domain="[('company_ids', 'in', company_id)]",
         store=True,
         readonly=False,
     )
@@ -327,7 +327,7 @@ class L10nEsAeatMod303Report(models.Model):
         for record in self:
             code = ("%s%%" % _ACCOUNT_PATTERN_MAP.get(record.result_type, "4750"),)
             record.counterpart_account_id = self.env["account.account"].search(
-                [("code", "=like", code[0]), ("company_id", "=", record.company_id.id)],
+                [("code", "=like", code[0]), ("company_ids", "kn", record.company_id.id)],
                 limit=1,
             )
 
@@ -572,7 +572,7 @@ class L10nEsAeatMod303Report(models.Model):
             return lines
         code = ("%s%%" % _ACCOUNT_PATTERN_MAP.get("C", "4700"),)
         compensation_account_id = self.env["account.account"].search(
-            [("code", "=like", code[0]), ("company_id", "=", self.company_id.id)],
+            [("code", "=like", code[0]), ("company_ids", "in", self.company_id.id)],
             limit=1,
         )
         lines.append(

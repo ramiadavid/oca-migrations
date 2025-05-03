@@ -16,7 +16,7 @@
                         <field name="partner_id" />
                         <field
                             name="account_id"
-                            domain="[('company_ids ', 'in', company_id)]"
+                            domain="[('company_ids', 'in', company_id)]"
                         />
                         <field name="name" />
                         <field name="balance" />
@@ -75,7 +75,7 @@
                 <field name="partner_id" />
                 <field
                     name="account_id"
-                    domain="[('company_ids ', 'in', company_id), ('deprecated', '=', False), ('hide_in_cash_flow', '=', False), ('account_type', 'in', ['asset_receivable', 'liability_payable'])]"
+                    domain="[('company_ids', 'in', company_id), ('deprecated', '=', False), ('hide_in_cash_flow', '=', False), ('account_type', 'in', ['asset_receivable', 'liability_payable'])]"
                 />
                 <field name="balance" />
             </list>
