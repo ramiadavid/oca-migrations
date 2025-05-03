@@ -8,13 +8,13 @@
         <field name="name">AEAT 349 Partner record detail (tree)</field>
         <field name="model">l10n.es.aeat.mod349.partner_record_detail</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="move_line_id" optional="show" />
                 <field name="move_id" optional="show" />
                 <field name="partner_id" optional="show" />
                 <field name="amount_untaxed" optional="show" />
                 <field name="date" optional="show" />
-            </tree>
+            </list>
         </field>
     </record>
     <!-- Form view -->
@@ -42,7 +42,7 @@
         <field name="name">AEAT 349 Partner record (tree)</field>
         <field name="model">l10n.es.aeat.mod349.partner_record</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="not partner_record_ok">
+            <list decoration-danger="not partner_record_ok">
                 <field name="partner_record_ok" />
                 <field name="country_id" optional="show" />
                 <field name="partner_vat" optional="show" />
@@ -54,7 +54,7 @@
                     invisible="partner_record_ok"
                     optional="show"
                 />
-            </tree>
+            </list>
         </field>
     </record>
     <!-- Form view -->
@@ -94,13 +94,13 @@
         <field name="name">AEAT 349 Partner refund detail (tree)</field>
         <field name="model">l10n.es.aeat.mod349.partner_refund_detail</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="refund_line_id" optional="show" />
                 <field name="move_id" optional="show" />
                 <field name="partner_id" optional="show" />
                 <field name="amount_untaxed" optional="show" />
                 <field name="date" optional="show" />
-            </tree>
+            </list>
         </field>
     </record>
     <!-- Form view -->
@@ -128,7 +128,7 @@
         <field name="name">AEAT 349 Partner refund (tree)</field>
         <field name="model">l10n.es.aeat.mod349.partner_refund</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="not partner_refund_ok">
+            <list decoration-danger="not partner_refund_ok">
                 <field name="partner_refund_ok" column_invisible="1" />
                 <field name="country_id" optional="show" />
                 <field name="partner_vat" optional="show" />
@@ -138,7 +138,7 @@
                 <field name="period_type" optional="show" />
                 <field name="total_operation_amount" optional="show" />
                 <field name="total_origin_amount" optional="show" />
-            </tree>
+            </list>
         </field>
     </record>
     <!-- Form view -->
@@ -177,9 +177,9 @@
         <field name="model">l10n.es.aeat.mod349.report</field>
         <field name="inherit_id" ref="l10n_es_aeat.view_l10n_es_aeat_report_tree" />
         <field name="arch" type="xml">
-            <tree position="attributes">
+            <list position="attributes">
                     <attribute name="string">AEAT 349 reports</attribute>=
-                </tree>
+                </list>
             <field name="period_type" position="after">
                 <field name="total_partner_records" />
                 <field name="total_partner_records_amount" />
@@ -251,7 +251,7 @@
     <record id="action_l10n_es_aeat_mod349_report" model="ir.actions.act_window">
         <field name="name">AEAT Model 349</field>
         <field name="res_model">l10n.es.aeat.mod349.report</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help">Create and query AEAT Model 349 reports</field>
     </record>
     <record

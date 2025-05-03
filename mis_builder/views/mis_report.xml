@@ -4,10 +4,10 @@
         <field name="name">mis.report.view.tree</field>
         <field name="model">mis.report</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name" />
                 <field name="description" />
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -31,7 +31,7 @@
                                 colspan="2"
                                 context="{'default_report_id': id}"
                             >
-                                <tree>
+                                <list>
                                     <field name="sequence" widget="handle" />
                                     <field name="description" />
                                     <field name="name" />
@@ -45,7 +45,7 @@
                                         invisible="type == 'str'"
                                     />
                                     <field name="expression" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Queries">
@@ -55,7 +55,7 @@
                                 colspan="2"
                                 context="{'default_report_id': id}"
                             >
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="name" />
                                     <field name="model_id" />
                                     <field
@@ -70,16 +70,16 @@
                                         domain="[('model_id', '=', model_id), ('ttype', 'in', ('date', 'datetime'))]"
                                     />
                                     <field name="domain" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Sub KPI's">
                             <field name="subkpi_ids" nolabel="1" colspan="2">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle" />
                                     <field name="description" />
                                     <field name="name" />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Sub Reports">
@@ -89,13 +89,13 @@
                                 colspan="2"
                                 context="{'default_report_id': id}"
                             >
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="name" />
                                     <field
                                         name="subreport_id"
                                         domain="[('id', '!=', parent.id)]"
                                     />
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -132,13 +132,13 @@
                                 nolabel="1"
                                 invisible="not multi"
                             >
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field
                                         name="subkpi_id"
                                         domain="[('report_id', '=', parent.report_id)]"
                                     />
                                     <field name="name" />
-                                </tree>
+                                </list>
                             </field>
                             <field
                                 name="expression"
@@ -284,7 +284,7 @@
         <field name="name">MIS Report Templates</field>
         <field name="view_id" ref="mis_report_view_tree" />
         <field name="res_model">mis.report</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
     <menuitem
         id="mis_report_conf_menu"
