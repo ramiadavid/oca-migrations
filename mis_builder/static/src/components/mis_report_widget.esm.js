@@ -7,12 +7,13 @@ import {SearchBar} from "@web/search/search_bar/search_bar";
 import {SearchModel} from "@web/search/search_model";
 import {parseDate} from "@web/core/l10n/dates";
 import {registry} from "@web/core/registry";
+import {user} from "@web/core/user";
 
 export class MisReportWidget extends Component {
     setup() {
         super.setup();
         this.orm = useService("orm");
-        this.user = useService("user");
+        this.user = user;
         this.action = useService("action");
         this.view = useService("view");
         this.JSON = JSON;
