@@ -1,7 +1,7 @@
 # Copyright 2017 Ignacio Ibeas <ignacio@acysos.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 
 
 class AeatSiiMap(models.Model):
@@ -41,16 +41,12 @@ class AeatSiiMap(models.Model):
             domain += [("date_from", "<=", self.date_to)]
         date_lst = self.search(domain)
         if date_lst:
-            raise exceptions.UserError(
-                _("Error! The dates of the record overlap with an existing " "record.")
-            )
+            raise exceptions.UserError(self.env._("Error! The dates of the record overlap with an existing " "record."))
 
     name = fields.Char(string="Model", required=True)
     date_from = fields.Date()
     date_to = fields.Date()
-    map_lines = fields.One2many(
-        comodel_name="aeat.sii.map.lines", inverse_name="sii_map_id", string="Lines"
-    )
+    map_lines = fields.One2many(comodel_name="aeat.sii.map.lines", inverse_name="sii_map_id", string="Lines")
 
 
 class AeatSiiMapLines(models.Model):
@@ -59,9 +55,5 @@ class AeatSiiMapLines(models.Model):
 
     code = fields.Char(required=True)
     name = fields.Char()
-    tax_xmlid_ids = fields.Many2many(
-        comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes templates"
-    )
-    sii_map_id = fields.Many2one(
-        comodel_name="aeat.sii.map", string="Aeat SII Map", ondelete="cascade"
-    )
+    tax_xmlid_ids = fields.Many2many(comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes templates")
+    sii_map_id = fields.Many2one(comodel_name="aeat.sii.map", string="Aeat SII Map", ondelete="cascade")

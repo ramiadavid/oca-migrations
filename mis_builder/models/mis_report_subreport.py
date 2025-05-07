@@ -1,7 +1,7 @@
 # Copyright 2020 ACSONE SA/NV (<http://acsone.eu>)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 from .mis_report import _is_valid_python_var
@@ -40,8 +40,7 @@ class MisReportSubReport(models.Model):
         (
             "subreport_unique",
             "unique(subreport_id, report_id)",
-            "Should not include the same report more than once as sub report "
-            "of a given report",
+            "Should not include the same report more than once as sub report " "of a given report",
         ),
     ]
 
@@ -50,9 +49,7 @@ class MisReportSubReport(models.Model):
         for rec in self:
             if not _is_valid_python_var(rec.name):
                 raise InvalidNameError(
-                    _("Subreport name ({}) must be a valid python identifier").format(
-                        rec.name
-                    )
+                    self.env._("Subreport name ({}) must be a valid python identifier").format(rec.name)
                 )
 
     @api.constrains("report_id", "subreport_id")
@@ -62,13 +59,10 @@ class MisReportSubReport(models.Model):
                 return False
             if report in reports:
                 return True
-            return any(
-                _has_subreport(r.subreport_ids.mapped("subreport_id"), report)
-                for r in reports
-            )
+            return any(_has_subreport(r.subreport_ids.mapped("subreport_id"), report) for r in reports)
 
         for rec in self:
             if _has_subreport(rec.subreport_id, rec.report_id):
-                raise ParentLoopError(_("Subreport loop detected"))
+                raise ParentLoopError(self.env._("Subreport loop detected"))
 
     # TODO check subkpi compatibility in subreports

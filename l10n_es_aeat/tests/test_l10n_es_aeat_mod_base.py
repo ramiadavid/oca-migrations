@@ -44,13 +44,9 @@ class TestL10nEsAeatModBase(common.TransactionCase):
             {"name": "Spanish test company", "currency_id": cls.env.ref("base.EUR").id}
         )
         cls.env.ref("base.group_multi_company").write({"users": [(4, cls.env.uid)]})
-        cls.env.user.write(
-            {"company_ids": [(4, cls.company.id)], "company_id": cls.company.id}
-        )
+        cls.env.user.write({"company_ids": [(4, cls.company.id)], "company_id": cls.company.id})
         chart = cls.env["account.chart.template"]
-        chart.try_loading(
-            template_code="es_pymes", company=cls.company, install_demo=False
-        )
+        chart.try_loading(template_code="es_pymes", company=cls.company, install_demo=False)
         cls.with_context(company_id=cls.company.id)
         return True
 
@@ -76,9 +72,7 @@ class TestL10nEsAeatModBase(common.TransactionCase):
 
     @classmethod
     def _print_move_lines(cls, lines):
-        _logger.debug(
-            "%8s %9s %9s %14s %s", "ACCOUNT", "DEBIT", "CREDIT", "TAX", "TAXES"
-        )
+        _logger.debug("%8s %9s %9s %14s %s", "ACCOUNT", "DEBIT", "CREDIT", "TAX", "TAXES")
         for line in lines:
             _logger.debug(
                 "%8s %9s %9s %14s %s",
@@ -187,9 +181,7 @@ class TestL10nEsAeatModBase(common.TransactionCase):
     @classmethod
     def _invoice_refund(cls, invoice, dt):
         _logger.debug(f"Refund {invoice.move_type} invoice: date = {dt}")
-        default_values_list = [
-            {"date": dt, "invoice_date": dt, "invoice_payment_term_id": None}
-        ]
+        default_values_list = [{"date": dt, "invoice_date": dt, "invoice_payment_term_id": None}]
         inv = invoice.with_user(cls.billing_user)._reverse_moves(default_values_list)
         inv.action_post()
         if cls.debug:
@@ -281,9 +273,7 @@ class TestL10nEsAeatModBase(common.TransactionCase):
         account_manager_grp = cls.env.ref("account.group_account_manager")
         aeat_grp = cls.env.ref("l10n_es_aeat.group_account_aeat")
         # Create test user
-        Users = cls.env["res.users"].with_context(
-            no_reset_password=True, mail_create_nosubscribe=True
-        )
+        Users = cls.env["res.users"].with_context(no_reset_password=True, mail_create_nosubscribe=True)
         cls.billing_user = Users.create(
             {
                 "name": "Billing user",

@@ -13,9 +13,9 @@ class L10nEsVatBookIssuedSummary(models.Model):
     _order = "book_type, special_tax_group DESC"
 
     def _selection_special_tax_group(self):
-        return self.env["l10n.es.vat.book.line.tax"].fields_get(
-            allfields=["special_tax_group"]
-        )["special_tax_group"]["selection"]
+        return self.env["l10n.es.vat.book.line.tax"].fields_get(allfields=["special_tax_group"])["special_tax_group"][
+            "selection"
+        ]
 
     vat_book_id = fields.Many2one(comodel_name="l10n.es.vat.book", string="Vat Book id")
 

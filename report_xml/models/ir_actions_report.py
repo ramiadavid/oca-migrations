@@ -7,9 +7,7 @@ from odoo import api, fields, models
 class IrActionsReport(models.Model):
     _inherit = "ir.actions.report"
 
-    report_type = fields.Selection(
-        selection_add=[("qweb-xml", "XML")], ondelete={"qweb-xml": "set default"}
-    )
+    report_type = fields.Selection(selection_add=[("qweb-xml", "XML")], ondelete={"qweb-xml": "set default"})
     xsd_schema = fields.Binary(
         string="XSD Validation Schema",
         attachment=True,
@@ -17,17 +15,13 @@ class IrActionsReport(models.Model):
         "if validation is not required.",
     )
     xml_encoding = fields.Selection(
-        selection=[
-            ("UTF-8", "UTF-8")  # will be used as default even if nothing is selected
-        ],
+        selection=[("UTF-8", "UTF-8")],  # will be used as default even if nothing is selected
         string="XML Encoding",
-        help="Encoding for XML reports. If nothing is selected, then UTF-8 will be "
-        "applied.",
+        help="Encoding for XML reports. If nothing is selected, then UTF-8 will be " "applied.",
     )
     xml_declaration = fields.Boolean(
         string="XML Declaration",
-        help='Add `<?xml encoding="..." version="..."?>` at the start of final report '
-        "file.",
+        help='Add `<?xml encoding="..." version="..."?>` at the start of final report ' "file.",
     )
     xml_extension = fields.Char(
         default="xml",
@@ -50,9 +44,7 @@ class IrActionsReport(models.Model):
          * str - type of result content
         """
         report = self._get_report(report_ref)
-        report_model = self.env.get(
-            f"report.{report.report_name}", self.env["report.report_xml.abstract"]
-        )
+        report_model = self.env.get(f"report.{report.report_name}", self.env["report.report_xml.abstract"])
         return report_model.generate_report(
             ir_report=report,  # will be used to get settings of report
             docids=res_ids,

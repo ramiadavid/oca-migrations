@@ -47,10 +47,7 @@
             </div>
             <div class="row">
                 <div class="col-12" id="rectification_invoices_issued_detail_div">
-                    <table
-                        class="table table-sm"
-                        id="rectification_invoices_issued_detail_table"
-                    >
+                    <table class="table table-sm" id="rectification_invoices_issued_detail_table">
                         <t t-call="l10n_es_vat_book.vat_book_invoices_head" />
                         <tbody>
                             <tr t-foreach="o.rectification_issued_line_ids" t-as="l">
@@ -86,9 +83,7 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.internal_layout">
-                    <t
-                        t-call="l10n_es_vat_book.report_vat_book_invoices_issued_document"
-                    />
+                    <t t-call="l10n_es_vat_book.report_vat_book_invoices_issued_document" />
                 </t>
             </t>
         </t>
@@ -97,9 +92,7 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.internal_layout">
-                    <t
-                        t-call="l10n_es_vat_book.report_vat_book_invoices_issued_document"
-                    />
+                    <t t-call="l10n_es_vat_book.report_vat_book_invoices_issued_document" />
                 </t>
             </t>
         </t>

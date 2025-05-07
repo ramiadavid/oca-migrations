@@ -6,9 +6,7 @@ import logging
 
 from odoo import fields
 
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import (
-    TestL10nEsAeatModBase,
-)
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import TestL10nEsAeatModBase
 
 _logger = logging.getLogger("aeat.vat.book")
 
@@ -93,17 +91,13 @@ class TestL10nEsAeatVatBook(TestL10nEsAeatModBase):
         )
         self.assertGreaterEqual(len(report_pdf[0]), 1)
         # Export to XLSX
-        report_xlsx = self.env["ir.actions.report"]._render(
-            "l10n_es_vat_book.l10n_es_vat_book_xlsx", vat_book.ids
-        )
+        report_xlsx = self.env["ir.actions.report"]._render("l10n_es_vat_book.l10n_es_vat_book_xlsx", vat_book.ids)
         self.assertGreaterEqual(len(report_xlsx[0]), 1)
         self.assertEqual(report_xlsx[1], "xlsx")
         # Check empty Vat Book
         vat_book.write(
             {
-                "tax_agency_ids": [
-                    (4, self.env.ref("l10n_es_aeat.aeat_tax_agency_araba").id)
-                ],
+                "tax_agency_ids": [(4, self.env.ref("l10n_es_aeat.aeat_tax_agency_araba").id)],
             }
         )
         vat_book.button_calculate()

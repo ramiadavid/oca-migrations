@@ -8,7 +8,7 @@ import re
 from calendar import monthrange
 from datetime import datetime
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 from odoo.tools import config
 
 from .spanish_states_mapping import SPANISH_STATES as ss
@@ -27,9 +27,9 @@ class L10nEsAeatReport(models.AbstractModel):
     SPANISH_STATES = ss
 
     def _default_journal(self):
-        return self.env["account.journal"].search(
-            [("type", "=", "general"), ("company_id", "=", self.env.company.id)]
-        )[:1]
+        return self.env["account.journal"].search([("type", "=", "general"), ("company_id", "=", self.env.company.id)])[
+            :1
+        ]
 
     def get_period_type_selection(self):
         period_types = []
@@ -249,7 +249,7 @@ class L10nEsAeatReport(models.AbstractModel):
         for report in self:
             if report.statement_type in ("C", "S") and not report.previous_number:
                 raise exceptions.UserError(
-                    _(
+                    self.env._(
                         "If this declaration is complementary or substitutive, "
                         "a previous declaration number should be provided."
                     )
@@ -261,15 +261,11 @@ class L10nEsAeatReport(models.AbstractModel):
         if self.company_id.vat:
             # Remove the ES part from spanish vat numbers
             #  (ES12345678Z => 12345678Z)
-            self.company_vat = re.match("(ES){0,1}(.*)", self.company_id.vat).groups()[
-                1
-            ]
+            self.company_vat = re.match("(ES){0,1}(.*)", self.company_id.vat).groups()[1]
         self.contact_name = self.env.user.name
         self.contact_email = self.env.user.email
         self.contact_phone = self._filter_phone(
-            self.env.user.partner_id.phone
-            or self.env.user.partner_id.mobile
-            or self.env.user.company_id.phone
+            self.env.user.partner_id.phone or self.env.user.partner_id.mobile or self.env.user.company_id.phone
         )
         if self.journal_id.company_id != self.company_id:
             self.journal_id = self.with_company(self.company_id.id)._default_journal()
@@ -288,12 +284,9 @@ class L10nEsAeatReport(models.AbstractModel):
                     # Trimestral
                     starting_month = 1 + (int(report.period_type[0]) - 1) * 3
                     ending_month = starting_month + 2
-                    report.date_start = fields.Date.to_date(
-                        f"{report.year}-{starting_month}-01"
-                    )
+                    report.date_start = fields.Date.to_date(f"{report.year}-{starting_month}-01")
                     report.date_end = fields.Date.to_date(
-                        f"{report.year}-{ending_month}-"
-                        f"{monthrange(report.year, ending_month)[1]}"
+                        f"{report.year}-{ending_month}-" f"{monthrange(report.year, ending_month)[1]}"
                     )
                 elif report.period_type in (
                     "01",
@@ -312,9 +305,7 @@ class L10nEsAeatReport(models.AbstractModel):
                     # Mensual
                     month = int(report.period_type)
                     report.date_start = fields.Date.to_date(f"{report.year}-{month}-01")
-                    report.date_end = fields.Date.to_date(
-                        f"{report.year}-{month}-{monthrange(report.year, month)[1]}"
-                    )
+                    report.date_end = fields.Date.to_date(f"{report.year}-{month}-{monthrange(report.year, month)[1]}")
 
     @api.depends("company_id")
     def _compute_representative_vat(self):
@@ -331,12 +322,10 @@ class L10nEsAeatReport(models.AbstractModel):
     def _report_identifier_get(self, vals):
         seq_name = "aeat%s-sequence" % self._aeat_number
         company_id = vals.get("company_id", self.env.user.company_id.id)
-        seq = self.env["ir.sequence"].search(
-            [("name", "=", seq_name), ("company_id", "=", company_id)], limit=1
-        )
+        seq = self.env["ir.sequence"].search([("name", "=", seq_name), ("company_id", "=", company_id)], limit=1)
         if not seq:
             raise exceptions.UserError(
-                _(
+                self.env._(
                     "AEAT model sequence not found. You can try to restart your "
                     "Odoo service for recreating the sequences."
                 )
@@ -412,9 +401,7 @@ class L10nEsAeatReport(models.AbstractModel):
 
     def button_export(self):
         for report in self:
-            export_obj = self.env[
-                "l10n.es.aeat.report.%s.export_to_boe" % report.number
-            ]
+            export_obj = self.env["l10n.es.aeat.report.%s.export_to_boe" % report.number]
             export_obj.export_boe_file(report)
         return True
 
@@ -429,9 +416,7 @@ class L10nEsAeatReport(models.AbstractModel):
 
     def unlink(self):
         if any(item.state not in ["draft", "cancelled"] for item in self):
-            raise exceptions.UserError(
-                _("Only reports in 'draft' or 'cancelled' state can be removed")
-            )
+            raise exceptions.UserError(self.env._("Only reports in 'draft' or 'cancelled' state can be removed"))
         return super().unlink()
 
     @api.model
@@ -460,24 +445,17 @@ class L10nEsAeatReport(models.AbstractModel):
         aeat_num = getattr(self, "_aeat_number", False)
         if not aeat_num:
             raise exceptions.UserError(
-                _("Modelo no válido: %s. Debe declarar una variable " "'_aeat_number'")
-                % self._name
+                self.env._("Modelo no válido: %s. Debe declarar una variable " "'_aeat_number'") % self._name
             )
         seq_obj = self.env["ir.sequence"]
         sequence = "aeat%s-sequence" % aeat_num
         if not companies:
             companies = self.env["res.company"].search([])
         for company in companies:
-            seq = seq_obj.search(
-                [("name", "=", sequence), ("company_id", "=", company.id)]
-            )
+            seq = seq_obj.search([("name", "=", sequence), ("company_id", "=", company.id)])
             if seq:
                 continue
-            seq_obj.create(
-                self.env[self._name]._prepare_aeat_sequence_vals(
-                    sequence, aeat_num, company
-                )
-            )
+            seq_obj.create(self.env[self._name]._prepare_aeat_sequence_vals(sequence, aeat_num, company))
         return res
 
     @api.model
@@ -499,9 +477,7 @@ class L10nEsAeatReport(models.AbstractModel):
         rec = self.browse(self.env.context.get("active_id"))
         if rec:
             rcontext["o"] = rec
-            result["html"] = self.env.ref(self.env.context.get("template_name")).render(
-                rcontext
-            )
+            result["html"] = self.env.ref(self.env.context.get("template_name")).render(rcontext)
         return result
 
     @api.model

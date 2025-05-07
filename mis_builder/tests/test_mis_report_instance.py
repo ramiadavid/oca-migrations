@@ -18,9 +18,7 @@ class TestMisReportInstance(common.HttpCase):
     def setUp(self):
         super().setUp()
         partner_model_id = self.env.ref("base.model_res_partner").id
-        partner_create_date_field_id = self.env.ref(
-            "base.field_res_partner__create_date"
-        ).id
+        partner_create_date_field_id = self.env.ref("base.field_res_partner__create_date").id
         partner_debit_field_id = self.env.ref("account.field_res_partner__debit").id
         # create a report with 2 subkpis and one query
         self.report = self.env["mis.report"].create(
@@ -134,9 +132,7 @@ class TestMisReportInstance(common.HttpCase):
                     (
                         0,
                         0,
-                        dict(
-                            name="partner.debit", subkpi_id=self.report.subkpi_ids[1].id
-                        ),
+                        dict(name="partner.debit", subkpi_id=self.report.subkpi_ids[1].id),
                     ),
                 ],
             )
@@ -235,16 +231,12 @@ class TestMisReportInstance(common.HttpCase):
                     (
                         0,
                         0,
-                        dict(
-                            name="bale[200%]", subkpi_id=self.report_2.subkpi_ids[0].id
-                        ),
+                        dict(name="bale[200%]", subkpi_id=self.report_2.subkpi_ids[0].id),
                     ),
                     (
                         0,
                         0,
-                        dict(
-                            name="balp[200%]", subkpi_id=self.report_2.subkpi_ids[1].id
-                        ),
+                        dict(name="balp[200%]", subkpi_id=self.report_2.subkpi_ids[1].id),
                     ),
                 ],
             )
@@ -270,16 +262,12 @@ class TestMisReportInstance(common.HttpCase):
                     (
                         0,
                         0,
-                        dict(
-                            name="bale[200%]", subkpi_id=self.report_3.subkpi_ids[0].id
-                        ),
+                        dict(name="bale[200%]", subkpi_id=self.report_3.subkpi_ids[0].id),
                     ),
                     (
                         0,
                         0,
-                        dict(
-                            name="balp[200%]", subkpi_id=self.report_3.subkpi_ids[1].id
-                        ),
+                        dict(name="balp[200%]", subkpi_id=self.report_3.subkpi_ids[1].id),
                     ),
                 ],
             )
@@ -569,25 +557,16 @@ class TestMisReportInstance(common.HttpCase):
         self.assertFalse(self.report_instance.query_company_ids - self.env.companies)
         # In a user context where there is only one company, ensure
         # query_company_ids only has one company too.
-        assert (
-            self.report_instance.with_context(
-                allowed_company_ids=(c1.id,)
-            ).query_company_ids
-            == c1
-        )
+        assert self.report_instance.with_context(allowed_company_ids=(c1.id,)).query_company_ids == c1
 
     def test_multi_company_onchange(self):
         # not multi company
         self.assertTrue(self.report_instance.company_id)
         self.assertFalse(self.report_instance.multi_company)
         self.assertFalse(self.report_instance.company_ids)
-        self.assertEqual(
-            self.report_instance.query_company_ids[0], self.report_instance.company_id
-        )
+        self.assertEqual(self.report_instance.query_company_ids[0], self.report_instance.company_id)
         # create a child company
-        self.env["res.company"].create(
-            dict(name="company 2", parent_id=self.report_instance.company_id.id)
-        )
+        self.env["res.company"].create(dict(name="company 2", parent_id=self.report_instance.company_id.id))
         self.report_instance.multi_company = True
         # multi company, company_ids not set
         self.assertEqual(self.report_instance.query_company_ids, self.env.companies)
@@ -601,16 +580,12 @@ class TestMisReportInstance(common.HttpCase):
         # reset single company mode
         self.report_instance.multi_company = False
         self.report_instance._onchange_company()
-        self.assertEqual(
-            self.report_instance.query_company_ids[0], self.report_instance.company_id
-        )
+        self.assertEqual(self.report_instance.query_company_ids[0], self.report_instance.company_id)
         self.assertFalse(self.report_instance.company_ids)
 
     def test_mis_report_analytic_filters(self):
         # Check that matrix has no values when using a filter with a non existing value
-        matrix = self.report_instance.with_context(
-            analytic_domain=[("partner_id", "=", -1)]
-        )._compute_matrix()
+        matrix = self.report_instance.with_context(analytic_domain=[("partner_id", "=", -1)])._compute_matrix()
         for row in matrix.iter_rows():
             vals = [c.val for c in row.iter_cells()]
             if row.kpi.name == "k1":
@@ -629,7 +604,5 @@ class TestMisReportInstance(common.HttpCase):
             self.report_instance_3.compute()
 
     def test_unprivileged(self):
-        test_user = common.new_test_user(
-            self.env, "mis_you", groups="base.group_user,account.group_account_readonly"
-        )
+        test_user = common.new_test_user(self.env, "mis_you", groups="base.group_user,account.group_account_readonly")
         self.report_instance.with_user(test_user).compute()

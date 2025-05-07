@@ -11,11 +11,7 @@
                 </attribute>
             </button>
             <xpath expr="//page[@name='advanced']/group" position="after">
-                <group
-                    name="xml_reports"
-                    string="XML Rreport Settings"
-                    invisible="report_type != 'qweb-xml'"
-                >
+                <group name="xml_reports" string="XML Rreport Settings" invisible="report_type != 'qweb-xml'">
                     <field name="xsd_schema" />
                     <field name="xml_encoding" />
                     <field name="xml_extension" />

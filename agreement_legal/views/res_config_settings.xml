@@ -14,9 +14,7 @@
                     groups="agreement_legal.group_agreement_manager"
                 >
                     <block title="Operations">
-                        <setting
-                            help="Sell and purchase products in different units of measure"
-                        >
+                        <setting help="Sell and purchase products in different units of measure">
                             <field name="group_uom" />
                             <div class="mt16" invisible="not group_uom">
                                 <button
@@ -30,9 +28,7 @@
                         </setting>
                     </block>
                     <block title="Advanced ">
-                        <setting
-                            help="Create an agreement when the sales order is confirmed"
-                        >
+                        <setting help="Create an agreement when the sales order is confirmed">
                             <field name="module_agreement_sale" />
                         </setting>
                         <setting
@@ -48,46 +44,25 @@
                         >
                             <field name="module_fieldservice_agreement" />
                         </setting>
-                        <setting
-                            string="Inventory"
-                            help="Link your transfers to an agreement"
-                        >
+                        <setting string="Inventory" help="Link your transfers to an agreement">
                             <field name="module_agreement_stock" />
                         </setting>
-                        <setting
-                            string="Returns"
-                            help="Link your returns to an agreement"
-                        >
+                        <setting string="Returns" help="Link your returns to an agreement">
                             <field name="module_agreement_rma" />
                         </setting>
-                        <setting
-                            string="Maintenance"
-                            help="Manage maintenance agreements and contracts"
-                        >
+                        <setting string="Maintenance" help="Manage maintenance agreements and contracts">
                             <field name="module_agreement_maintenance" />
                         </setting>
-                        <setting
-                            string="Manufacturing"
-                            help="Link your manufacturing orders to an agreement"
-                        >
+                        <setting string="Manufacturing" help="Link your manufacturing orders to an agreement">
                             <field name="module_agreement_mrp" />
                         </setting>
-                        <setting
-                            string="Repair"
-                            help="Link your repair orders to an agreement"
-                        >
+                        <setting string="Repair" help="Link your repair orders to an agreement">
                             <field name="module_agreement_repair" />
                         </setting>
-                        <setting
-                            string="Project"
-                            help="Link your projects and tasks to an agreement"
-                        >
+                        <setting string="Project" help="Link your projects and tasks to an agreement">
                             <field name="module_agreement_project" />
                         </setting>
-                        <setting
-                            string="Helpdesk"
-                            help="Link your Helpdesk tickets to an agreement"
-                        >
+                        <setting string="Helpdesk" help="Link your Helpdesk tickets to an agreement">
                             <field name="module_agreement_helpdesk" />
                         </setting>
                     </block>

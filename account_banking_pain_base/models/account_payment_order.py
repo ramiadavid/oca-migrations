@@ -9,7 +9,7 @@ from datetime import datetime
 
 from lxml import etree
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
 from odoo.exceptions import UserError
 from odoo.tools.safe_eval import safe_eval
 
@@ -122,32 +122,21 @@ class AccountPaymentOrder(models.Model):
             if payment_method.pain_version:
                 sepa_payment_method = True
                 sepa = True
-                if (
-                    order.company_partner_bank_id
-                    and order.company_partner_bank_id.acc_type != "iban"
-                ):
+                if order.company_partner_bank_id and order.company_partner_bank_id.acc_type != "iban":
                     sepa = False
                 if (
                     order.company_partner_bank_id
-                    and order.company_partner_bank_id.sanitized_acc_number[:2]
-                    not in sepa_list
+                    and order.company_partner_bank_id.sanitized_acc_number[:2] not in sepa_list
                 ):
                     sepa = False
                 for pline in order.payment_line_ids:
                     if pline.currency_id != eur:
                         sepa = False
                         break
-                    if (
-                        pline.partner_bank_id
-                        and pline.partner_bank_id.acc_type != "iban"
-                    ):
+                    if pline.partner_bank_id and pline.partner_bank_id.acc_type != "iban":
                         sepa = False
                         break
-                    if (
-                        pline.partner_bank_id
-                        and pline.partner_bank_id.sanitized_acc_number[:2]
-                        not in sepa_list
-                    ):
+                    if pline.partner_bank_id and pline.partner_bank_id.sanitized_acc_number[:2] not in sepa_list:
                         sepa = False
                         break
                 sepa = order.compute_sepa_final_hook(sepa)
@@ -162,9 +151,7 @@ class AccountPaymentOrder(models.Model):
         return sepa
 
     @api.model
-    def _prepare_field(
-        self, field_name, field_value, eval_ctx, max_size=0, gen_args=None
-    ):
+    def _prepare_field(self, field_name, field_value, eval_ctx, max_size=0, gen_args=None):
         """This function is designed to be inherited !"""
         if gen_args is None:
             gen_args = {}
@@ -205,27 +192,17 @@ class AccountPaymentOrder(models.Model):
                 for unallowed_ascii_char in unallowed_ascii_chars:
                     value = value.replace(unallowed_ascii_char, "-")
         except Exception:
-            error_msg_prefix = _("Cannot compute the field '{field_name}'.").format(
-                field_name=field_name
-            )
+            error_msg_prefix = self.env._("Cannot compute the field '{field_name}'.").format(field_name=field_name)
 
-            error_msg_details_list = self.except_messages_prepare_field(
-                eval_ctx, field_name
-            )
-            error_msg_data = _(
-                "Data for evaluation:\n"
-                "\tcontext: {eval_ctx}\n"
-                "\tfield path: {field_value}"
+            error_msg_details_list = self.except_messages_prepare_field(eval_ctx, field_name)
+            error_msg_data = self.env._(
+                "Data for evaluation:\n" "\tcontext: {eval_ctx}\n" "\tfield path: {field_value}"
             ).format(eval_ctx=eval_ctx, field_value=field_value)
-            raise UserError(
-                "\n".join(
-                    [error_msg_prefix] + error_msg_details_list + [error_msg_data]
-                )
-            ) from None
+            raise UserError("\n".join([error_msg_prefix] + error_msg_details_list + [error_msg_data])) from None
 
         if not isinstance(value, str):
             raise UserError(
-                _(
+                self.env._(
                     "The type of the field '%(field)s' is %(value)s. It should be a string "  # noqa: E501
                     "or unicode.",
                     field=field_name,
@@ -233,10 +210,7 @@ class AccountPaymentOrder(models.Model):
                 )
             )
         if not value:
-            raise UserError(
-                _("The '%s' is empty or 0. It should have a non-null value.")
-                % field_name
-            )
+            raise UserError(self.env._("The '%s' is empty or 0. It should have a non-null value.") % field_name)
         if max_size and len(value) > max_size:
             value = value[0:max_size]
         return value
@@ -251,12 +225,10 @@ class AccountPaymentOrder(models.Model):
         error_messages = list()
         line = eval_ctx.get("line")
         if line:
-            error_messages.append(_("Payment Line has reference '%s'.") % line.name)
+            error_messages.append(self.env._("Payment Line has reference '%s'.") % line.name)
         partner_bank = eval_ctx.get("partner_bank")
         if partner_bank:
-            error_messages.append(
-                _("Partner's bank account is '%s'.") % partner_bank.display_name
-            )
+            error_messages.append(self.env._("Partner's bank account is '%s'.") % partner_bank.display_name)
         return error_messages
 
     @api.model
@@ -272,7 +244,7 @@ class AccountPaymentOrder(models.Model):
             logger.warning(xml_string)
             logger.warning(e)
             raise UserError(
-                _(
+                self.env._(
                     "The generated XML file is not valid against the official "
                     "XML Schema Definition. The generated XML file and the "
                     "full error have been written in the server logs. Here "
@@ -284,12 +256,8 @@ class AccountPaymentOrder(models.Model):
         return True
 
     def finalize_sepa_file_creation(self, xml_root, gen_args):
-        xml_string = etree.tostring(
-            xml_root, pretty_print=True, encoding="UTF-8", xml_declaration=True
-        )
-        logger.debug(
-            "Generated SEPA XML file in format %s below" % gen_args["pain_flavor"]
-        )
+        xml_string = etree.tostring(xml_root, pretty_print=True, encoding="UTF-8", xml_declaration=True)
+        logger.debug("Generated SEPA XML file in format %s below" % gen_args["pain_flavor"])
         logger.debug(xml_string)
         self._validate_xml(xml_string, gen_args)
 
@@ -317,9 +285,7 @@ class AccountPaymentOrder(models.Model):
             "Message Identification", "self.name", {"self": self}, 35, gen_args=gen_args
         )
         creation_date_time = etree.SubElement(group_header, "CreDtTm")
-        creation_date_time.text = datetime.strftime(
-            datetime.today(), "%Y-%m-%dT%H:%M:%S"
-        )
+        creation_date_time.text = datetime.strftime(datetime.today(), "%Y-%m-%dT%H:%M:%S")
         if gen_args.get("pain_flavor") == "pain.001.001.02":
             # batch_booking is in "Group header" with pain.001.001.02
             # and in "Payment info" in pain.001.001.03/04
@@ -422,12 +388,10 @@ class AccountPaymentOrder(models.Model):
             or self.payment_mode_id.company_id.initiating_party_identifier
         )
         initiating_party_issuer = (
-            self.payment_mode_id.initiating_party_issuer
-            or self.payment_mode_id.company_id.initiating_party_issuer
+            self.payment_mode_id.initiating_party_issuer or self.payment_mode_id.company_id.initiating_party_issuer
         )
         initiating_party_scheme = (
-            self.payment_mode_id.initiating_party_scheme
-            or self.payment_mode_id.company_id.initiating_party_scheme
+            self.payment_mode_id.initiating_party_scheme or self.payment_mode_id.company_id.initiating_party_scheme
         )
         # in pain.008.001.02.ch.01.xsd files they use
         # initiating_party_identifier but not initiating_party_issuer
@@ -438,19 +402,15 @@ class AccountPaymentOrder(models.Model):
             iniparty_org_other_id = etree.SubElement(iniparty_org_other, "Id")
             iniparty_org_other_id.text = initiating_party_identifier
             if initiating_party_scheme:
-                iniparty_org_other_scheme = etree.SubElement(
-                    iniparty_org_other, "SchmeNm"
-                )
-                iniparty_org_other_scheme_name = etree.SubElement(
-                    iniparty_org_other_scheme, "Prtry"
-                )
+                iniparty_org_other_scheme = etree.SubElement(iniparty_org_other, "SchmeNm")
+                iniparty_org_other_scheme_name = etree.SubElement(iniparty_org_other_scheme, "Prtry")
                 iniparty_org_other_scheme_name.text = initiating_party_scheme
             if initiating_party_issuer:
                 iniparty_org_other_issuer = etree.SubElement(iniparty_org_other, "Issr")
                 iniparty_org_other_issuer.text = initiating_party_issuer
         elif self._must_have_initiating_party(gen_args):
             raise UserError(
-                _(
+                self.env._(
                     "Missing 'Initiating Party Issuer' and/or "
                     "'Initiating Party Identifier' for the company '%s'. "
                     "Both fields must have a value."
@@ -460,9 +420,7 @@ class AccountPaymentOrder(models.Model):
         return True
 
     @api.model
-    def generate_party_agent(
-        self, parent_node, party_type, order, partner_bank, gen_args, bank_line=None
-    ):
+    def generate_party_agent(self, parent_node, party_type, order, partner_bank, gen_args, bank_line=None):
         """Generate the piece of the XML file corresponding to BIC
         This code is mutualized between TRF and DD
         Starting from Feb 1st 2016, we should be able to do
@@ -475,18 +433,14 @@ class AccountPaymentOrder(models.Model):
         if partner_bank.bank_bic:
             party_agent = etree.SubElement(parent_node, "%sAgt" % party_type)
             party_agent_institution = etree.SubElement(party_agent, "FinInstnId")
-            party_agent_bic = etree.SubElement(
-                party_agent_institution, gen_args.get("bic_xml_tag")
-            )
+            party_agent_bic = etree.SubElement(party_agent_institution, gen_args.get("bic_xml_tag"))
             party_agent_bic.text = partner_bank.bank_bic
         else:
             if order == "B" or (order == "C" and gen_args["payment_method"] == "DD"):
                 party_agent = etree.SubElement(parent_node, "%sAgt" % party_type)
                 party_agent_institution = etree.SubElement(party_agent, "FinInstnId")
                 party_agent_other = etree.SubElement(party_agent_institution, "Othr")
-                party_agent_other_identification = etree.SubElement(
-                    party_agent_other, "Id"
-                )
+                party_agent_other_identification = etree.SubElement(party_agent_other, "Id")
                 party_agent_other_identification.text = "NOTPROVIDED"
             # for Credit Transfers, in the 'C' block, if BIC is not provided,
             # we should not put the 'Creditor Agent' block at all,
@@ -503,9 +457,7 @@ class AccountPaymentOrder(models.Model):
         return
 
     @api.model
-    def generate_party_acc_number(
-        self, parent_node, party_type, order, partner_bank, gen_args, bank_line=None
-    ):
+    def generate_party_acc_number(self, parent_node, party_type, order, partner_bank, gen_args, bank_line=None):
         party_account = etree.SubElement(parent_node, "%sAcct" % party_type)
         party_account_id = etree.SubElement(party_account, "Id")
         if partner_bank.acc_type == "iban":
@@ -566,19 +518,17 @@ class AccountPaymentOrder(models.Model):
         return True
 
     @api.model
-    def generate_party_block(
-        self, parent_node, party_type, order, partner_bank, gen_args, bank_line=None
-    ):
+    def generate_party_block(self, parent_node, party_type, order, partner_bank, gen_args, bank_line=None):
         """Generate the piece of the XML file corresponding to Name+IBAN+BIC
         This code is mutualized between TRF and DD
         In some localization (l10n_ch_sepa for example), they need the
         bank_line argument"""
         assert order in ("B", "C"), "Order can be 'B' or 'C'"
-        party_type_label = _("Partner name")
+        party_type_label = self.env._("Partner name")
         if party_type == "Cdtr":
-            party_type_label = _("Creditor name")
+            party_type_label = self.env._("Creditor name")
         elif party_type == "Dbtr":
-            party_type_label = _("Debtor name")
+            party_type_label = self.env._("Debtor name")
         name = "partner_bank.acc_holder_name or partner_bank.partner_id.name"
         eval_ctx = {"partner_bank": partner_bank}
         party_name = self._prepare_field(
@@ -608,9 +558,7 @@ class AccountPaymentOrder(models.Model):
 
         self.generate_party_id(party, party_type, partner)
 
-        self.generate_party_acc_number(
-            parent_node, party_type, order, partner_bank, gen_args, bank_line=bank_line
-        )
+        self.generate_party_acc_number(parent_node, party_type, order, partner_bank, gen_args, bank_line=bank_line)
 
         if order == "B":
             self.generate_party_agent(
@@ -638,40 +586,22 @@ class AccountPaymentOrder(models.Model):
             )
         else:
             remittance_info_structured = etree.SubElement(remittance_info, "Strd")
-            creditor_ref_information = etree.SubElement(
-                remittance_info_structured, "CdtrRefInf"
-            )
+            creditor_ref_information = etree.SubElement(remittance_info_structured, "CdtrRefInf")
             if gen_args.get("pain_flavor") == "pain.001.001.02":
-                creditor_ref_info_type = etree.SubElement(
-                    creditor_ref_information, "CdtrRefTp"
-                )
-                creditor_ref_info_type_code = etree.SubElement(
-                    creditor_ref_info_type, "Cd"
-                )
+                creditor_ref_info_type = etree.SubElement(creditor_ref_information, "CdtrRefTp")
+                creditor_ref_info_type_code = etree.SubElement(creditor_ref_info_type, "Cd")
                 creditor_ref_info_type_code.text = "SCOR"
                 # SCOR means "Structured Communication Reference"
-                creditor_ref_info_type_issuer = etree.SubElement(
-                    creditor_ref_info_type, "Issr"
-                )
+                creditor_ref_info_type_issuer = etree.SubElement(creditor_ref_info_type, "Issr")
                 creditor_ref_info_type_issuer.text = communication_type
-                creditor_reference = etree.SubElement(
-                    creditor_ref_information, "CdtrRef"
-                )
+                creditor_reference = etree.SubElement(creditor_ref_information, "CdtrRef")
             else:
                 if gen_args.get("structured_remittance_issuer", True):
-                    creditor_ref_info_type = etree.SubElement(
-                        creditor_ref_information, "Tp"
-                    )
-                    creditor_ref_info_type_or = etree.SubElement(
-                        creditor_ref_info_type, "CdOrPrtry"
-                    )
-                    creditor_ref_info_type_code = etree.SubElement(
-                        creditor_ref_info_type_or, "Cd"
-                    )
+                    creditor_ref_info_type = etree.SubElement(creditor_ref_information, "Tp")
+                    creditor_ref_info_type_or = etree.SubElement(creditor_ref_info_type, "CdOrPrtry")
+                    creditor_ref_info_type_code = etree.SubElement(creditor_ref_info_type_or, "Cd")
                     creditor_ref_info_type_code.text = "SCOR"
-                    creditor_ref_info_type_issuer = etree.SubElement(
-                        creditor_ref_info_type, "Issr"
-                    )
+                    creditor_ref_info_type_issuer = etree.SubElement(creditor_ref_info_type, "Issr")
                     creditor_ref_info_type_issuer.text = communication_type
 
                 creditor_reference = etree.SubElement(creditor_ref_information, "Ref")
@@ -699,9 +629,7 @@ class AccountPaymentOrder(models.Model):
         csi_privateid = etree.SubElement(csi_id, "PrvtId")
         csi_other = etree.SubElement(csi_privateid, "Othr")
         csi_other_id = etree.SubElement(csi_other, "Id")
-        csi_other_id.text = self._prepare_field(
-            identification_label, identification, eval_ctx, gen_args=gen_args
-        )
+        csi_other_id.text = self._prepare_field(identification_label, identification, eval_ctx, gen_args=gen_args)
         csi_scheme_name = etree.SubElement(csi_other, "SchmeNm")
         csi_scheme_name_proprietary = etree.SubElement(csi_scheme_name, "Prtry")
         csi_scheme_name_proprietary.text = scheme_name_proprietary

@@ -45,9 +45,7 @@ class AccountMoveLine(models.Model):
         discount_values = []
         for discount in discounts:
             discount_values.append(1 - (discount or 0.0) / 100.0)
-        aggregated_discount = (
-            1 - functools.reduce((lambda x, y: x * y), discount_values)
-        ) * 100
+        aggregated_discount = (1 - functools.reduce((lambda x, y: x * y), discount_values)) * 100
         return aggregated_discount
 
     @api.model
@@ -57,9 +55,7 @@ class AccountMoveLine(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get("discount") and (
-                not vals.get("discount1")
-                and not vals.get("discount2")
-                and not vals.get("discount3")
+                not vals.get("discount1") and not vals.get("discount2") and not vals.get("discount3")
             ):
                 vals["discount1"] = vals["discount"]
 

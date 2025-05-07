@@ -7,7 +7,7 @@
 import json
 import logging
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.modules.registry import Registry
 from odoo.tools.float_utils import float_compare
@@ -92,8 +92,7 @@ class SiiMixin(models.AbstractModel):
     )
     sii_macrodata = fields.Boolean(
         string="MacroData",
-        help="Check to confirm that the document has an absolute amount "
-        "greater o equal to 100 000 000,00 euros.",
+        help="Check to confirm that the document has an absolute amount " "greater o equal to 100 000 000,00 euros.",
         compute="_compute_macrodata",
     )
     sii_send_date = fields.Datetime(string="SII Send Date", index=True)
@@ -154,7 +153,7 @@ class SiiMixin(models.AbstractModel):
     @api.model
     def _search_sii_enabled(self, operator, value):
         if self._is_unsupported_search_operator(operator):
-            raise ValueError(_("Unsupported search operator"))
+            raise ValueError(self.env._("Unsupported search operator"))
         return [("company_id.sii_enabled", operator, value)]
 
     def _compute_macrodata(self):
@@ -177,9 +176,7 @@ class SiiMixin(models.AbstractModel):
     def _unlink_except_sii(self):
         """Do not allow the deletion of records already sent to the SII."""
         if self._filter_sii_unlink_not_possible():
-            raise exceptions.UserError(
-                _("You cannot delete an invoice already registered at the SII.")
-            )
+            raise exceptions.UserError(self.env._("You cannot delete an invoice already registered at the SII."))
 
     @api.model
     def _get_aeat_taxes_map(self, codes, date):
@@ -201,9 +198,7 @@ class SiiMixin(models.AbstractModel):
             ],
             limit=1,
         )
-        tax_templates = sii_map.map_lines.filtered(
-            lambda x: x.code in codes
-        ).tax_xmlid_ids
+        tax_templates = sii_map.map_lines.filtered(lambda x: x.code in codes).tax_xmlid_ids
         taxes = self.env["account.tax"]
         for template in tax_templates:
             tax_id = self.company_id._get_tax_id_from_xmlid(template.name)
@@ -213,9 +208,7 @@ class SiiMixin(models.AbstractModel):
     def _get_dua_sii_exempt_taxes(self):
         self.ensure_one()
         taxes = []
-        dua_exempt_tax = self.company_id._get_tax_id_from_xmlid(
-            "account_tax_template_p_dua_exempt"
-        )
+        dua_exempt_tax = self.company_id._get_tax_id_from_xmlid("account_tax_template_p_dua_exempt")
         if dua_exempt_tax:
             taxes.append(dua_exempt_tax)
         return taxes
@@ -230,9 +223,7 @@ class SiiMixin(models.AbstractModel):
         """
         self.ensure_one()
         if not self.company_id.vat:
-            raise UserError(
-                _("No VAT configured for the company '{}'").format(self.company_id.name)
-            )
+            raise UserError(self.env._("No VAT configured for the company '{}'").format(self.company_id.name))
         header = {
             "IDVersionSii": SII_VERSION,
             "Titular": {
@@ -261,17 +252,12 @@ class SiiMixin(models.AbstractModel):
         )
         if not documents._cancel_send_to_sii():
             raise UserError(
-                _(
-                    "You can not communicate this document at this moment. "
-                    "Please, try again later."
-                )
+                self.env._("You can not communicate this document at this moment. " "Please, try again later.")
             )
         if documents:
             documents.with_context(bypass_sii_send=True)._process_sii_send()
             sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
-            self.env["ir.cron.trigger"].sudo().create(
-                {"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()}
-            )
+            self.env["ir.cron.trigger"].sudo().create({"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()})
 
     def _process_sii_send(self):
         """Process document sending to the SII. Adds general checks from
@@ -287,9 +273,7 @@ class SiiMixin(models.AbstractModel):
             or (company.send_mode == "delayed" and company.delay_time == 0.0)
         ) and not self.env.context.get("bypass_sii_send", False):
             sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
-            self.env["ir.cron.trigger"].sudo().create(
-                {"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()}
-            )
+            self.env["ir.cron.trigger"].sudo().create({"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()})
 
     def _bind_service(self, client, port_name, address=None):
         self.ensure_one()
@@ -341,14 +325,10 @@ class SiiMixin(models.AbstractModel):
             partner = self._aeat_get_partner()
             country_code = self._get_aeat_country_code()
             is_simplified_invoice = self._is_aeat_simplified_invoice()
-            if (
-                (gen_type != 3 or country_code == "ES")
-                and not partner.vat
-                and not is_simplified_invoice
-            ):
-                raise UserError(_("The partner has not a VAT configured."))
+            if (gen_type != 3 or country_code == "ES") and not partner.vat and not is_simplified_invoice:
+                raise UserError(self.env._("The partner has not a VAT configured."))
             if not self.sii_enabled:
-                raise UserError(_("This invoice is not SII enabled."))
+                raise UserError(self.env._("This invoice is not SII enabled."))
         return res
 
     def _get_document_fiscal_date(self):
@@ -381,15 +361,10 @@ class SiiMixin(models.AbstractModel):
             exempt_cause = False
             product_exempt_causes = self._get_document_product_exempt(applied_taxes)
             if len(product_exempt_causes) > 1:
-                raise UserError(
-                    _("Currently there's no support for multiple exempt causes.")
-                )
+                raise UserError(self.env._("Currently there's no support for multiple exempt causes."))
             if product_exempt_causes:
                 exempt_cause = product_exempt_causes.pop()
-            elif (
-                self.fiscal_position_id.sii_exempt_cause
-                and self.fiscal_position_id.sii_exempt_cause != "none"
-            ):
+            elif self.fiscal_position_id.sii_exempt_cause and self.fiscal_position_id.sii_exempt_cause != "none":
                 exempt_cause = self.fiscal_position_id.sii_exempt_cause
             if gen_type == 3 and exempt_cause not in ["E2", "E3"]:
                 exempt_cause = "E2"
@@ -438,10 +413,7 @@ class SiiMixin(models.AbstractModel):
 
     def _get_no_taxable_cause(self):
         self.ensure_one()
-        return (
-            self.fiscal_position_id.sii_no_taxable_cause
-            or "ImporteTAIReglasLocalizacion"
-        )
+        return self.fiscal_position_id.sii_no_taxable_cause or "ImporteTAIReglasLocalizacion"
 
     def _is_sii_type_breakdown_required(self, taxes_dict):
         """Calculates if the block 'DesgloseTipoOperacion' is required for
@@ -462,9 +434,7 @@ class SiiMixin(models.AbstractModel):
             # DesgloseTipoOperacion required for national operations
             # with 'IDOtro' in the SII identifier block
             return True
-        elif sii_gen_type == 1 and (self._aeat_get_partner().vat or "").startswith(
-            "ESN"
-        ):
+        elif sii_gen_type == 1 and (self._aeat_get_partner().vat or "").startswith("ESN"):
             # DesgloseTipoOperacion required if customer's country is Spain and
             # has a NIF which starts with 'N'
             return True
@@ -487,9 +457,7 @@ class SiiMixin(models.AbstractModel):
         taxes_sfesse = self._get_aeat_taxes_map(["SFESSE"], date)
         taxes_sfesns = self._get_aeat_taxes_map(["SFESNS"], date)
         taxes_not_in_total = self._get_aeat_taxes_map(["NotIncludedInTotal"], date)
-        taxes_not_in_total_neg = self._get_aeat_taxes_map(
-            ["NotIncludedInTotalNegative"], date
-        )
+        taxes_not_in_total_neg = self._get_aeat_taxes_map(["NotIncludedInTotalNegative"], date)
         base_not_in_total = self._get_aeat_taxes_map(["BaseNotIncludedInTotal"], date)
         not_in_amount_total = 0
         exempt_cause = self._get_sii_exempt_cause(taxes_sfesbe + taxes_sfesse)
@@ -571,9 +539,7 @@ class SiiMixin(models.AbstractModel):
                         "NoExenta",
                         {"TipoNoExenta": "S1", "DesgloseIVA": {"DetalleIVA": []}},
                     )
-                    sub = type_breakdown["PrestacionServicios"]["Sujeta"]["NoExenta"][
-                        "DesgloseIVA"
-                    ]["DetalleIVA"]
+                    sub = type_breakdown["PrestacionServicios"]["Sujeta"]["NoExenta"]["DesgloseIVA"]["DetalleIVA"]
                     sub.append(self._get_sii_tax_dict(tax_line, tax_lines))
                 if tax in taxes_sfesns:
                     nsub_dict = service_dict.setdefault(
@@ -586,9 +552,7 @@ class SiiMixin(models.AbstractModel):
         # - Ciertos condicionantes obligan DesgloseTipoOperacion
         if self._is_sii_type_breakdown_required(taxes_dict):
             taxes_dict.setdefault("DesgloseTipoOperacion", {})
-            taxes_dict["DesgloseTipoOperacion"]["Entrega"] = taxes_dict[
-                "DesgloseFactura"
-            ]
+            taxes_dict["DesgloseTipoOperacion"]["Entrega"] = taxes_dict["DesgloseFactura"]
             del taxes_dict["DesgloseFactura"]
         return taxes_dict, not_in_amount_total
 
@@ -670,9 +634,7 @@ class SiiMixin(models.AbstractModel):
         serial_number = self._get_document_serial_number()
         inv_dict = {
             "IDFactura": {
-                "IDEmisorFactura": {
-                    "NIF": company.partner_id._parse_aeat_vat_info()[2]
-                },
+                "IDEmisorFactura": {"NIF": company.partner_id._parse_aeat_vat_info()[2]},
                 # On cancelled invoices, number is not filled
                 "NumSerieFacturaEmisor": serial_number,
                 "FechaExpedicionFacturaEmisor": document_date,
@@ -754,9 +716,7 @@ class SiiMixin(models.AbstractModel):
         return self.sii_account_registration_date or fields.Date.today()
 
     def _send_document_to_sii(self):
-        for document in self.filtered(
-            lambda i: i.state in self._get_valid_document_states()
-        ):
+        for document in self.filtered(lambda i: i.state in self._get_valid_document_states()):
             if document.aeat_state == "not_sent":
                 tipo_comunicacion = "A0"
             else:
@@ -794,8 +754,7 @@ class SiiMixin(models.AbstractModel):
                         }
                     )
                 elif (
-                    res["EstadoEnvio"] == "ParcialmenteCorrecto"
-                    and res_line["EstadoRegistro"] == "AceptadoConErrores"
+                    res["EstadoEnvio"] == "ParcialmenteCorrecto" and res_line["EstadoRegistro"] == "AceptadoConErrores"
                 ):
                     doc_vals.update(
                         {
@@ -806,14 +765,8 @@ class SiiMixin(models.AbstractModel):
                     )
                 else:
                     doc_vals["aeat_send_failed"] = True
-                if (
-                    "aeat_state" in doc_vals
-                    and not document.sii_account_registration_date
-                    and mapping_key[:2] == "in"
-                ):
-                    doc_vals[
-                        "sii_account_registration_date"
-                    ] = document._get_account_registration_date()
+                if "aeat_state" in doc_vals and not document.sii_account_registration_date and mapping_key[:2] == "in":
+                    doc_vals["sii_account_registration_date"] = document._get_account_registration_date()
                 doc_vals["sii_return"] = res
                 send_error = False
                 if res_line["CodigoErrorRegistro"]:

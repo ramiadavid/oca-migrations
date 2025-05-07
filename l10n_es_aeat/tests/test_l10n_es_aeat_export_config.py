@@ -29,9 +29,7 @@ class TestL10nEsAeatExportConfig(TransactionCase):
         export_line_subtype.decimal_size = 10
         export_line_subtype.apply_sign = True
         export_line_subtype.subconfig_id = export_line_str.id
-        self.assertFalse(
-            export_line_subtype.alignment, "Alignment must be False for a subtype line"
-        )
+        self.assertFalse(export_line_subtype.alignment, "Alignment must be False for a subtype line")
         self.assertEqual(export_line_subtype.decimal_size, 0)
         self.assertFalse(
             export_line_subtype.apply_sign,
@@ -164,8 +162,6 @@ class TestL10nEsAeatExportConfig(TransactionCase):
             }
         )
         new_report = self.env["l10n.es.aeat.report"]
-        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create(
-            {"name": "test_export_to_boe.txt"}
-        )
+        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create({"name": "test_export_to_boe.txt"})
         export_file = export_to_boe._export_config(new_report, export_config)
         self.assertEqual(b"<T           001001500X >", export_file)

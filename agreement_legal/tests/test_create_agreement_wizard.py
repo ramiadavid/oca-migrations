@@ -6,9 +6,7 @@ from odoo.tests import TransactionCase
 class TestCreateAgreementWizard(TransactionCase):
     def setUp(self):
         super().setUp()
-        self.agreement_type = self.env["agreement.type"].create(
-            {"name": "Test Agreement Type", "domain": "sale"}
-        )
+        self.agreement_type = self.env["agreement.type"].create({"name": "Test Agreement Type", "domain": "sale"})
         # Create Agreement Template
         self.agreement_template = self.env["agreement"].create(
             {

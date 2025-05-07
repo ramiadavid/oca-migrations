@@ -19,15 +19,13 @@ class AccountTax(models.Model):
             ("05", "Otro"),
             (
                 "06",
-                "ITPAJD: Impuesto sobre transmisiones patrimoniales y"
-                " actos jurídicos documentados",
+                "ITPAJD: Impuesto sobre transmisiones patrimoniales y" " actos jurídicos documentados",
             ),
             ("07", "IE: Impuestos especiales"),
             ("08", "Ra: Renta aduanas"),
             (
                 "09",
-                "IGTECM: Impuesto general sobre el tráfico de empresas que"
-                " se aplica en Ceuta y Melilla",
+                "IGTECM: Impuesto general sobre el tráfico de empresas que" " se aplica en Ceuta y Melilla",
             ),
             (
                 "10",
@@ -36,14 +34,12 @@ class AccountTax(models.Model):
             ),
             (
                 "11",
-                "IIIMAB: Impuesto sobre las instalaciones que inciden sobre"
-                " el medio ambiente en la Baleares",
+                "IIIMAB: Impuesto sobre las instalaciones que inciden sobre" " el medio ambiente en la Baleares",
             ),
             ("12", "ICIO: Impuesto sobre las construcciones, instalaciones y" " obras"),
             (
                 "13",
-                "IMVDN: Impuesto municipal sobre las viviendas desocupadas"
-                " en Navarra",
+                "IMVDN: Impuesto municipal sobre las viviendas desocupadas" " en Navarra",
             ),
             ("14", "IMSN: Impuesto municipal sobre solares en Navarra"),
             ("15", "IMGSN: Impuesto municipal sobre gastos suntuarios en" " Navarra"),

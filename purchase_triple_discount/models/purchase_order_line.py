@@ -22,58 +22,35 @@ class PurchaseOrderLine(models.Model):
             seller = line.product_id._select_seller(
                 partner_id=line.partner_id,
                 quantity=line.product_qty,
-                date=line.order_id.date_order
-                and line.order_id.date_order.date()
-                or fields.Date.context_today(line),
+                date=line.order_id.date_order and line.order_id.date_order.date() or fields.Date.context_today(line),
                 uom_id=line.product_uom,
                 params=params,
             )
             if not seller:
                 continue
-            line.update(
-                dict(
-                    (fname, seller[fname] or 0.0)
-                    for fname in self._get_multiple_discount_field_names()
-                )
-            )
+            line.update({fname: seller[fname] or 0.0 for fname in self._get_multiple_discount_field_names()})
 
     def _prepare_account_move_line(self, move=False):
         self.ensure_one()
         res = super()._prepare_account_move_line(move)
-        res.update(
-            dict(
-                (fname, self[fname])
-                for fname in self._get_multiple_discount_field_names()
-            )
-        )
+        res.update({fname: self[fname] for fname in self._get_multiple_discount_field_names()})
         # TODO: Replace this when https://github.com/OCA/account-invoicing/pull/1638 is merged for:
         #       res.pop("discount")
         res["discount"] = res.pop("discount1")
         return res
 
     @api.model
-    def _prepare_purchase_order_line(
-        self, product_id, product_qty, product_uom, company_id, supplier, po
-    ):
-        res = super()._prepare_purchase_order_line(
-            product_id, product_qty, product_uom, company_id, supplier, po
-        )
+    def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
+        res = super()._prepare_purchase_order_line(product_id, product_qty, product_uom, company_id, supplier, po)
         today = fields.Date.today()
         partner = supplier.partner_id
-        uom_po_qty = product_uom._compute_quantity(
-            product_qty, product_id.uom_po_id, rounding_method="HALF-UP"
-        )
+        uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_po_id, rounding_method="HALF-UP")
         seller = product_id.with_company(company_id)._select_seller(
             partner_id=partner,
             quantity=uom_po_qty,
             date=po.date_order and max(po.date_order.date(), today) or today,
             uom_id=product_id.uom_po_id,
         )
-        res.update(
-            dict(
-                (fname, seller[fname] or 0.0)
-                for fname in self._get_multiple_discount_field_names()
-            )
-        )
+        res.update({fname: seller[fname] or 0.0 for fname in self._get_multiple_discount_field_names()})
         res.pop("discount")
         return res

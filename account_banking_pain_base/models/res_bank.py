@@ -3,7 +3,7 @@
 
 import re
 
-from odoo import _, api, models
+from odoo import api, models
 from odoo.exceptions import ValidationError
 
 BIC_REGEX = re.compile(r"[A-Z]{6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3})?$")
@@ -24,7 +24,7 @@ class ResBank(models.Model):
         invalid_banks = self.filtered(lambda r: r.bic and not BIC_REGEX.match(r.bic))
         if invalid_banks:
             raise ValidationError(
-                _(
+                self.env._(
                     "The following Bank Identifier Codes (BIC) do not respect "
                     "the SEPA pattern:\n{bic_list}\n\nSEPA pattern: "
                     "{sepa_pattern}"

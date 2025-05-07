@@ -31,9 +31,7 @@ class L10nEsVatBookLineTax(models.Model):
         store=True,
     )
 
-    move_line_ids = fields.Many2many(
-        comodel_name="account.move.line", string="Move Lines"
-    )
+    move_line_ids = fields.Many2many(comodel_name="account.move.line", string="Move Lines")
     special_tax_group = fields.Selection(
         selection=[("req", "R.Eq."), ("irpf", "IRPF")],
         string="Special group",
@@ -65,6 +63,4 @@ class L10nEsVatBookLineTax(models.Model):
     @api.depends("total_amount", "special_tax_amount")
     def _compute_total_amount_special_include(self):
         for record in self:
-            record.total_amount_special_include = (
-                record.total_amount + record.special_tax_amount
-            )
+            record.total_amount_special_include = record.total_amount + record.special_tax_amount

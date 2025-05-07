@@ -12,9 +12,7 @@ from lxml import etree
 from odoo import exceptions, fields
 from odoo.tools.misc import mute_logger
 
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_certificate import (
-    TestL10nEsAeatCertificateBase,
-)
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_certificate import TestL10nEsAeatCertificateBase
 
 
 class CommonTestBase(TestL10nEsAeatCertificateBase):
@@ -58,27 +56,21 @@ class CommonTestBase(TestL10nEsAeatCertificateBase):
         main_company = self.env.ref("base.main_company")
         main_company.vat = "ESA12345674"
         main_company.partner_id.country_id = self.env.ref("base.uk")
-        self.env["res.currency.rate"].search(
-            [("currency_id", "=", main_company.currency_id.id)]
-        ).write({"company_id": False})
-        bank_obj = self.env["res.partner.bank"]
-        self.bank = bank_obj.search(
-            [("acc_number", "=", "FR20 1242 1242 1242 1242 1242 124")], limit=1
+        self.env["res.currency.rate"].search([("currency_id", "=", main_company.currency_id.id)]).write(
+            {"company_id": False}
         )
+        bank_obj = self.env["res.partner.bank"]
+        self.bank = bank_obj.search([("acc_number", "=", "FR20 1242 1242 1242 1242 1242 124")], limit=1)
         if not self.bank:
             self.bank = bank_obj.create(
                 {
                     "acc_number": "FR20 1242 1242 1242 1242 1242 124",
                     "partner_id": main_company.partner.id,
-                    "bank_id": self.env["res.bank"]
-                    .search([("bic", "=", "PSSTFRPPXXX")], limit=1)
-                    .id,
+                    "bank_id": self.env["res.bank"].search([("bic", "=", "PSSTFRPPXXX")], limit=1).id,
                 }
             )
         self.payment_method = self.env.ref("account.account_payment_method_manual_in")
-        payment_methods = self.env["account.payment.method"].search(
-            [("payment_type", "=", "inbound")]
-        )
+        payment_methods = self.env["account.payment.method"].search([("payment_type", "=", "inbound")])
         self.journal = self.env["account.journal"].create(
             {
                 "name": "Test journal",
@@ -86,9 +78,7 @@ class CommonTestBase(TestL10nEsAeatCertificateBase):
                 "type": "bank",
                 "company_id": main_company.id,
                 "bank_account_id": self.bank.id,
-                "inbound_payment_method_line_ids": [
-                    (0, 0, {"payment_method_id": x.id}) for x in payment_methods
-                ],
+                "inbound_payment_method_line_ids": [(0, 0, {"payment_method_id": x.id}) for x in payment_methods],
             }
         )
 
@@ -105,9 +95,7 @@ class CommonTestBase(TestL10nEsAeatCertificateBase):
                 "name": "Test payment mode Refund",
                 "bank_account_link": "fixed",
                 "fixed_journal_id": self.journal.id,
-                "payment_method_id": self.env.ref(
-                    "account.account_payment_method_manual_out"
-                ).id,
+                "payment_method_id": self.env.ref("account.account_payment_method_manual_out").id,
                 "show_bank_account_from_journal": True,
                 "facturae_code": "01",
             }
@@ -155,9 +143,7 @@ class CommonTestBase(TestL10nEsAeatCertificateBase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref(
-                                "product.product_delivery_02"
-                            ).id,
+                            "product_id": self.env.ref("product.product_delivery_02").id,
                             "account_id": self.account.id,
                             "name": "Producto de prueba",
                             "quantity": 1.0,
@@ -181,9 +167,7 @@ class CommonTestBase(TestL10nEsAeatCertificateBase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref(
-                                "product.product_delivery_02"
-                            ).id,
+                            "product_id": self.env.ref("product.product_delivery_02").id,
                             "account_id": self.account.id,
                             "name": "Producto de prueba",
                             "quantity": 1.0,
@@ -223,9 +207,7 @@ class CommonTestBase(TestL10nEsAeatCertificateBase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref(
-                                "product.product_delivery_02"
-                            ).id,
+                            "product_id": self.env.ref("product.product_delivery_02").id,
                             "account_id": self.account.id,
                             "name": "Producto de prueba",
                             "quantity": 1.0,
@@ -267,8 +249,7 @@ class CommonTest(CommonTestBase):
         generated_facturae = self._create_facturae_file(self.move)
         self.assertEqual(
             generated_facturae.xpath(
-                "/fe:Facturae/Parties/SellerParty/TaxIdentification/"
-                "TaxIdentificationNumber",
+                "/fe:Facturae/Parties/SellerParty/TaxIdentification/" "TaxIdentificationNumber",
                 namespaces={"fe": self.fe},
             )[0].text,
             self.env.ref("base.main_company").vat,
@@ -282,8 +263,7 @@ class CommonTest(CommonTestBase):
         )
         self.assertFalse(
             generated_facturae.xpath(
-                "/fe:Facturae/Invoices/Invoice/AdditionalData/"
-                "RelatedDocuments/Attachments",
+                "/fe:Facturae/Invoices/Invoice/AdditionalData/" "RelatedDocuments/Attachments",
                 namespaces={"fe": self.fe},
             ),
         )
@@ -293,9 +273,7 @@ class CommonTest(CommonTestBase):
         self.move.action_post()
         self.move.name = "2999/99999"
         self.partner.attach_invoice_as_annex = True
-        with mock.patch(
-            "odoo.addons.base.models.ir_actions_report.IrActionsReport._render_qweb_pdf"
-        ) as ptch:
+        with mock.patch("odoo.addons.base.models.ir_actions_report.IrActionsReport._render_qweb_pdf") as ptch:
             ptch.return_value = (b"1234", "pdf")
             generated_facturae = self._create_facturae_file(self.move, force=True)
         self.assertTrue(
@@ -306,8 +284,7 @@ class CommonTest(CommonTestBase):
         )
         self.assertTrue(
             generated_facturae.xpath(
-                "/fe:Facturae/Invoices/Invoice/AdditionalData/"
-                "RelatedDocuments/Attachment",
+                "/fe:Facturae/Invoices/Invoice/AdditionalData/" "RelatedDocuments/Attachment",
                 namespaces={"fe": self.fe},
             ),
         )
@@ -340,8 +317,7 @@ class CommonTest(CommonTestBase):
         )
         self.assertTrue(
             generated_facturae.xpath(
-                "/fe:Facturae/Invoices/Invoice/AdditionalData/"
-                "RelatedDocuments/Attachment",
+                "/fe:Facturae/Invoices/Invoice/AdditionalData/" "RelatedDocuments/Attachment",
                 namespaces={"fe": self.fe},
             ),
         )
@@ -377,9 +353,7 @@ class CommonTest(CommonTestBase):
         self.main_company.partner_id.country_id = self.env.ref("base.es")
         generated_facturae = self._create_facturae_file(self.move)
         ns = "http://www.w3.org/2000/09/xmldsig#"
-        self.assertEqual(
-            len(generated_facturae.xpath("//ds:Signature", namespaces={"ds": ns})), 1
-        )
+        self.assertEqual(len(generated_facturae.xpath("//ds:Signature", namespaces={"ds": ns})), 1)
 
         node = generated_facturae.find(".//ds:Signature", {"ds": ns})
         ctx = xmlsig.SignatureContext()
@@ -393,8 +367,7 @@ class CommonTest(CommonTestBase):
         self.assertEqual(
             verification_error,
             False,
-            "Error found during verification of the signature of "
-            + "the move: %s" % error_message,
+            "Error found during verification of the signature of " + "the move: %s" % error_message,
         )
 
     def test_refund(self):
@@ -423,9 +396,7 @@ class CommonTest(CommonTestBase):
         self.assertEqual(refund_inv.facturae_refund_reason, "01")
         refund_inv.action_post()
         refund_inv.name = "2998/99999"
-        self.wizard.with_context(
-            active_ids=refund_inv.ids, active_model="account.move"
-        ).create_facturae_file()
+        self.wizard.with_context(active_ids=refund_inv.ids, active_model="account.move").create_facturae_file()
         with self.assertRaises(exceptions.UserError):
             self.wizard.with_context(
                 active_ids=[self.move_02.id, self.move.id],
@@ -600,9 +571,7 @@ class CommonTest(CommonTestBase):
             subtotal,
         )
         self.assertEqual(
-            generated_facturae.xpath("//InvoiceTotals/TotalGrossAmountBeforeTaxes")[
-                0
-            ].text,
+            generated_facturae.xpath("//InvoiceTotals/TotalGrossAmountBeforeTaxes")[0].text,
             base,
         )
         self.assertEqual(
@@ -633,9 +602,7 @@ class CommonTest(CommonTestBase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref(
-                                "product.product_delivery_02"
-                            ).id,
+                            "product_id": self.env.ref("product.product_delivery_02").id,
                             "account_id": self.account.id,
                             "name": "Producto de prueba",
                             "quantity": 1.0,
@@ -668,9 +635,7 @@ class CommonTest(CommonTestBase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref(
-                                "product.product_delivery_02"
-                            ).id,
+                            "product_id": self.env.ref("product.product_delivery_02").id,
                             "account_id": self.account.id,
                             "name": "Producto de prueba",
                             "quantity": 1.0,
@@ -703,9 +668,7 @@ class CommonTest(CommonTestBase):
                         0,
                         0,
                         {
-                            "product_id": self.env.ref(
-                                "product.product_delivery_02"
-                            ).id,
+                            "product_id": self.env.ref("product.product_delivery_02").id,
                             "account_id": self.account.id,
                             "name": "Producto de prueba",
                             "quantity": 1.0,
@@ -746,9 +709,7 @@ class CommonTest(CommonTestBase):
         self._activate_certificate(self.certificate_password)
         self.move.name = "2999/99999"
         wizard = (
-            self.env["create.facturae"]
-            .with_context(active_ids=self.move.ids, active_model="account.move")
-            .create({})
+            self.env["create.facturae"].with_context(active_ids=self.move.ids, active_model="account.move").create({})
         )
         return wizard
 

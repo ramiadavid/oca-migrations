@@ -8,9 +8,9 @@ _logger = logging.getLogger(__name__)
 
 
 def create_column_thirdparty_invoice(cr):
-    if not column_exists(
-        cr, "account_journal", "thirdparty_invoice"
-    ) and not column_exists(cr, "account_move", "thirdparty_invoice"):
+    if not column_exists(cr, "account_journal", "thirdparty_invoice") and not column_exists(
+        cr, "account_move", "thirdparty_invoice"
+    ):
         _logger.info("Initializing column thirdparty_invoice on table account_move")
         create_column(
             cr=cr,

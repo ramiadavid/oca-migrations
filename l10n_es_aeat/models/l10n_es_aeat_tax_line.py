@@ -17,9 +17,7 @@ class L10nEsAeatTaxLine(models.Model):
         store=True,
         readonly=True,
     )
-    name = fields.Char(
-        string="Name", related="map_line_id.name", store=True, readonly=True
-    )
+    name = fields.Char(string="Name", related="map_line_id.name", store=True, readonly=True)
     amount = fields.Float(digits="Account")
     map_line_id = fields.Many2one(
         comodel_name="l10n.es.aeat.map.tax.line",
@@ -27,9 +25,7 @@ class L10nEsAeatTaxLine(models.Model):
         required=True,
         ondelete="cascade",
     )
-    move_line_ids = fields.Many2many(
-        comodel_name="account.move.line", string="Journal items"
-    )
+    move_line_ids = fields.Many2many(comodel_name="account.move.line", string="Journal items")
     to_regularize = fields.Boolean(related="map_line_id.to_regularize", readonly=True)
     model = fields.Char(index=True, readonly=True, required=True, string="Model name")
 

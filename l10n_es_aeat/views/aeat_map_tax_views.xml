@@ -28,12 +28,7 @@
                         </group>
                     </group>
                     <group string="Mapping Lines" col="4">
-                        <field
-                            name="map_line_ids"
-                            context="{'active_test': False}"
-                            nolabel="1"
-                            colspan="4"
-                        />
+                        <field name="map_line_ids" context="{'active_test': False}" nolabel="1" colspan="4" />
                     </group>
                 </sheet>
             </form>

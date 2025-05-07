@@ -7,14 +7,10 @@
     "name": "Payment Term Extension",
     "version": "18.0.1.0.0",
     "category": "Accounting & Finance",
-    "summary": "Adds rounding, months, weeks and multiple payment days "
-    "properties on payment term lines",
-    "author": "Camptocamp,"
-    "Tecnativa,"
-    "Agile Business Group, "
-    "Odoo Community Association (OCA)",
+    "summary": "Adds rounding, months, weeks and multiple payment days " "properties on payment term lines",
+    "author": "Camptocamp," "Tecnativa," "Agile Business Group, " "Odoo Community Association (OCA)",
     "maintainer": "OCA",
-    "website": "https://github.com/OCA/account-payment",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "depends": ["account", "purchase"],
     "data": [

@@ -13,9 +13,9 @@ class L10nEsVatBookLine(models.Model):
     _order = "exception_text asc, entry_number asc, invoice_date asc, ref asc"
 
     def _selection_special_tax_group(self):
-        return self.env["l10n.es.vat.book.line.tax"].fields_get(
-            allfields=["special_tax_group"]
-        )["special_tax_group"]["selection"]
+        return self.env["l10n.es.vat.book.line.tax"].fields_get(allfields=["special_tax_group"])["special_tax_group"][
+            "selection"
+        ]
 
     ref = fields.Char("Reference")
     entry_number = fields.Integer()

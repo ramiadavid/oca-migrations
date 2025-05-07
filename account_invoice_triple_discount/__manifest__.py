@@ -6,7 +6,7 @@
     "version": "18.0.1.0.0",
     "category": "Accounting & Finance",
     "author": "QubiQ, Tecnativa, GRAP, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/account-invoicing",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "summary": "Manage triple discount on invoice lines",
     "depends": ["account"],

@@ -6,17 +6,9 @@
         <field name="arch" type="xml">
             <form string="Load Certificate">
                 <header>
-                    <button
-                        name="load_password_wizard"
-                        type="object"
-                        string="Obtain Keys"
-                    />
+                    <button name="load_password_wizard" type="object" string="Obtain Keys" />
                     <button name="action_active" type="object" string="To Active" />
-                    <field
-                        name="state"
-                        widget="statusbar"
-                        statusbar_visible="draft,active"
-                    />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active" />
                 </header>
                 <group>
                     <group>

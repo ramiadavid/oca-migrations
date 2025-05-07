@@ -66,32 +66,12 @@
                     name="unreconciled"
                 />
                 <separator />
-                <filter
-                    string="Journal Item"
-                    name="move_line"
-                    domain="[('line_type','=', 'move_line')]"
-                />
-                <filter
-                    string="Forecast Line"
-                    name="forecast_line"
-                    domain="[('line_type','=', 'forecast_line')]"
-                />
+                <filter string="Journal Item" name="move_line" domain="[('line_type','=', 'move_line')]" />
+                <filter string="Forecast Line" name="forecast_line" domain="[('line_type','=', 'forecast_line')]" />
                 <group>
-                    <filter
-                        string="Line Type"
-                        name="group_by_line_type"
-                        context="{'group_by':'line_type'}"
-                    />
-                    <filter
-                        string="Account"
-                        name="group_by_account_id"
-                        context="{'group_by':'account_id'}"
-                    />
-                    <filter
-                        string="Date"
-                        name="group_by_date"
-                        context="{'group_by':'date'}"
-                    />
+                    <filter string="Line Type" name="group_by_line_type" context="{'group_by':'line_type'}" />
+                    <filter string="Account" name="group_by_account_id" context="{'group_by':'account_id'}" />
+                    <filter string="Date" name="group_by_date" context="{'group_by':'date'}" />
                     <filter
                         string="Company"
                         name="group_by_company_id"

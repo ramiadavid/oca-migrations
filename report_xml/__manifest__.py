@@ -4,7 +4,7 @@
     "name": "XML Reports",
     "version": "18.0.1.0.0",
     "category": "Reporting",
-    "website": "https://github.com/OCA/reporting-engine",
+    "website": "https://www.processcontrol.es",
     "development_status": "Production/Stable",
     "author": "Tecnativa, Odoo Community Association (OCA), Avoin.Systems",
     "license": "AGPL-3",
@@ -25,9 +25,7 @@
         "demo/demo_report.xml",  # report body definition
     ],
     "external_dependencies": {
-        "python": [  # Python third party libraries required for module
-            "lxml"  # XML and HTML with Python
-        ]
+        "python": ["lxml"]  # Python third party libraries required for module  # XML and HTML with Python
     },
     "post_init_hook": "post_init_hook",
 }

@@ -2,7 +2,7 @@
 # Copyright 2014-2017 Tecnativa - Pedro M. Baeza <pedro.baeza@tecnativa.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 
 class AeatModelExportConfigLine(models.Model):
@@ -19,18 +19,14 @@ class AeatModelExportConfigLine(models.Model):
     )
     name = fields.Char(required=True)
     repeat_expression = fields.Char(
-        help="If set, this expression will be used for getting the list of "
-        "elements to iterate on",
+        help="If set, this expression will be used for getting the list of " "elements to iterate on",
     )
     repeat = fields.Boolean(compute="_compute_repeat", store=True)
     conditional_expression = fields.Char(
-        help="If set, this expression will be used to evaluate if this line "
-        "should be added",
+        help="If set, this expression will be used to evaluate if this line " "should be added",
     )
     conditional = fields.Boolean(compute="_compute_conditional", store=True)
-    subconfig_id = fields.Many2one(
-        comodel_name="aeat.model.export.config", string="Sub-configuration"
-    )
+    subconfig_id = fields.Many2one(comodel_name="aeat.model.export.config", string="Sub-configuration")
     export_type = fields.Selection(
         selection=[
             ("string", "Alphanumeric"),
@@ -44,9 +40,7 @@ class AeatModelExportConfigLine(models.Model):
         string="Export field type",
         required=True,
     )
-    apply_sign = fields.Boolean(
-        compute="_compute_apply_sign", readonly=False, store=True
-    )
+    apply_sign = fields.Boolean(compute="_compute_apply_sign", readonly=False, store=True)
     positive_sign = fields.Char(string="Positive sign character", size=1, default="0")
     negative_sign = fields.Char(string="Negative sign character", size=1, default="N")
     size = fields.Integer(string="Field size")
@@ -103,13 +97,13 @@ class AeatModelExportConfigLine(models.Model):
             if line.export_type == "subconfig":
                 line.value = "-"
             elif line.expression:
-                line.value = _("Expression: ")
+                line.value = self.env._("Expression: ")
                 if len(line.expression) > 35:
                     line.value += '"%s…"' % line.expression[:34]
                 else:
                     line.value += '"%s"' % line.expression
             else:
-                line.value = _("Fixed: {}").format(line.fixed_value or _("<blank>"))
+                line.value = self.env._("Fixed: {}").format(line.fixed_value or self.env._("<blank>"))
 
     @api.depends("export_type", "subconfig_id")
     def _compute_alignment(self):

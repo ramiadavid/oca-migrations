@@ -2,7 +2,7 @@
 # Copyright 2014-2017 Tecnativa - Pedro M. Baeza <pedro.baeza@tecnativa.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 
 
 class L10nEsAeatMapTax(models.Model):
@@ -41,10 +41,7 @@ class L10nEsAeatMapTax(models.Model):
                 domain.append(("date_from_search", "<=", map_tax.date_to))
             if map_tax.search(domain):
                 raise exceptions.UserError(
-                    _(
-                        "Error! The dates of the record overlap with an "
-                        "existing record."
-                    )
+                    self.env._("Error! The dates of the record overlap with an " "existing record.")
                 )
 
     def name_get(self):

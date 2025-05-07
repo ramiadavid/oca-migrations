@@ -13,9 +13,7 @@
     "FechaRegContable": "01-10-2020",
     "DesgloseFactura": {
       "InversionSujetoPasivo": {
-        "DetalleIVA": [
-          {"BaseImponible": 100.0, "CuotaSoportada": 21.0, "TipoImpositivo": "21.0"}
-        ]
+        "DetalleIVA": [{"BaseImponible": 100.0, "CuotaSoportada": 21.0, "TipoImpositivo": "21.0"}]
       }
     },
     "CuotaDeducible": 21.0

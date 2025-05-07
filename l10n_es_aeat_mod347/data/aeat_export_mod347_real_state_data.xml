@@ -2,16 +2,11 @@
 <odoo>
     <!-- Tipo registro 2 – Registro de inmueble: -->
     <record id="aeat_mod347_real_state_export_config" model="aeat.model.export.config">
-        <field
-            name="name"
-        >Exportación modelo 347 - Tipo de Registro 2 – Registro de inmueble</field>
+        <field name="name">Exportación modelo 347 - Tipo de Registro 2 – Registro de inmueble</field>
         <field name="model_number">347</field>
     </record>
     <!--            1          Tipo de Registro -->
-    <record
-        id="aeat_mod347_real_state_export_line_01"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_01" model="aeat.model.export.config.line">
         <field name="sequence">1</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Constante: 2</field>
@@ -21,10 +16,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            2-4        Modelo Declaración -->
-    <record
-        id="aeat_mod347_real_state_export_line_02"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_02" model="aeat.model.export.config.line">
         <field name="sequence">2</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Constante: 347</field>
@@ -34,10 +26,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            5-8        Ejercicio -->
-    <record
-        id="aeat_mod347_real_state_export_line_03"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_03" model="aeat.model.export.config.line">
         <field name="sequence">3</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Ejercicio</field>
@@ -48,10 +37,7 @@
         <field name="alignment">right</field>
     </record>
     <!--            9-17       NIF del declarante -->
-    <record
-        id="aeat_mod347_real_state_export_line_04"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_04" model="aeat.model.export.config.line">
         <field name="sequence">4</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">NIF del declarante</field>
@@ -61,10 +47,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            18-26      NIF del arrendatario -->
-    <record
-        id="aeat_mod347_real_state_export_line_05"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_05" model="aeat.model.export.config.line">
         <field name="sequence">5</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">NIF del arrendatario</field>
@@ -74,10 +57,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            27-35      NIF del representante legal -->
-    <record
-        id="aeat_mod347_real_state_export_line_06"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_06" model="aeat.model.export.config.line">
         <field name="sequence">6</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">NIF del representante legal del arrendatario</field>
@@ -88,25 +68,17 @@
     </record>
     <!--            36-75      Apellidos y nombre, razón social o denominación del -->
     <!--                       declarado -->
-    <record
-        id="aeat_mod347_real_state_export_line_07"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_07" model="aeat.model.export.config.line">
         <field name="sequence">7</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
-        <field
-            name="name"
-        >Apellidos y nombres, razón social o denominación del arrendatario</field>
+        <field name="name">Apellidos y nombres, razón social o denominación del arrendatario</field>
         <field name="expression">${object.partner_id.name}</field>
         <field name="export_type">string</field>
         <field name="size">40</field>
         <field name="alignment">left</field>
     </record>
     <!--            76         Tipo de hoja -->
-    <record
-        id="aeat_mod347_real_state_export_line_08"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_08" model="aeat.model.export.config.line">
         <field name="sequence">8</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Tipo de hoja</field>
@@ -116,10 +88,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            77-99      Blancos -->
-    <record
-        id="aeat_mod347_real_state_export_line_09"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_09" model="aeat.model.export.config.line">
         <field name="sequence">9</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Blancos</field>
@@ -143,10 +112,7 @@
         <field name="alignment">right</field>
     </record>
     <!--            115        Situación del inmueble -->
-    <record
-        id="aeat_mod347_real_state_export_line_11"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_11" model="aeat.model.export.config.line">
         <field name="sequence">11</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Situación del inmueble</field>
@@ -157,10 +123,7 @@
         <field name="alignment">right</field>
     </record>
     <!--            116-140    Referencia catastral -->
-    <record
-        id="aeat_mod347_real_state_export_line_12"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_12" model="aeat.model.export.config.line">
         <field name="sequence">12</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Referencia catastral</field>
@@ -171,10 +134,7 @@
     </record>
     <!--            141-333    Dirección y datos del inmueble -->
     <!--            141–145    TIPO DE VÍA -->
-    <record
-        id="aeat_mod347_real_state_export_line_13"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_13" model="aeat.model.export.config.line">
         <field name="sequence">13</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - TIPO DE VÍA</field>
@@ -184,10 +144,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            146–195    NOMBRE VÍA PUBLICA -->
-    <record
-        id="aeat_mod347_real_state_export_line_14"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_14" model="aeat.model.export.config.line">
         <field name="sequence">14</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - NOMBRE VÍA PUBLICA</field>
@@ -197,10 +154,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            196–198    TIPO DE NUMERACIÓN -->
-    <record
-        id="aeat_mod347_real_state_export_line_15"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_15" model="aeat.model.export.config.line">
         <field name="sequence">15</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - TIPO DE NUMERACIÓN</field>
@@ -210,10 +164,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            199–203    NUMERO DE CASA -->
-    <record
-        id="aeat_mod347_real_state_export_line_16"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_16" model="aeat.model.export.config.line">
         <field name="sequence">16</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - NUMERO DE CASA</field>
@@ -224,25 +175,17 @@
         <field name="alignment">right</field>
     </record>
     <!--            204-206    CALIFICADOR DEL NUMERO -->
-    <record
-        id="aeat_mod347_real_state_export_line_17"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_17" model="aeat.model.export.config.line">
         <field name="sequence">17</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
-        <field
-            name="name"
-        >Dirección y datos del inmueble - CALIFICADOR DEL NUMERO</field>
+        <field name="name">Dirección y datos del inmueble - CALIFICADOR DEL NUMERO</field>
         <field name="expression">${object.number_calification}</field>
         <field name="export_type">string</field>
         <field name="size">3</field>
         <field name="alignment">left</field>
     </record>
     <!--            207–209    BLOQUE -->
-    <record
-        id="aeat_mod347_real_state_export_line_18"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_18" model="aeat.model.export.config.line">
         <field name="sequence">18</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - BLOQUE</field>
@@ -252,10 +195,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            210–212    PORTAL -->
-    <record
-        id="aeat_mod347_real_state_export_line_19"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_19" model="aeat.model.export.config.line">
         <field name="sequence">19</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - PORTAL</field>
@@ -265,10 +205,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            213–215    ESCALERA -->
-    <record
-        id="aeat_mod347_real_state_export_line_20"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_20" model="aeat.model.export.config.line">
         <field name="sequence">20</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - ESCALERA</field>
@@ -278,10 +215,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            216–218    PLANTA O PISO -->
-    <record
-        id="aeat_mod347_real_state_export_line_21"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_21" model="aeat.model.export.config.line">
         <field name="sequence">21</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - PLANTA O PISO</field>
@@ -291,10 +225,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            219–221    PUERTA -->
-    <record
-        id="aeat_mod347_real_state_export_line_22"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_22" model="aeat.model.export.config.line">
         <field name="sequence">22</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - PUERTA</field>
@@ -304,10 +235,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            222–261    COMPLEMENTO. -->
-    <record
-        id="aeat_mod347_real_state_export_line_23"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_23" model="aeat.model.export.config.line">
         <field name="sequence">23</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - COMPLEMENTO</field>
@@ -317,25 +245,17 @@
         <field name="alignment">left</field>
     </record>
     <!--            262–291    LOCALIDAD O POBLACIÓN. -->
-    <record
-        id="aeat_mod347_real_state_export_line_24"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_24" model="aeat.model.export.config.line">
         <field name="sequence">24</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
-        <field
-            name="name"
-        >Dirección y datos del inmueble - LOCALIDAD O POBLACIÓN</field>
+        <field name="name">Dirección y datos del inmueble - LOCALIDAD O POBLACIÓN</field>
         <field name="expression">${object.city}</field>
         <field name="export_type">string</field>
         <field name="size">30</field>
         <field name="alignment">left</field>
     </record>
     <!--            292–321    MUNICIPIO -->
-    <record
-        id="aeat_mod347_real_state_export_line_25"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_25" model="aeat.model.export.config.line">
         <field name="sequence">25</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - MUNICIPIO</field>
@@ -345,10 +265,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            322–326    CODIGO DE MUNICIPIO -->
-    <record
-        id="aeat_mod347_real_state_export_line_26"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_26" model="aeat.model.export.config.line">
         <field name="sequence">26</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - CODIGO DE MUNICIPIO</field>
@@ -358,10 +275,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            327-328    CODIGO PROVINCIA -->
-    <record
-        id="aeat_mod347_real_state_export_line_27"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_27" model="aeat.model.export.config.line">
         <field name="sequence">27</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - CODIGO DE PROVINCIA</field>
@@ -371,10 +285,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            329-333    CODIGO POSTAL -->
-    <record
-        id="aeat_mod347_real_state_export_line_28"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_28" model="aeat.model.export.config.line">
         <field name="sequence">28</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Dirección y datos del inmueble - CODIGO POSTAL</field>
@@ -384,10 +295,7 @@
         <field name="alignment">left</field>
     </record>
     <!--            334-500    Blancos -->
-    <record
-        id="aeat_mod347_real_state_export_line_29"
-        model="aeat.model.export.config.line"
-    >
+    <record id="aeat_mod347_real_state_export_line_29" model="aeat.model.export.config.line">
         <field name="sequence">29</field>
         <field name="export_config_id" ref="aeat_mod347_real_state_export_config" />
         <field name="name">Blancos</field>

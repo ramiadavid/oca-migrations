@@ -8,10 +8,7 @@
     <record id="account_payment_mode_form" model="ir.ui.view">
         <field name="name">pain_base.account.payment.mode.form</field>
         <field name="model">account.payment.mode</field>
-        <field
-            name="inherit_id"
-            ref="account_payment_order.account_payment_mode_form"
-        />
+        <field name="inherit_id" ref="account_payment_order.account_payment_mode_form" />
         <field name="arch" type="xml">
             <group name="main" position="inside">
                 <field

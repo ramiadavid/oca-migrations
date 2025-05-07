@@ -11,8 +11,7 @@ class AccountMove(models.Model):
 
     eu_triangular_deal = fields.Boolean(
         string="EU Triangular deal",
-        help="This invoice constitutes a triangular operation for the "
-        "purposes of intra-community operations.",
+        help="This invoice constitutes a triangular operation for the " "purposes of intra-community operations.",
         readonly=True,
     )
 
@@ -53,7 +52,5 @@ class AccountMoveLine(models.Model):
                 rec.l10n_es_aeat_349_operation_key = False
                 for tax in rec.tax_ids:
                     if tax.l10n_es_aeat_349_operation_key:
-                        rec.l10n_es_aeat_349_operation_key = (
-                            tax.l10n_es_aeat_349_operation_key
-                        )
+                        rec.l10n_es_aeat_349_operation_key = tax.l10n_es_aeat_349_operation_key
                         break

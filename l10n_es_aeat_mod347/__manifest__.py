@@ -12,7 +12,7 @@
     "name": "AEAT modelo 347",
     "version": "18.0.1.0.0",
     "author": "Tecnativa,PESOL,Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/l10n-spain",
+    "website": "https://www.processcontrol.es",
     "category": "Accounting",
     "license": "AGPL-3",
     "depends": [

@@ -17,12 +17,8 @@ def add_key_to_existing_invoices(env):
     )
     if invoices:
         sii_key_obj = env["aeat.sii.mapping.registration.keys"]
-        sale_key = sii_key_obj.search(
-            [("code", "=", "01"), ("type", "=", "sale")], limit=1
-        )
-        purchase_key = sii_key_obj.search(
-            [("code", "=", "01"), ("type", "=", "purchase")], limit=1
-        )
+        sale_key = sii_key_obj.search([("code", "=", "01"), ("type", "=", "sale")], limit=1)
+        purchase_key = sii_key_obj.search([("code", "=", "01"), ("type", "=", "purchase")], limit=1)
         if purchase_key:
             env.cr.execute(
                 """

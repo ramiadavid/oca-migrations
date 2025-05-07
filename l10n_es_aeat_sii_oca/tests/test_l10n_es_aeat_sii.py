@@ -11,12 +11,8 @@ import json
 from odoo import exceptions
 from odoo.tools.misc import file_path
 
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_certificate import (
-    TestL10nEsAeatCertificateBase,
-)
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import (
-    TestL10nEsAeatModBase,
-)
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_certificate import TestL10nEsAeatCertificateBase
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import TestL10nEsAeatModBase
 
 
 class TestL10nEsAeatSiiBase(TestL10nEsAeatModBase, TestL10nEsAeatCertificateBase):
@@ -44,9 +40,7 @@ class TestL10nEsAeatSiiBase(TestL10nEsAeatModBase, TestL10nEsAeatCertificateBase
             )
         return tax
 
-    def _create_and_test_invoice_sii_dict(
-        self, inv_type, lines, extra_vals, module=None
-    ):
+    def _create_and_test_invoice_sii_dict(self, inv_type, lines, extra_vals, module=None):
         vals = []
         tax_names = []
         for line in lines:
@@ -65,9 +59,7 @@ class TestL10nEsAeatSiiBase(TestL10nEsAeatModBase, TestL10nEsAeatCertificateBase
             module=module,
         )
 
-    def _compare_sii_dict(
-        self, json_file, inv_type, lines, extra_vals=None, module=None
-    ):
+    def _compare_sii_dict(self, json_file, inv_type, lines, extra_vals=None, module=None):
         """Helper method for creating an invoice according arguments, and
         comparing the expected SII dict with .
         """
@@ -141,15 +133,9 @@ class TestL10nEsAeatSiiBase(TestL10nEsAeatModBase, TestL10nEsAeatCertificateBase
     def setUpClass(cls):
         super().setUpClass()
         cls.maxDiff = None  # needed for the dict comparison
-        cls.partner = cls.env["res.partner"].create(
-            {"name": "Test partner", "vat": "ESF35999705"}
-        )
-        cls.product = cls.env["product.product"].create(
-            {"name": "Test product", "sii_exempt_cause": "E5"}
-        )
-        cls.account_expense = cls.env.ref(
-            "account.%s_account_common_600" % cls.company.id
-        )
+        cls.partner = cls.env["res.partner"].create({"name": "Test partner", "vat": "ESF35999705"})
+        cls.product = cls.env["product.product"].create({"name": "Test product", "sii_exempt_cause": "E5"})
+        cls.account_expense = cls.env.ref("account.%s_account_common_600" % cls.company.id)
         cls.invoice = cls._create_invoice("out_invoice")
         cls.company.write(
             {
@@ -177,9 +163,7 @@ class TestL10nEsAeatSii(TestL10nEsAeatSiiBase):
                 "email": "somebody@somewhere.com",
             }
         )
-        cls.tax_agencies = cls.env["aeat.tax.agency"].search(
-            [("sii_wsdl_out", "!=", False)]
-        )
+        cls.tax_agencies = cls.env["aeat.tax.agency"].search([("sii_wsdl_out", "!=", False)])
 
     def test_invoice_search_sii_enabled(self):
         domain_base = [("id", "=", self.invoice.id)]
@@ -221,9 +205,7 @@ class TestL10nEsAeatSii(TestL10nEsAeatSiiBase):
         )
         fp_extra = self.browse_ref(f"account.{self.company.id}_fp_extra")
         fp_extra.sii_partner_identification_type = "3"
-        invoice = self.invoice.copy(
-            {"partner_id": eu_customer.id, "fiscal_position_id": fp_extra.id}
-        )
+        invoice = self.invoice.copy({"partner_id": eu_customer.id, "fiscal_position_id": fp_extra.id})
         invoice.action_post()
         sii_info = invoice._get_aeat_invoice_dict()
         self.assertEqual(
@@ -345,9 +327,7 @@ class TestL10nEsAeatSii(TestL10nEsAeatSiiBase):
             ),
         ]
         for inv_type, lines, extra_vals, is_dua in mapping:
-            invoice = self._create_and_test_invoice_sii_dict(
-                inv_type, lines, extra_vals
-            )
+            invoice = self._create_and_test_invoice_sii_dict(inv_type, lines, extra_vals)
             if is_dua:
                 self.assertTrue(invoice.sii_dua_invoice)
             else:
@@ -389,9 +369,7 @@ class TestL10nEsAeatSii(TestL10nEsAeatSiiBase):
         )
 
     def test_vat_number_check(self):
-        self.partner.write(
-            {"vat": "F35999705", "country_id": self.env.ref("base.es").id}
-        )
+        self.partner.write({"vat": "F35999705", "country_id": self.env.ref("base.es").id})
         # Repeat get invoice data tests to ensure no change is due to the VAT number
         # expressed without country, but setting the country
         self.test_get_invoice_data()
@@ -478,11 +456,7 @@ class TestL10nEsAeatSii(TestL10nEsAeatSiiBase):
         }
         with self.assertRaises(exceptions.UserError):
             self._invoice_purchase_create("2018-02-01", extra_vals=extra_data_wo_ref)
-        self.assertTrue(
-            self._invoice_purchase_create(
-                "2018-02-01", extra_vals=dict(extra_data_wo_ref, ref="TEST REF")
-            )
-        )
+        self.assertTrue(self._invoice_purchase_create("2018-02-01", extra_vals=dict(extra_data_wo_ref, ref="TEST REF")))
 
     def test_unlink_draft_invoice_when_not_sent_to_sii(self):
         draft_invoice = self.invoice.copy({})

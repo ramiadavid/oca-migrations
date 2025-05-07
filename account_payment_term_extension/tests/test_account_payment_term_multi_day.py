@@ -157,12 +157,8 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
             }
         )
 
-    def _create_invoice(
-        self, payment_term, date, quantity, price_unit, move_type="in_invoice"
-    ):
-        invoice_form = Form(
-            self.invoice_model.with_context(default_move_type=move_type)
-        )
+    def _create_invoice(self, payment_term, date, quantity, price_unit, move_type="in_invoice"):
+        invoice_form = Form(self.invoice_model.with_context(default_move_type=move_type))
         invoice_form.partner_id = self.partner
         invoice_form.invoice_payment_term_id = payment_term
         invoice_form.invoice_date = date
@@ -195,9 +191,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
         self.assertEqual(invoice.line_ids[3].credit, 600.0)
 
     def test_out_invoice_amount_untaxed_payment_term(self):
-        invoice = self._create_invoice(
-            self.amount_untaxed_lines, "2020-01-01", 10, 100, move_type="out_invoice"
-        )
+        invoice = self._create_invoice(self.amount_untaxed_lines, "2020-01-01", 10, 100, move_type="out_invoice")
         with Form(invoice) as invoice_form:
             with invoice_form.invoice_line_ids.edit(0) as line_form:
                 line_form.tax_ids.add(self.tax)
@@ -218,9 +212,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                 )
 
     def test_invoice_multi_payment_term_day_1(self):
-        invoice = self._create_invoice(
-            self.payment_term_0_days_5_10, "2020-01-01", 10, 100
-        )
+        invoice = self._create_invoice(self.payment_term_0_days_5_10, "2020-01-01", 10, 100)
         invoice.action_post()
         for line in invoice.line_ids:
             if line.date_maturity:
@@ -231,9 +223,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                 )
 
     def test_invoice_multi_payment_term_day_6(self):
-        invoice = self._create_invoice(
-            self.payment_term_0_days_5_10, "2020-01-06", 10, 100
-        )
+        invoice = self._create_invoice(self.payment_term_0_days_5_10, "2020-01-06", 10, 100)
         invoice.action_post()
         for line in invoice.line_ids:
             if line.date_maturity:
@@ -244,9 +234,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
                 )
 
     def test_invoice_multi_payment_term_sequential_day_1(self):
-        invoice = self._create_invoice(
-            self.payment_term_0_days_15_20_then_5_10, "2020-01-01", 10, 100
-        )
+        invoice = self._create_invoice(self.payment_term_0_days_15_20_then_5_10, "2020-01-01", 10, 100)
         invoice.action_post()
         dates_maturity = []
         for line in invoice.line_ids:
@@ -256,20 +244,16 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
         self.assertEqual(
             fields.Date.to_string(dates_maturity[0]),
             "2020-01-15",
-            "Incorrect due date for invoice with payment days on "
-            "15 and 20 then 5 and 10 (1)",
+            "Incorrect due date for invoice with payment days on " "15 and 20 then 5 and 10 (1)",
         )
         self.assertEqual(
             fields.Date.to_string(dates_maturity[1]),
             "2020-02-05",
-            "Incorrect due date for invoice with payment days on "
-            "15 and 20 then 5 and 10 (1)",
+            "Incorrect due date for invoice with payment days on " "15 and 20 then 5 and 10 (1)",
         )
 
     def test_invoice_multi_payment_term_sequential_day_18(self):
-        invoice = self._create_invoice(
-            self.payment_term_0_days_15_20_then_5_10, "2020-01-18", 10, 100
-        )
+        invoice = self._create_invoice(self.payment_term_0_days_15_20_then_5_10, "2020-01-18", 10, 100)
         invoice.action_post()
         dates_maturity = []
         for line in invoice.line_ids:
@@ -279,20 +263,16 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
         self.assertEqual(
             fields.Date.to_string(dates_maturity[0]),
             "2020-01-20",
-            "Incorrect due date for invoice with payment days on "
-            "15 and 20 then 5 and 10 (2)",
+            "Incorrect due date for invoice with payment days on " "15 and 20 then 5 and 10 (2)",
         )
         self.assertEqual(
             fields.Date.to_string(dates_maturity[1]),
             "2020-02-05",
-            "Incorrect due date for invoice with payment days on "
-            "15 and 20 then 5 and 10 (2)",
+            "Incorrect due date for invoice with payment days on " "15 and 20 then 5 and 10 (2)",
         )
 
     def test_invoice_multi_payment_term_sequential_day_25(self):
-        invoice = self._create_invoice(
-            self.payment_term_0_days_15_20_then_5_10, "2020-01-25", 10, 100
-        )
+        invoice = self._create_invoice(self.payment_term_0_days_15_20_then_5_10, "2020-01-25", 10, 100)
         invoice.action_post()
         dates_maturity = []
         for line in invoice.line_ids:
@@ -302,20 +282,16 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
         self.assertEqual(
             fields.Date.to_string(dates_maturity[0]),
             "2020-02-15",
-            "Incorrect due date for invoice with payment days on "
-            "15 and 20 then 5 and 10 (3)",
+            "Incorrect due date for invoice with payment days on " "15 and 20 then 5 and 10 (3)",
         )
         self.assertEqual(
             fields.Date.to_string(dates_maturity[1]),
             "2020-03-05",
-            "Incorrect due date for invoice with payment days on "
-            "15 and 20 then 5 and 10 (3)",
+            "Incorrect due date for invoice with payment days on " "15 and 20 then 5 and 10 (3)",
         )
 
     def test_invoice_multi_payment_term_round(self):
-        invoice = self._create_invoice(
-            self.payment_term_round, "2020-01-25", 10, 100.01
-        )
+        invoice = self._create_invoice(self.payment_term_round, "2020-01-25", 10, 100.01)
         invoice.action_post()
         amounts = []
         for line in invoice.line_ids:
@@ -324,8 +300,7 @@ class TestAccountPaymentTermMultiDay(common.TransactionCase):
         self.assertEqual(
             amounts[0],
             500,
-            "Incorrect round for invoice with payment days on "
-            "15 and 20 then 5 and 10 (round)",
+            "Incorrect round for invoice with payment days on " "15 and 20 then 5 and 10 (round)",
         )
 
     def test_decode_payment_days(self):

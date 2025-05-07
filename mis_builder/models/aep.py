@@ -5,7 +5,7 @@ import logging
 import re
 from collections import defaultdict
 
-from odoo import _, fields
+from odoo import fields
 from odoo.exceptions import UserError
 from odoo.models import expression
 from odoo.tools.float_utils import float_is_zero
@@ -52,9 +52,7 @@ class Accumulator:
     def __init__(self, custom_field_names=()):
         self.debit = AccountingNone
         self.credit = AccountingNone
-        self.custom_fields = {
-            custom_field: AccountingNone for custom_field in custom_field_names
-        }
+        self.custom_fields = {custom_field: AccountingNone for custom_field in custom_field_names}
 
     def has_data(self):
         return (
@@ -70,7 +68,7 @@ class Accumulator:
     def add_custom_field(self, field, value):
         self.custom_fields[field] += value
 
-    def __iadd__(self, other):
+    def __idadd__(self, other):
         self.debit += other.debit
         self.credit += other.credit
         for field in self.custom_fields:
@@ -150,10 +148,7 @@ class AccountingExpressionProcessor:
             self.currency = companies.mapped("currency_id")
             if len(self.currency) > 1:
                 raise UserError(
-                    _(
-                        "If currency_id is not provided, "
-                        "all companies must have the same currency."
-                    )
+                    self.env._("If currency_id is not provided, " "all companies must have the same currency.")
                 )
         else:
             self.currency = currency
@@ -252,23 +247,19 @@ class AccountingExpressionProcessor:
             if field == "fld":
                 if mode != self.MODE_VARIATION:
                     raise UserError(
-                        _(
-                            "`fld` can only be used with mode `p` (variation) "
-                            "in expression %s",
+                        self.env._(
+                            "`fld` can only be used with mode `p` (variation) " "in expression %s",
                             expr,
                         )
                     )
                 if not fld_name:
-                    raise UserError(
-                        _("`fld` must have a field name in exression %s", expr)
-                    )
+                    raise UserError(self.env._("`fld` must have a field name in exression %s", expr))
                 self._custom_fields.add(fld_name)
             else:
                 if fld_name:
                     raise UserError(
-                        _(
-                            "`%(field)s` cannot have a field name "
-                            "in expression %(expr)s",
+                        self.env._(
+                            "`%(field)s` cannot have a field name " "in expression %(expr)s",
                             field=field,
                             expr=expr,
                         )
@@ -279,9 +270,7 @@ class AccountingExpressionProcessor:
         for key, acc_domains in self._map_account_ids.items():
             all_account_ids = set()
             for acc_domain in acc_domains:
-                acc_domain_with_company = expression.AND(
-                    [acc_domain, [("company_id", "in", self.companies.ids)]]
-                )
+                acc_domain_with_company = expression.AND([acc_domain, [("company_id", "in", self.companies.ids)]])
                 account_ids = self._account_model.search(acc_domain_with_company).ids
                 self._account_ids_by_acc_domain[acc_domain].update(account_ids)
                 all_account_ids.update(account_ids)
@@ -333,9 +322,7 @@ class AccountingExpressionProcessor:
                 aml_domain.append((fld_name, "!=", False))
             aml_domains.append(expression.normalize_domain(aml_domain))
             if mode not in date_domain_by_mode:
-                date_domain_by_mode[mode] = self.get_aml_domain_for_dates(
-                    date_from, date_to, mode
-                )
+                date_domain_by_mode[mode] = self.get_aml_domain_for_dates(date_from, date_to, mode)
         assert aml_domains
         # TODO we could do this for more precision:
         #      AND(OR(aml_domains[mode]), date_domain[mode]) for each mode
@@ -351,9 +338,7 @@ class AccountingExpressionProcessor:
             date_from_date = fields.Date.from_string(date_from)
             # TODO this takes the fy from the first company
             # make that user controllable (nice to have)?
-            fy_date_from = self.companies[0].compute_fiscalyear_dates(date_from_date)[
-                "date_from"
-            ]
+            fy_date_from = self.companies[0].compute_fiscalyear_dates(date_from_date)["date_from"]
             domain = [
                 "|",
                 ("date", ">=", fields.Date.to_string(fy_date_from)),
@@ -367,9 +352,7 @@ class AccountingExpressionProcessor:
             date_from_date = fields.Date.from_string(date_from)
             # TODO this takes the fy from the first company
             # make that user controllable (nice to have)?
-            fy_date_from = self.companies[0].compute_fiscalyear_dates(date_from_date)[
-                "date_from"
-            ]
+            fy_date_from = self.companies[0].compute_fiscalyear_dates(date_from_date)["date_from"]
             domain = [
                 ("date", "<", fields.Date.to_string(fy_date_from)),
                 ("account_id.include_initial_balance", "=", False),
@@ -421,9 +404,7 @@ class AccountingExpressionProcessor:
                 ends.append((domain, mode))
                 continue
             if mode not in domain_by_mode:
-                domain_by_mode[mode] = self.get_aml_domain_for_dates(
-                    date_from, date_to, mode
-                )
+                domain_by_mode[mode] = self.get_aml_domain_for_dates(date_from, date_to, mode)
             domain = list(domain) + domain_by_mode[mode]
             domain.append(("account_id", "in", self._map_account_ids[key]))
             if additional_move_line_filter:
@@ -445,7 +426,7 @@ class AccountingExpressionProcessor:
                 )
             except ValueError as e:
                 raise UserError(
-                    _(
+                    self.env._(
                         'Error while querying move line source "%(model_name)s". '
                         "This is likely due to a filter or expression referencing "
                         "a field that does not exist in the model.\n\n"
@@ -471,9 +452,7 @@ class AccountingExpressionProcessor:
                 account_data = self._data[key][acc["account_id"][0]]
                 account_data.add_debit_credit(debit * rate, credit * rate)
                 for field_name in self._custom_fields:
-                    account_data.add_custom_field(
-                        field_name, acc[field_name] or AccountingNone
-                    )
+                    account_data.add_custom_field(field_name, acc[field_name] or AccountingNone)
         # compute ending balances by summing initial and variation
         for key in ends:
             domain, mode = key

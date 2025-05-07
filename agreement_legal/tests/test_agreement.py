@@ -12,9 +12,7 @@ class TestAgreement(TransactionCase):
     def setUp(self):
         super().setUp()
         self.test_customer = self.env["res.partner"].create({"name": "TestCustomer"})
-        self.agreement_type = self.env["agreement.type"].create(
-            {"name": "Test Agreement Type", "domain": "sale"}
-        )
+        self.agreement_type = self.env["agreement.type"].create({"name": "Test Agreement Type", "domain": "sale"})
         self.test_agreement = self.env["agreement"].create(
             {
                 "name": "TestAgreement",
@@ -30,9 +28,7 @@ class TestAgreement(TransactionCase):
     # TEST 01: Set 'Field' for dynamic placeholder, test onchange method
     def test_onchange_copyvalue(self):
         agreement_01 = self.test_agreement
-        field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement"), ("name", "=", "active")]
-        )
+        field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement"), ("name", "=", "active")])
         agreement_01.field_id = field_01.id
         agreement_01.onchange_copyvalue()
         self.assertEqual(agreement_01.copyvalue, "{{object.active or ''}}")
@@ -41,32 +37,22 @@ class TestAgreement(TransactionCase):
     # test onchange method
     def test_onchange_copyvalue2(self):
         agreement_01 = self.test_agreement
-        field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement"), ("name", "=", "agreement_type_id")]
-        )
-        sub_field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement.type"), ("name", "=", "active")]
-        )
+        field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement"), ("name", "=", "agreement_type_id")])
+        sub_field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement.type"), ("name", "=", "active")])
         agreement_01.field_id = field_01.id
         agreement_01.onchange_copyvalue()
         self.assertEqual(agreement_01.sub_object_id.model, "agreement.type")
         agreement_01.sub_model_object_field_id = sub_field_01.id
         agreement_01.onchange_copyvalue()
-        self.assertEqual(
-            agreement_01.copyvalue, "{{object.agreement_type_id.active or ''}}"
-        )
+        self.assertEqual(agreement_01.copyvalue, "{{object.agreement_type_id.active or ''}}")
 
     # TEST 03: Create New Version
     def test_create_new_version(self):
         agreement_01 = self.test_agreement
         agreement_01.create_new_version()
-        old_agreement = self.env["agreement"].search(
-            [("code", "=", agreement_01.code + "-V1"), ("active", "=", False)]
-        )
+        old_agreement = self.env["agreement"].search([("code", "=", agreement_01.code + "-V1"), ("active", "=", False)])
         self.assertEqual(len(old_agreement), 1)
-        new_agreement = self.env["agreement"].search(
-            [("name", "=", "TestAgreement"), ("version", "=", 2)]
-        )
+        new_agreement = self.env["agreement"].search([("name", "=", "TestAgreement"), ("version", "=", 2)])
         self.assertEqual(len(new_agreement), 1)
 
     # TEST 04: Create New Agreement
@@ -99,9 +85,7 @@ class TestAgreement(TransactionCase):
         agreement_01 = self.test_agreement
         self.assertEqual(
             agreement_01._read_group_stage_ids(self.env["agreement.stage"], [], "id"),
-            self.env["agreement.stage"].search(
-                [("stage_type", "=", "agreement")], order="id"
-            ),
+            self.env["agreement.stage"].search([("stage_type", "=", "agreement")], order="id"),
         )
 
     # Test fields_view_get
@@ -112,9 +96,7 @@ class TestAgreement(TransactionCase):
         )
         doc = etree.XML(res["arch"])
         field = doc.xpath("//field[@name='partner_contact_id']")
-        self.assertEqual(
-            field[0].get("modifiers", ""), '{"readonly": [["readonly", "=", true]]}'
-        )
+        self.assertEqual(field[0].get("modifiers", ""), '{"readonly": [["readonly", "=", true]]}')
 
     def test_action_create_new_version(self):
         self.test_agreement.create_new_version()
@@ -122,9 +104,7 @@ class TestAgreement(TransactionCase):
         self.assertEqual(len(self.test_agreement.previous_version_agreements_ids), 1)
 
     def test_cron(self):
-        self.agreement_type.write(
-            {"review_user_id": self.env.user.id, "review_days": 0}
-        )
+        self.agreement_type.write({"review_user_id": self.env.user.id, "review_days": 0})
         self.test_agreement.write({"agreement_type_id": self.agreement_type.id})
         self.assertFalse(
             self.env["mail.activity"].search_count(
@@ -156,7 +136,5 @@ class TestAgreement(TransactionCase):
 
     def test_partner_action(self):
         action = self.test_agreement.partner_id.action_open_agreement()
-        self.assertIn(
-            self.test_agreement, self.env[action["res_model"]].search(action["domain"])
-        )
+        self.assertIn(self.test_agreement, self.env[action["res_model"]].search(action["domain"]))
         self.assertEqual(1, self.test_agreement.partner_id.agreements_count)

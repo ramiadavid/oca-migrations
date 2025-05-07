@@ -7,7 +7,7 @@ from datetime import datetime
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 NUMBER_OF_UNUSED_MONTHS_BEFORE_EXPIRY = 36
@@ -35,8 +35,7 @@ class AccountBankingMandate(models.Model):
         [("first", "First"), ("recurring", "Recurring"), ("final", "Final")],
         string="Sequence Type for Next Debit",
         tracking=70,
-        help="This field is only used for Recurrent mandates, not for "
-        "One-Off mandates.",
+        help="This field is only used for Recurrent mandates, not for " "One-Off mandates.",
         default="first",
     )
     scheme = fields.Selection(
@@ -53,7 +52,7 @@ class AccountBankingMandate(models.Model):
         for mandate in self:
             if mandate.type == "recurrent" and not mandate.recurrent_sequence_type:
                 raise UserError(
-                    _("The recurrent mandate '%s' must have a sequence type.")
+                    self.env._("The recurrent mandate '%s' must have a sequence type.")
                     % mandate.unique_mandate_reference
                 )
 
@@ -79,8 +78,8 @@ class AccountBankingMandate(models.Model):
         ):
             self.recurrent_sequence_type = "first"
             res["warning"] = {
-                "title": _("Mandate update"),
-                "message": _(
+                "title": self.env._("Mandate update"),
+                "message": self.env._(
                     "As you changed the bank account attached "
                     "to this mandate, the 'Sequence Type' has "
                     "been set back to 'First'."
@@ -90,9 +89,7 @@ class AccountBankingMandate(models.Model):
 
     def _sdd_mandate_set_state_to_expired(self):
         logger.info("Searching for SDD Mandates that must be set to Expired")
-        expire_limit_date = datetime.today() + relativedelta(
-            months=-NUMBER_OF_UNUSED_MONTHS_BEFORE_EXPIRY
-        )
+        expire_limit_date = datetime.today() + relativedelta(months=-NUMBER_OF_UNUSED_MONTHS_BEFORE_EXPIRY)
         expired_mandates = self.search(
             [
                 "|",
@@ -106,16 +103,10 @@ class AccountBankingMandate(models.Model):
             expired_mandates.write({"state": "expired"})
             for mandate in expired_mandates:
                 mandate.message_post(
-                    body=_(
-                        "Mandate automatically set to"
-                        " expired after %d months without use."
-                    )
+                    body=self.env._("Mandate automatically set to" " expired after %d months without use.")
                     % NUMBER_OF_UNUSED_MONTHS_BEFORE_EXPIRY
                 )
-            logger.info(
-                "%d SDD Mandate set to expired: IDs %s"
-                % (len(expired_mandates), expired_mandates.ids)
-            )
+            logger.info("%d SDD Mandate set to expired: IDs %s" % (len(expired_mandates), expired_mandates.ids))
         else:
             logger.info("0 SDD Mandates had to be set to Expired")
 

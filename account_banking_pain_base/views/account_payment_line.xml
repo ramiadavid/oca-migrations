@@ -7,10 +7,7 @@
     <record id="account_payment_line_form" model="ir.ui.view">
         <field name="name">pain.base.account.payment.line</field>
         <field name="model">account.payment.line</field>
-        <field
-            name="inherit_id"
-            ref="account_payment_order.account_payment_line_form"
-        />
+        <field name="inherit_id" ref="account_payment_order.account_payment_line_form" />
         <field name="arch" type="xml">
             <field name="communication_type" position="before">
                 <field name="priority" />
@@ -23,10 +20,7 @@
     <record id="account_payment_line_tree" model="ir.ui.view">
         <field name="name">pain.base.account.payment.tree</field>
         <field name="model">account.payment.line</field>
-        <field
-            name="inherit_id"
-            ref="account_payment_order.account_payment_line_tree"
-        />
+        <field name="inherit_id" ref="account_payment_order.account_payment_line_tree" />
         <field name="arch" type="xml">
             <field name="communication" position="after">
                 <field name="priority" optional="hide" />

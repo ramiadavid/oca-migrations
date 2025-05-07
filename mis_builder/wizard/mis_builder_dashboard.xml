@@ -23,10 +23,7 @@
             </form>
         </field>
     </record>
-    <record
-        model="ir.actions.act_window"
-        id="mis_report_instance_add_to_dashboard_action"
-    >
+    <record model="ir.actions.act_window" id="mis_report_instance_add_to_dashboard_action">
         <field name="name">Add to dashboard</field>
         <field name="res_model">add.mis.report.instance.dashboard.wizard</field>
         <field name="view_mode">form</field>

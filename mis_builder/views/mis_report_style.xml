@@ -32,11 +32,7 @@
                         <field name="color_inherit" />
                         <field name="color" invisible="color_inherit" widget="color" />
                         <field name="background_color_inherit" />
-                        <field
-                            name="background_color"
-                            invisible="background_color_inherit"
-                            widget="color"
-                        />
+                        <field name="background_color" invisible="background_color_inherit" widget="color" />
                     </group>
                     <group string="Font" col="4">
                         <field name="font_style_inherit" />

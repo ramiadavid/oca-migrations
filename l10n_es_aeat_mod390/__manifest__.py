@@ -6,7 +6,7 @@
     "version": "18.0.1.0.0",
     "category": "Localisation/Accounting",
     "author": "Tecnativa, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/l10n-spain",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "depends": ["l10n_es_aeat_mod303"],
     "data": [

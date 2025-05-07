@@ -2,15 +2,13 @@
 # Copyright 2016,2024 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 
 
 class L10nEsAeatReportTaxMapping(models.AbstractModel):
     _name = "l10n.es.aeat.report.tax.mapping"
     _inherit = "l10n.es.aeat.report"
-    _description = (
-        "Inheritable abstract model to add taxes by code mapping in any AEAT report"
-    )
+    _description = "Inheritable abstract model to add taxes by code mapping in any AEAT report"
 
     tax_line_ids = fields.One2many(
         comodel_name="l10n.es.aeat.tax.line",
@@ -190,7 +188,7 @@ class L10nEsAeatReportTaxMapping(models.AbstractModel):
     @api.model
     def _prepare_counterpart_move_line(self, account, debit, credit):
         vals = {
-            "name": _("Regularization"),
+            "name": self.env._("Regularization"),
             "account_id": account.id,
             "partner_id": self.env.ref("l10n_es_aeat.res_partner_aeat").id,
         }
@@ -206,26 +204,18 @@ class L10nEsAeatReportTaxMapping(models.AbstractModel):
     def _prepare_regularization_move_lines(self):
         """Prepare the list of dictionaries for the regularization move lines."""
         self.ensure_one()
-        lines = self._process_tax_line_regularization(
-            self.tax_line_ids.filtered("to_regularize")
-        )
+        lines = self._process_tax_line_regularization(self.tax_line_ids.filtered("to_regularize"))
         lines += self._prepare_regularization_extra_move_lines()
         # Write counterpart with the remaining
         debit = sum(x["debit"] for x in lines)
         credit = sum(x["credit"] for x in lines)
-        lines.append(
-            self._prepare_counterpart_move_line(
-                self.counterpart_account_id, debit, credit
-            )
-        )
+        lines.append(self._prepare_counterpart_move_line(self.counterpart_account_id, debit, credit))
         return lines
 
     def create_regularization_move(self):
         self.ensure_one()
         if not self.counterpart_account_id or not self.journal_id:
-            raise exceptions.UserError(
-                _("You must fill both journal and counterpart account.")
-            )
+            raise exceptions.UserError(self.env._("You must fill both journal and counterpart account."))
         move_vals = self._prepare_move_vals()
         line_vals_list = self._prepare_regularization_move_lines()
         move_vals["line_ids"] = [(0, 0, x) for x in line_vals_list]

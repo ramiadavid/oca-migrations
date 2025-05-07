@@ -14,23 +14,15 @@ class TestRendering(common.TransactionCase):
         self.style_obj = self.env["mis.report.style"]
         self.kpi_obj = self.env["mis.report.kpi"]
         self.style = self.style_obj.create(dict(name="teststyle"))
-        self.lang = (
-            self.env["res.lang"]
-            .with_context(active_test=False)
-            .search([("code", "=", "en_US")])[0]
-        )
+        self.lang = self.env["res.lang"].with_context(active_test=False).search([("code", "=", "en_US")])[0]
 
     def _render(self, value, var_type=TYPE_NUM):
         style_props = self.style_obj.merge([self.style])
         return self.style_obj.render(self.lang, style_props, var_type, value)
 
-    def _compare_and_render(
-        self, value, base_value, var_type=TYPE_NUM, compare_method=CMP_PCT
-    ):
+    def _compare_and_render(self, value, base_value, var_type=TYPE_NUM, compare_method=CMP_PCT):
         style_props = self.style_obj.merge([self.style])
-        r = self.style_obj.compare_and_render(
-            self.lang, style_props, var_type, compare_method, value, base_value
-        )[:2]
+        r = self.style_obj.compare_and_render(self.lang, style_props, var_type, compare_method, value, base_value)[:2]
         if r[0]:
             return (round(r[0], 8), r[1])
         else:
@@ -113,31 +105,19 @@ class TestRendering(common.TransactionCase):
         self.assertEqual((-1.0, "\u2011100.0\xa0%"), self._compare_and_render(0, 50))
         self.assertEqual((-2.0, "\u2011200.0\xa0%"), self._compare_and_render(-50, 50))
         self.assertEqual((-0.5, "\u201150.0\xa0%"), self._compare_and_render(-75, -50))
-        self.assertEqual(
-            (AccountingNone, ""), self._compare_and_render(50, AccountingNone)
-        )
+        self.assertEqual((AccountingNone, ""), self._compare_and_render(50, AccountingNone))
         self.assertEqual((AccountingNone, ""), self._compare_and_render(50, None))
         self.assertEqual((AccountingNone, ""), self._compare_and_render(50, 50))
         self.assertEqual((0.002, "+0.2\xa0%"), self._compare_and_render(50.1, 50))
         self.assertEqual((AccountingNone, ""), self._compare_and_render(50.01, 50))
-        self.assertEqual(
-            (-1.0, "\u2011100.0\xa0%"), self._compare_and_render(AccountingNone, 50)
-        )
+        self.assertEqual((-1.0, "\u2011100.0\xa0%"), self._compare_and_render(AccountingNone, 50))
         self.assertEqual((-1.0, "\u2011100.0\xa0%"), self._compare_and_render(None, 50))
-        self.assertEqual(
-            (AccountingNone, ""), self._compare_and_render(DataError("#ERR", "."), 1)
-        )
-        self.assertEqual(
-            (AccountingNone, ""), self._compare_and_render(1, DataError("#ERR", "."))
-        )
+        self.assertEqual((AccountingNone, ""), self._compare_and_render(DataError("#ERR", "."), 1))
+        self.assertEqual((AccountingNone, ""), self._compare_and_render(1, DataError("#ERR", ".")))
 
     def test_compare_num_diff(self):
-        self.assertEqual(
-            (25, "+25"), self._compare_and_render(75, 50, TYPE_NUM, CMP_DIFF)
-        )
-        self.assertEqual(
-            (-25, "\u201125"), self._compare_and_render(25, 50, TYPE_NUM, CMP_DIFF)
-        )
+        self.assertEqual((25, "+25"), self._compare_and_render(75, 50, TYPE_NUM, CMP_DIFF))
+        self.assertEqual((-25, "\u201125"), self._compare_and_render(25, 50, TYPE_NUM, CMP_DIFF))
         self.style.suffix_inherit = False
         self.style.suffix = "€"
         self.assertEqual(
@@ -149,39 +129,27 @@ class TestRendering(common.TransactionCase):
             (50.0, "+50"),
             self._compare_and_render(50, AccountingNone, TYPE_NUM, CMP_DIFF),
         )
-        self.assertEqual(
-            (50.0, "+50"), self._compare_and_render(50, None, TYPE_NUM, CMP_DIFF)
-        )
+        self.assertEqual((50.0, "+50"), self._compare_and_render(50, None, TYPE_NUM, CMP_DIFF))
         self.assertEqual(
             (-50.0, "\u201150"),
             self._compare_and_render(AccountingNone, 50, TYPE_NUM, CMP_DIFF),
         )
-        self.assertEqual(
-            (-50.0, "\u201150"), self._compare_and_render(None, 50, TYPE_NUM, CMP_DIFF)
-        )
+        self.assertEqual((-50.0, "\u201150"), self._compare_and_render(None, 50, TYPE_NUM, CMP_DIFF))
         self.style.dp_inherit = False
         self.style.dp = 2
-        self.assertEqual(
-            (0.1, "+0.10"), self._compare_and_render(1.1, 1.0, TYPE_NUM, CMP_DIFF)
-        )
+        self.assertEqual((0.1, "+0.10"), self._compare_and_render(1.1, 1.0, TYPE_NUM, CMP_DIFF))
         self.assertEqual(
             (AccountingNone, ""),
             self._compare_and_render(1.001, 1.0, TYPE_NUM, CMP_DIFF),
         )
 
     def test_compare_pct(self):
-        self.assertEqual(
-            (0.25, "+25\xa0pp"), self._compare_and_render(0.75, 0.50, TYPE_PCT)
-        )
-        self.assertEqual(
-            (AccountingNone, ""), self._compare_and_render(0.751, 0.750, TYPE_PCT)
-        )
+        self.assertEqual((0.25, "+25\xa0pp"), self._compare_and_render(0.75, 0.50, TYPE_PCT))
+        self.assertEqual((AccountingNone, ""), self._compare_and_render(0.751, 0.750, TYPE_PCT))
 
     def test_compare_pct_result_type(self):
         style_props = self.style_obj.merge([self.style])
-        result = self.style_obj.compare_and_render(
-            self.lang, style_props, TYPE_PCT, CMP_DIFF, 0.75, 0.50
-        )
+        result = self.style_obj.compare_and_render(self.lang, style_props, TYPE_PCT, CMP_DIFF, 0.75, 0.50)
         self.assertEqual(result[3], TYPE_NUM)
 
     def test_merge(self):

@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates>
-    <t
-        t-name="agreement.ListView.Buttons"
-        t-inherit="web.ListView.Buttons"
-        t-inherit-mode="primary"
-        owl="1"
-    >
+    <t t-name="agreement.ListView.Buttons" t-inherit="web.ListView.Buttons" t-inherit-mode="primary" owl="1">
         <xpath expr="//div[hasclass('o_list_buttons')]" position="attributes">
             <attribute name="t-if">canCreateTemplate</attribute>
         </xpath>
@@ -14,27 +9,16 @@
         </xpath>
     </t>
     <t t-inherit="web.FormView" t-inherit-mode="extension">
-        <xpath
-            expr="//*[@class='btn btn-outline-primary o_form_button_create']"
-            position="after"
-        >
+        <xpath expr="//*[@class='btn btn-outline-primary o_form_button_create']" position="after">
             <t t-if="props.resModel === 'agreement'">
                 <t t-call="agreement.TemplateButton" />
             </t>
         </xpath>
-        <xpath
-            expr="//*[@class='btn btn-outline-primary o_form_button_create']"
-            position="attributes"
-        >
+        <xpath expr="//*[@class='btn btn-outline-primary o_form_button_create']" position="attributes">
             <attribute name="t-if">canCreateTemplate</attribute>
         </xpath>
     </t>
-    <t
-        t-name="agreement.KanbanView.Buttons"
-        t-inherit="web.KanbanView.Buttons"
-        t-inherit-mode="primary"
-        owl="1"
-    >
+    <t t-name="agreement.KanbanView.Buttons" t-inherit="web.KanbanView.Buttons" t-inherit-mode="primary" owl="1">
         <xpath expr="//div[hasclass('o_cp_buttons')]" position="inside">
             <t t-call="agreement.TemplateButton" />
         </xpath>

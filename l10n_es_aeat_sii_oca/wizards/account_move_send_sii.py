@@ -23,9 +23,7 @@ class SendSIIWizard(models.TransientModel):
             lambda a: a.aeat_state == "not_sent" and not a.aeat_send_failed
         )
         with_errors = account_moves.filtered(lambda a: a.aeat_send_failed)
-        modified = account_moves.filtered(
-            lambda a: a.aeat_state in ["sent_modified", "cancelled_modified"]
-        )
+        modified = account_moves.filtered(lambda a: a.aeat_state in ["sent_modified", "cancelled_modified"])
         res.update(
             {
                 "sending_number": len(account_moves),

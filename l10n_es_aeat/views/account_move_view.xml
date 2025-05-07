@@ -8,11 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='ref'][last()]" position="after">
                 <field name="thirdparty_invoice" invisible="1" />
-                <field
-                    name="thirdparty_number"
-                    invisible="1"
-                    readonly="state != 'draft'"
-                />
+                <field name="thirdparty_number" invisible="1" readonly="state != 'draft'" />
             </xpath>
         </field>
     </record>

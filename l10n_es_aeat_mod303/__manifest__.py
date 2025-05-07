@@ -10,12 +10,8 @@
     "version": "18.0.1.0.0",
     "category": "Accounting",
     "development_status": "Mature",
-    "author": "Guadaltech,"
-    "AvanzOSC,"
-    "Tecnativa,"
-    "ForgeFlow,"
-    "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/l10n-spain",
+    "author": "Guadaltech," "AvanzOSC," "Tecnativa," "ForgeFlow," "Odoo Community Association (OCA)",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "depends": ["l10n_es", "l10n_es_aeat"],
     "data": [

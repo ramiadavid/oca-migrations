@@ -8,7 +8,7 @@
 import datetime
 import re
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import ormcache
 
@@ -128,14 +128,9 @@ class L10nEsVatBook(models.Model):
             fields=["vat_book_id"],
             groupby=["vat_book_id"],
         )
-        vat_book_exception_dict = {
-            vbe["vat_book_id"][0]: vbe["vat_book_id_count"]
-            for vbe in vat_book_exception_group
-        }
+        vat_book_exception_dict = {vbe["vat_book_id"][0]: vbe["vat_book_id_count"] for vbe in vat_book_exception_group}
         for vat_book_report in self:
-            vat_book_report.error_count = vat_book_exception_dict.get(
-                vat_book_report.id, 0
-            )
+            vat_book_report.error_count = vat_book_exception_dict.get(vat_book_report.id, 0)
 
     @api.model
     def _prepare_vat_book_tax_summary(self, tax_lines, book_type):
@@ -151,20 +146,14 @@ class L10nEsVatBook(models.Model):
                     "vat_book_id": self.id,
                     "special_tax_group": tax_line.special_tax_group,
                 }
-            tax_summary_data_recs[tax_line.tax_id][
-                "base_amount"
-            ] += tax_line.base_amount
+            tax_summary_data_recs[tax_line.tax_id]["base_amount"] += tax_line.base_amount
             tax_summary_data_recs[tax_line.tax_id]["tax_amount"] += tax_line.tax_amount
-            tax_summary_data_recs[tax_line.tax_id][
-                "total_amount"
-            ] += tax_line.total_amount
+            tax_summary_data_recs[tax_line.tax_id]["total_amount"] += tax_line.total_amount
         return tax_summary_data_recs
 
     @api.model
     def _create_vat_book_tax_summary(self, tax_summary_data_recs):
-        return self.env["l10n.es.vat.book.tax.summary"].create(
-            list(tax_summary_data_recs.values())
-        )
+        return self.env["l10n.es.vat.book.tax.summary"].create(list(tax_summary_data_recs.values()))
 
     def _prepare_vat_book_summary(self, tax_summary_recs, book_type):
         vals_list = []
@@ -196,9 +185,7 @@ class L10nEsVatBook(models.Model):
 
     @api.model
     def _create_vat_book_summary(self, tax_summary_recs, book_type):
-        return self.env["l10n.es.vat.book.summary"].create(
-            self._prepare_vat_book_summary(tax_summary_recs, book_type)
-        )
+        return self.env["l10n.es.vat.book.summary"].create(self._prepare_vat_book_summary(tax_summary_recs, book_type))
 
     def calculate(self):
         """
@@ -245,9 +232,7 @@ class L10nEsVatBook(models.Model):
         balance = move_line.credit - move_line.debit
         if vat_book_line["line_type"] in ["received", "rectification_received"]:
             balance = -balance
-        base_amount_untaxed = (
-            balance if move_line.tax_ids and not move_line.tax_line_id else 0.0
-        )
+        base_amount_untaxed = balance if move_line.tax_ids and not move_line.tax_line_id else 0.0
         fee_amount_untaxed = balance if move_line.tax_line_id else 0.0
         return {
             "tax_id": move_line.tax_line_id.id,
@@ -319,9 +304,7 @@ class L10nEsVatBook(models.Model):
         return domain
 
     def _get_account_move_lines(self, taxes=None, account=None):
-        return self.env["account.move.line"].search(
-            self._account_move_line_domain(taxes=taxes, account=account)
-        )
+        return self.env["account.move.line"].search(self._account_move_line_domain(taxes=taxes, account=account))
 
     @ormcache("self.id")
     def get_pos_partner_ids(self):
@@ -365,20 +348,16 @@ class L10nEsVatBook(models.Model):
     def _check_exceptions(self, line_vals):
         rp_model = self.env["res.partner"]
         if not line_vals["partner_id"]:
-            line_vals["exception_text"] = _("Without Partner")
+            line_vals["exception_text"] = self.env._("Without Partner")
         elif not line_vals["vat_number"]:  # Doesn't have VAT
             partner = rp_model.browse(line_vals["partner_id"])
             country_code, identifier_type, vat_number = partner._parse_aeat_vat_info()
-            req_vat_identif_types = [
-                s_opt[0]
-                for s_opt in rp_model._fields["aeat_identification_type"].selection
-            ] + [""]  # "" is the identification type for Spain
+            req_vat_identif_types = [s_opt[0] for s_opt in rp_model._fields["aeat_identification_type"].selection] + [
+                ""
+            ]  # "" is the identification type for Spain
             # Partner type requires VAT
-            if (
-                identifier_type in req_vat_identif_types
-                and line_vals["partner_id"] not in self.get_pos_partner_ids()
-            ):
-                line_vals["exception_text"] = _("Without VAT")
+            if identifier_type in req_vat_identif_types and line_vals["partner_id"] not in self.get_pos_partner_ids():
+                line_vals["exception_text"] = self.env._("Without VAT")
 
     def create_vat_book_lines(self, move_lines, line_type, taxes):
         VatBookLine = self.env["l10n.es.vat.book.line"]
@@ -433,7 +412,7 @@ class L10nEsVatBook(models.Model):
         """
         for rec in self:
             if not rec.company_id.partner_id.vat:
-                raise UserError(_("This company doesn't have VAT"))
+                raise UserError(self.env._("This company doesn't have VAT"))
             rec._clear_old_data()
             # Searches for all possible usable lines to report
             moves = rec._get_account_move_lines()
@@ -458,22 +437,17 @@ class L10nEsVatBook(models.Model):
                         lambda line: line.tax_ids & taxes
                         or (
                             line.tax_line_id in taxes
-                            and accounts.get(line.tax_line_id, line.account_id)
-                            == line.account_id
+                            and accounts.get(line.tax_line_id, line.account_id) == line.account_id
                         )
                     )
                 else:
-                    lines = moves.filtered(
-                        lambda line: (line.tax_ids | line.tax_line_id) & taxes
-                    )
+                    lines = moves.filtered(lambda line: (line.tax_ids | line.tax_line_id) & taxes)
                 if map_lines:
                     rec.create_vat_book_lines(lines, map_lines[:1].book_type, taxes)
             # Issued
             book_type = "issued"
             issued_tax_lines = rec.issued_line_ids.mapped("tax_line_ids")
-            rectification_issued_tax_lines = rec.rectification_issued_line_ids.mapped(
-                "tax_line_ids"
-            )
+            rectification_issued_tax_lines = rec.rectification_issued_line_ids.mapped("tax_line_ids")
             tax_summary_data_recs = rec._prepare_vat_book_tax_summary(
                 issued_tax_lines + rectification_issued_tax_lines, book_type
             )
@@ -484,9 +458,7 @@ class L10nEsVatBook(models.Model):
             book_type = "received"
             received_tax_lines = rec.received_line_ids.mapped("tax_line_ids")
             # flake8: noqa
-            rectification_received_tax_lines = (
-                rec.rectification_received_line_ids.mapped("tax_line_ids")
-            )
+            rectification_received_tax_lines = rec.rectification_received_line_ids.mapped("tax_line_ids")
             tax_summary_data_recs = rec._prepare_vat_book_tax_summary(
                 received_tax_lines + rectification_received_tax_lines, book_type
             )
@@ -515,9 +487,7 @@ class L10nEsVatBook(models.Model):
                     rec_inv.entry_number = i
                     i += 1
                 # Write state and date in the report
-            rec.write(
-                {"state": "calculated", "calculation_date": fields.Datetime.now()}
-            )
+            rec.write({"state": "calculated", "calculation_date": fields.Datetime.now()})
 
     def view_issued_invoices(self):
         self.ensure_one()
@@ -551,17 +521,13 @@ class L10nEsVatBook(models.Model):
         return datetime.datetime.strftime(fields.Date.to_date(date), date_format)
 
     def get_report_file_name(self):
-        return "{}{}C{}".format(
-            self.year, self.company_vat, re.sub(r"[\W_]+", "", self.company_id.name)
-        )
+        return "{}{}C{}".format(self.year, self.company_vat, re.sub(r"[\W_]+", "", self.company_id.name))
 
     def button_confirm(self):
         if any(l.exception_text for l in self.line_ids):
-            raise UserError(_("This book has warnings. Fix it before confirm"))
+            raise UserError(self.env._("This book has warnings. Fix it before confirm"))
         return super().button_confirm()
 
     def export_xlsx(self):
         self.ensure_one()
-        return self.env.ref("l10n_es_vat_book.l10n_es_vat_book_xlsx").report_action(
-            self
-        )
+        return self.env.ref("l10n_es_vat_book.l10n_es_vat_book_xlsx").report_action(self)

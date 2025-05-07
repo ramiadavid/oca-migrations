@@ -5,9 +5,7 @@ import logging
 
 from odoo import exceptions
 
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import (
-    TestL10nEsAeatModBase,
-)
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import TestL10nEsAeatModBase
 
 _logger = logging.getLogger("aeat.303")
 
@@ -117,21 +115,9 @@ class TestL10nEsAeatMod303Base(TestL10nEsAeatModBase):
             + (3 * 189)  # P_IVAx_IC_BI_2
         ),
         # Op. inv. del suj. pasivo (excepto adq. intracom.) - Base
-        "12": (
-            (3 * 110)
-            + (3 * 120)
-            + (3 * 130)
-            + (3 * 140)  # P_IVAx_SP_EX_1
-            + (3 * 150)
-        ),
+        "12": ((3 * 110) + (3 * 120) + (3 * 130) + (3 * 140) + (3 * 150)),  # P_IVAx_SP_EX_1
         # Op. inv. del suj. pasivo (excepto adq. intracom.) - Cuota
-        "13": (
-            (3 * 4.4)
-            + (3 * 12)
-            + (3 * 27.3)
-            + (3 * 5.6)  # P_IVAx_SP_EX_1
-            + (3 * 15)
-        ),
+        "13": ((3 * 4.4) + (3 * 12) + (3 * 27.3) + (3 * 5.6) + (3 * 15)),  # P_IVAx_SP_EX_1
         # Modificación bases y cuotas - Base (Compras y ventas)
         "14": (
             (-1)
@@ -260,22 +246,10 @@ class TestL10nEsAeatMod303Base(TestL10nEsAeatModBase):
         "35": (3 * 14.8) + (3 * 38) + (3 * 81.9),  # P_IVAx_IBI
         # En adq. intra. de bienes y servicios corrientes - Base
         "36": (
-            (3 * 100)
-            + (3 * 200)
-            + (3 * 300)
-            + (3 * 400)  # P_IVAx_IC_BC_1
-            + (3 * 500)
-            + (3 * 600)  # P_IVAx_SP_IN_2
+            (3 * 100) + (3 * 200) + (3 * 300) + (3 * 400) + (3 * 500) + (3 * 600)  # P_IVAx_IC_BC_1  # P_IVAx_SP_IN_2
         ),
         # En adq. intra. de bienes y servicios corrientes - Cuota
-        "37": (
-            (3 * 4)
-            + (3 * 20)
-            + (3 * 63)
-            + (3 * 16)  # P_IVAx_IC_BC_1
-            + (3 * 50)
-            + (3 * 126)  # P_IVAx_SP_IN_2
-        ),
+        "37": ((3 * 4) + (3 * 20) + (3 * 63) + (3 * 16) + (3 * 50) + (3 * 126)),  # P_IVAx_IC_BC_1  # P_IVAx_SP_IN_2
         # En adq. intra. de bienes de inversión - Base
         "38": (3 * 700) + (3 * 800) + (3 * 900),  # P_IVAx_IC_BI_1
         # En adq. intra. de bienes de inversión - Cuota
@@ -459,9 +433,7 @@ class TestL10nEsAeatMod303(TestL10nEsAeatMod303Base):
     def _check_tax_lines(self):
         for field, result in iter(self.taxes_result.items()):
             _logger.debug("Checking tax line: %s" % field)
-            lines = self.model303.tax_line_ids.filtered(
-                lambda x, field=field: x.field_number == int(field)
-            )
+            lines = self.model303.tax_line_ids.filtered(lambda x, field=field: x.field_number == int(field))
             self.assertAlmostEqual(
                 sum(lines.mapped("amount")),
                 result,
@@ -473,9 +445,7 @@ class TestL10nEsAeatMod303(TestL10nEsAeatMod303Base):
         _logger.debug("Calculate AEAT 303 1T 2024")
         self.model303.button_calculate()
         # Test default counterpart.
-        self.assertEqual(
-            self.model303.counterpart_account_id.id, self.accounts["475000"].id
-        )
+        self.assertEqual(self.model303.counterpart_account_id.id, self.accounts["475000"].id)
         self.assertEqual(self.model303.state, "calculated")
         # Fill manual fields
         self.model303.write(
@@ -493,12 +463,10 @@ class TestL10nEsAeatMod303(TestL10nEsAeatMod303Base):
         # Check result
         _logger.debug("Checking results")
         devengado = sum(
-            self.taxes_result.get(b, 0.0)
-            for b in ("3", "6", "9", "11", "13", "15", "18", "21", "24", "26")
+            self.taxes_result.get(b, 0.0) for b in ("3", "6", "9", "11", "13", "15", "18", "21", "24", "26")
         )
         deducir = sum(
-            self.taxes_result.get(b, 0.0)
-            for b in ("29", "31", "33", "35", "37", "39", "41", "42", "43", "44")
+            self.taxes_result.get(b, 0.0) for b in ("29", "31", "33", "35", "37", "39", "41", "42", "43", "44")
         )
         subtotal = round(devengado - deducir, 3)
         estado = round(subtotal * 0.95, 3)
@@ -510,16 +478,12 @@ class TestL10nEsAeatMod303(TestL10nEsAeatMod303Base):
         self.assertAlmostEqual(self.model303.casilla_69, result, 2)
         self.assertAlmostEqual(self.model303.resultado_liquidacion, result, 2)
         self.assertAlmostEqual(
-            self.model303_4t.tax_line_ids.filtered(
-                lambda x: x.field_number == 80
-            ).amount,
+            self.model303_4t.tax_line_ids.filtered(lambda x: x.field_number == 80).amount,
             0,
         )
         self.assertEqual(self.model303.result_type, "I")
         # Export to BOE
-        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create(
-            {"name": "test_export_to_boe.txt"}
-        )
+        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create({"name": "test_export_to_boe.txt"})
         export_config_xml_ids = [
             "l10n_es_aeat_mod303.aeat_mod303_2023_main_export_config",
             "l10n_es_aeat_mod303.aeat_mod303_2024_10_main_export_config",
@@ -555,18 +519,14 @@ class TestL10nEsAeatMod303(TestL10nEsAeatMod303Base):
         # Check 4T without exonerated
         self.model303_4t.button_calculate()
         self.assertAlmostEqual(
-            self.model303_4t.tax_line_ids.filtered(
-                lambda x: x.field_number == 80
-            ).amount,
+            self.model303_4t.tax_line_ids.filtered(lambda x: x.field_number == 80).amount,
             0,
         )
         # Check 4T with exonerated
         self.model303_4t.exonerated_390 = "1"
         self.model303_4t.button_calculate()
         self.assertAlmostEqual(
-            self.model303_4t.tax_line_ids.filtered(
-                lambda x: x.field_number == 80
-            ).amount,
+            self.model303_4t.tax_line_ids.filtered(lambda x: x.field_number == 80).amount,
             14280.0,
         )
         self.assertAlmostEqual(self.model303_4t.casilla_88, 46480.0)

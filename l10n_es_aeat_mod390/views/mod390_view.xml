@@ -19,12 +19,10 @@
         <field name="arch" type="xml">
             <header position="after">
                 <div class="alert alert-warning" role="alert" invisible="not use_303">
-                    <p
-                    >This is using the 303 reports for automatic calculations in the <b
+                    <p>This is using the 303 reports for automatic calculations in the <b
                         >fields 85, 95, 97, 98 and 662</b>. The calculations
                         may not be correct if there are duplicated or out-of-date 303 reports.</p>
-                    <p
-                    >If you do not want to use the 303 reports for the automatic calculation,
+                    <p>If you do not want to use the 303 reports for the automatic calculation,
                         uncheck "<b>Use 303 reports</b>" option.</p>
                 </div>
             </header>
@@ -62,14 +60,8 @@
                             />
                         </group>
                         <group>
-                            <group
-                                string="Otras - 1ª actividad"
-                                name="group_other_first_activity"
-                            >
-                                <field
-                                    name="other_first_activity"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group string="Otras - 1ª actividad" name="group_other_first_activity">
+                                <field name="other_first_activity" readonly="state != 'calculated'" />
                                 <field
                                     name="other_first_activity_code"
                                     readonly="state != 'calculated'"
@@ -80,19 +72,10 @@
                                     readonly="state != 'calculated'"
                                     invisible="year &lt;= 2022"
                                 />
-                                <field
-                                    name="other_first_activity_iae"
-                                    readonly="state != 'calculated'"
-                                />
+                                <field name="other_first_activity_iae" readonly="state != 'calculated'" />
                             </group>
-                            <group
-                                string="Otras - 2ª actividad"
-                                name="group_other_second_activity"
-                            >
-                                <field
-                                    name="other_second_activity"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group string="Otras - 2ª actividad" name="group_other_second_activity">
+                                <field name="other_second_activity" readonly="state != 'calculated'" />
                                 <field
                                     name="other_second_activity_code"
                                     readonly="state != 'calculated'"
@@ -103,19 +86,10 @@
                                     readonly="state != 'calculated'"
                                     invisible="year &lt;= 2022"
                                 />
-                                <field
-                                    name="other_second_activity_iae"
-                                    readonly="state != 'calculated'"
-                                />
+                                <field name="other_second_activity_iae" readonly="state != 'calculated'" />
                             </group>
-                            <group
-                                string="Otras - 3ª actividad"
-                                name="group_other_third_activity"
-                            >
-                                <field
-                                    name="other_third_activity"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group string="Otras - 3ª actividad" name="group_other_third_activity">
+                                <field name="other_third_activity" readonly="state != 'calculated'" />
                                 <field
                                     name="other_third_activity_code"
                                     readonly="state != 'calculated'"
@@ -128,14 +102,8 @@
                                 />
                                 <field name="other_third_activity_iae" />
                             </group>
-                            <group
-                                string="Otras - 4ª actividad"
-                                name="group_other_fourth_activity"
-                            >
-                                <field
-                                    name="other_fourth_activity"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group string="Otras - 4ª actividad" name="group_other_fourth_activity">
+                                <field name="other_fourth_activity" readonly="state != 'calculated'" />
                                 <field
                                     name="other_fourth_activity_code"
                                     readonly="state != 'calculated'"
@@ -146,19 +114,10 @@
                                     readonly="state != 'calculated'"
                                     invisible="year &lt;= 2022"
                                 />
-                                <field
-                                    name="other_fourth_activity_iae"
-                                    readonly="state != 'calculated'"
-                                />
+                                <field name="other_fourth_activity_iae" readonly="state != 'calculated'" />
                             </group>
-                            <group
-                                string="Otras - 5ª actividad"
-                                name="group_other_fifth_activity"
-                            >
-                                <field
-                                    name="other_fifth_activity"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group string="Otras - 5ª actividad" name="group_other_fifth_activity">
+                                <field name="other_fifth_activity" readonly="state != 'calculated'" />
                                 <field
                                     name="other_fifth_activity_code"
                                     readonly="state != 'calculated'"
@@ -169,19 +128,13 @@
                                     readonly="state != 'calculated'"
                                     invisible="year &lt;= 2022"
                                 />
-                                <field
-                                    name="other_fifth_activity_iae"
-                                    readonly="state != 'calculated'"
-                                />
+                                <field name="other_fifth_activity_iae" readonly="state != 'calculated'" />
                             </group>
                         </group>
                     </page>
                     <page string="4. Representantes">
                         <group>
-                            <group
-                                name="group_first_representative"
-                                string="Primer representante"
-                            >
+                            <group name="group_first_representative" string="Primer representante">
                                 <field
                                     name="first_representative_name"
                                     required="state == 'calculated'"
@@ -203,47 +156,17 @@
                                     readonly="state != 'calculated'"
                                 />
                             </group>
-                            <group
-                                name="group_second_representative"
-                                string="Segundo representante"
-                            >
-                                <field
-                                    name="second_representative_name"
-                                    readonly="state != 'calculated'"
-                                />
-                                <field
-                                    name="second_representative_vat"
-                                    readonly="state != 'calculated'"
-                                />
-                                <field
-                                    name="second_representative_date"
-                                    readonly="state != 'calculated'"
-                                />
-                                <field
-                                    name="second_representative_notary"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group name="group_second_representative" string="Segundo representante">
+                                <field name="second_representative_name" readonly="state != 'calculated'" />
+                                <field name="second_representative_vat" readonly="state != 'calculated'" />
+                                <field name="second_representative_date" readonly="state != 'calculated'" />
+                                <field name="second_representative_notary" readonly="state != 'calculated'" />
                             </group>
-                            <group
-                                name="group_third_representative"
-                                string="Tercer representante"
-                            >
-                                <field
-                                    name="third_representative_name"
-                                    readonly="state != 'calculated'"
-                                />
-                                <field
-                                    name="third_representative_vat"
-                                    readonly="state != 'calculated'"
-                                />
-                                <field
-                                    name="third_representative_date"
-                                    readonly="state != 'calculated'"
-                                />
-                                <field
-                                    name="third_representative_notary"
-                                    readonly="state != 'calculated'"
-                                />
+                            <group name="group_third_representative" string="Tercer representante">
+                                <field name="third_representative_name" readonly="state != 'calculated'" />
+                                <field name="third_representative_vat" readonly="state != 'calculated'" />
+                                <field name="third_representative_date" readonly="state != 'calculated'" />
+                                <field name="third_representative_notary" readonly="state != 'calculated'" />
                             </group>
                         </group>
                     </page>
@@ -290,20 +213,11 @@
                         <group class="oe_subtotal_footer oe_right">
                             <field name="casilla_47" />
                             <field name="casilla_64" />
-                            <field
-                                name="casilla_65"
-                                class="oe_subtotal_footer_separator"
-                            />
-                            <field
-                                name="casilla_658"
-                                readonly="state != 'calculated'"
-                            />
+                            <field name="casilla_65" class="oe_subtotal_footer_separator" />
+                            <field name="casilla_658" readonly="state != 'calculated'" />
                             <field name="casilla_84" readonly="state != 'calculated'" />
                             <field name="casilla_85" readonly="state != 'calculated'" />
-                            <field
-                                name="casilla_86"
-                                class="oe_subtotal_footer_separator"
-                            />
+                            <field name="casilla_86" class="oe_subtotal_footer_separator" />
                         </group>
                     </page>
                     <page string="9. Resultado liquidaciones">
@@ -340,10 +254,7 @@
                     </page>
                     <page string="10. Volumen de operaciones">
                         <group class="oe_subtotal_footer oe_right">
-                            <field
-                                name="casilla_108"
-                                class="oe_subtotal_footer_separator"
-                            />
+                            <field name="casilla_108" class="oe_subtotal_footer_separator" />
                         </group>
                     </page>
                 </notebook>
@@ -358,11 +269,7 @@
             </group>
             <form position="inside">
                 <div class="oe_chatter">
-                    <field
-                        name="message_follower_ids"
-                        widget="mail_followers"
-                        groups="base.group_user"
-                    />
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user" />
                     <field name="activity_ids" widget="mail_activity" />
                     <field name="message_ids" widget="mail_thread" />
                 </div>
@@ -375,19 +282,13 @@
         <field name="view_mode">form,list</field>
         <field name="help">Create and query AEAT Model 390 reports.</field>
     </record>
-    <record
-        model="ir.actions.act_window.view"
-        id="action_l10n_es_aeat_mod390_report_tree"
-    >
+    <record model="ir.actions.act_window.view" id="action_l10n_es_aeat_mod390_report_tree">
         <field name="sequence" eval="2" />
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_l10n_es_aeat_mod390_report_tree" />
         <field name="act_window_id" ref="action_l10n_es_aeat_mod390_report" />
     </record>
-    <record
-        model="ir.actions.act_window.view"
-        id="action_l10n_es_aeat_mod390_report_form"
-    >
+    <record model="ir.actions.act_window.view" id="action_l10n_es_aeat_mod390_report_form">
         <field name="sequence" eval="3" />
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_l10n_es_aeat_mod390_report_form" />

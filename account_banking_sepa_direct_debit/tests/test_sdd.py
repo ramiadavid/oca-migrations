@@ -75,9 +75,7 @@ class TestSDDBase(TransactionCase):
             {
                 "company_id": cls.main_company.id,
                 "partner_id": cls.main_company.partner_id.id,
-                "bank_id": (
-                    cls.env.ref("account_payment_mode.bank_la_banque_postale").id
-                ),
+                "bank_id": (cls.env.ref("account_payment_mode.bank_la_banque_postale").id),
                 "acc_number": "ES52 0182 2782 5688 3882 1868",
             }
         )
@@ -95,9 +93,7 @@ class TestSDDBase(TransactionCase):
                         0,
                         0,
                         {
-                            "payment_method_id": cls.env.ref(
-                                "account_banking_sepa_direct_debit.sepa_direct_debit"
-                            ).id,
+                            "payment_method_id": cls.env.ref("account_banking_sepa_direct_debit.sepa_direct_debit").id,
                             "payment_account_id": cls.account_expense_company_B.id,
                         },
                     )
@@ -109,12 +105,10 @@ class TestSDDBase(TransactionCase):
         cls.main_company.write({"currency_exchange_journal_id": cls.bank_journal.id})
         cls.company_B.write({"currency_exchange_journal_id": cls.bank_journal.id})
         # update payment mode
-        cls.payment_mode = cls.env.ref(
-            "account_banking_sepa_direct_debit.payment_mode_inbound_sepa_dd1"
-        ).copy({"company_id": cls.main_company.id})
-        cls.payment_mode.write(
-            {"bank_account_link": "fixed", "fixed_journal_id": cls.bank_journal.id}
+        cls.payment_mode = cls.env.ref("account_banking_sepa_direct_debit.payment_mode_inbound_sepa_dd1").copy(
+            {"company_id": cls.main_company.id}
         )
+        cls.payment_mode.write({"bank_account_link": "fixed", "fixed_journal_id": cls.bank_journal.id})
         # Copy partner bank accounts
         bank1 = cls.env.ref("account_payment_mode.res_partner_12_iban").copy(
             {
@@ -123,9 +117,7 @@ class TestSDDBase(TransactionCase):
                 "acc_type": "iban",
             }
         )
-        cls.mandate12 = cls.env.ref(
-            "account_banking_sepa_direct_debit.res_partner_12_mandate"
-        ).copy(
+        cls.mandate12 = cls.env.ref("account_banking_sepa_direct_debit.res_partner_12_mandate").copy(
             {
                 "partner_bank_id": bank1.id,
                 "company_id": cls.main_company.id,
@@ -140,9 +132,7 @@ class TestSDDBase(TransactionCase):
                 "acc_type": "iban",
             }
         )
-        cls.mandate2 = cls.env.ref(
-            "account_banking_sepa_direct_debit.res_partner_2_mandate"
-        ).copy(
+        cls.mandate2 = cls.env.ref("account_banking_sepa_direct_debit.res_partner_2_mandate").copy(
             {
                 "partner_bank_id": bank2.id,
                 "company_id": cls.main_company.id,
@@ -262,13 +252,9 @@ class TestSDDBase(TransactionCase):
         accpre = self.env["decimal.precision"].precision_get("Account")
         self.assertEqual(agrolait_pay_line1.currency_id, self.eur_currency)
         self.assertEqual(agrolait_pay_line1.mandate_id, invoice1.mandate_id)
+        self.assertEqual(agrolait_pay_line1.partner_bank_id, invoice1.mandate_id.partner_bank_id)
         self.assertEqual(
-            agrolait_pay_line1.partner_bank_id, invoice1.mandate_id.partner_bank_id
-        )
-        self.assertEqual(
-            float_compare(
-                agrolait_pay_line1.amount_currency, 42, precision_digits=accpre
-            ),
+            float_compare(agrolait_pay_line1.amount_currency, 42, precision_digits=accpre),
             0,
         )
         self.assertEqual(agrolait_pay_line1.communication_type, "normal")
@@ -285,9 +271,7 @@ class TestSDDBase(TransactionCase):
             0,
         )
         self.assertEqual(agrolait_bank_line.payment_reference, invoice1.name)
-        self.assertEqual(
-            agrolait_bank_line.partner_bank_id, invoice1.mandate_id.partner_bank_id
-        )
+        self.assertEqual(agrolait_bank_line.partner_bank_id, invoice1.mandate_id.partner_bank_id)
         action = payment_order.open2generated()
         self.assertEqual(payment_order.state, "generated")
         self.assertEqual(action["res_model"], "ir.attachment")
@@ -300,13 +284,9 @@ class TestSDDBase(TransactionCase):
         namespaces.pop(None)
         pay_method_xpath = xml_root.xpath("//p:PmtInf/p:PmtMtd", namespaces=namespaces)
         self.assertEqual(pay_method_xpath[0].text, "DD")
-        sepa_xpath = xml_root.xpath(
-            "//p:PmtInf/p:PmtTpInf/p:SvcLvl/p:Cd", namespaces=namespaces
-        )
+        sepa_xpath = xml_root.xpath("//p:PmtInf/p:PmtTpInf/p:SvcLvl/p:Cd", namespaces=namespaces)
         self.assertEqual(sepa_xpath[0].text, "SEPA")
-        debtor_acc_xpath = xml_root.xpath(
-            "//p:PmtInf/p:CdtrAcct/p:Id/p:IBAN", namespaces=namespaces
-        )
+        debtor_acc_xpath = xml_root.xpath("//p:PmtInf/p:CdtrAcct/p:Id/p:IBAN", namespaces=namespaces)
         self.assertEqual(
             debtor_acc_xpath[0].text,
             payment_order.company_partner_bank_id.sanitized_acc_number,

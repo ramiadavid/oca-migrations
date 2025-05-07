@@ -9,9 +9,9 @@ class AeatVatBookMapLines(models.Model):
     _description = "AEAT Vat Book Map Line"
 
     def _selection_special_tax_group(self):
-        return self.env["l10n.es.vat.book.line.tax"].fields_get(
-            allfields=["special_tax_group"]
-        )["special_tax_group"]["selection"]
+        return self.env["l10n.es.vat.book.line.tax"].fields_get(allfields=["special_tax_group"])["special_tax_group"][
+            "selection"
+        ]
 
     name = fields.Char()
     book_type = fields.Selection(
@@ -24,9 +24,7 @@ class AeatVatBookMapLines(models.Model):
     )
     fee_type_xlsx_column = fields.Char(string="Type xlsx column")
     fee_amount_xlsx_column = fields.Char(string="Base xlsx column")
-    tax_xmlid_ids = fields.Many2many(
-        comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes"
-    )
+    tax_xmlid_ids = fields.Many2many(comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes")
     account_xmlid_id = fields.Many2one(
         comodel_name="l10n.es.aeat.map.tax.line.account",
         string="Tax Account Restriction",

@@ -63,9 +63,7 @@ class TestL10nEsAeat(TransactionCase):
             with self.assertRaises(exceptions.UserError):
                 self.tax_map_model.create(vals)
             # Weird that the record is created anyway, so we remove it
-            self.tax_map_model.search(
-                [("model", "=", 999), ("id", "!=", self.tax_map.id)]
-            ).unlink()
+            self.tax_map_model.search([("model", "=", 999), ("id", "!=", self.tax_map.id)]).unlink()
         else:
             self.tax_map_model.create(vals).unlink()
 

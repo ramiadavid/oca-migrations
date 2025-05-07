@@ -29,10 +29,7 @@
                         </h3>
                         <p>
                             <div class="mis_report_filers">
-                                <t
-                                    t-foreach="o.get_filter_descriptions()"
-                                    t-as="filter_description"
-                                >
+                                <t t-foreach="o.get_filter_descriptions()" t-as="filter_description">
                                     <div>
                                         <span t-out="filter_description" />
                                     </div>
@@ -52,10 +49,7 @@
                                             </t>
                                         </div>
                                         <!-- add empty cells because we have no colspan with css tables -->
-                                        <t
-                                            t-foreach="list(col.iter_subcols())[1:]"
-                                            t-as="subcol"
-                                        >
+                                        <t t-foreach="list(col.iter_subcols())[1:]" t-as="subcol">
                                             <div class="mis_cell mis_collabel" />
                                         </t>
                                     </t>
@@ -94,9 +88,7 @@
                                                 t-att-style="cell and style_obj.to_css_style(cell.style_props) or ''"
                                                 class="mis_cell mis_amount"
                                             >
-                                                <t
-                                                    t-out="cell and cell.val_rendered or ''"
-                                                />
+                                                <t t-out="cell and cell.val_rendered or ''" />
                                             </div>
                                         </t>
                                     </div>

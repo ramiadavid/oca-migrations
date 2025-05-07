@@ -15,8 +15,7 @@ class ProductTemplate(models.Model):
             ("E2", "[E2] Art. 21: Exenciones en las exportaciones de " "bienes"),
             (
                 "E3",
-                "[E3] Art. 22: Exenciones en las operaciones "
-                "asimiladas a las exportaciones",
+                "[E3] Art. 22: Exenciones en las operaciones " "asimiladas a las exportaciones",
             ),
             (
                 "E4",
@@ -26,8 +25,7 @@ class ProductTemplate(models.Model):
             ),
             (
                 "E5",
-                "[E5] Art. 25: Exenciones en las entregas de bienes "
-                "destinados a otro estado miembro.",
+                "[E5] Art. 25: Exenciones en las entregas de bienes " "destinados a otro estado miembro.",
             ),
             ("E6", "[E6] Otros"),
         ],

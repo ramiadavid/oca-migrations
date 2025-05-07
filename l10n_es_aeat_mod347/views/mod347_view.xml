@@ -18,12 +18,7 @@
                 <field name="amount" />
                 <field name="cash_amount" />
                 <field name="real_estate_transmissions_amount" />
-                <button
-                    type="object"
-                    name="button_print"
-                    icon="fa-print"
-                    title="Print"
-                />
+                <button type="object" name="button_print" icon="fa-print" title="Print" />
                 <button
                     type="object"
                     name="action_send"
@@ -87,11 +82,7 @@
                         string="Set to Pending"
                         type="object"
                     />
-                    <field
-                        name="state"
-                        widget="statusbar"
-                        statusbar_visible="pending,sent,confirmed"
-                    />
+                    <field name="state" widget="statusbar" statusbar_visible="pending,sent,confirmed" />
                 </header>
                 <sheet string="Partner Record">
                     <notebook>
@@ -100,11 +91,7 @@
                                 <group>
                                     <field name="partner_id" />
                                     <field name="check_ok" invisible="1" />
-                                    <field
-                                        name="error_text"
-                                        invisible="check_ok"
-                                        class="text-danger"
-                                    />
+                                    <field name="error_text" invisible="check_ok" class="text-danger" />
                                     <field name="partner_vat" select="1" />
                                     <field name="representative_vat" select="2" />
                                     <field name="community_vat" />
@@ -134,18 +121,10 @@
                                     <field name="fourth_quarter" />
                                 </group>
                                 <group>
-                                    <field
-                                        name="first_quarter_real_estate_transmission"
-                                    />
-                                    <field
-                                        name="second_quarter_real_estate_transmission"
-                                    />
-                                    <field
-                                        name="third_quarter_real_estate_transmission"
-                                    />
-                                    <field
-                                        name="fourth_quarter_real_estate_transmission"
-                                    />
+                                    <field name="first_quarter_real_estate_transmission" />
+                                    <field name="second_quarter_real_estate_transmission" />
+                                    <field name="third_quarter_real_estate_transmission" />
+                                    <field name="fourth_quarter_real_estate_transmission" />
                                 </group>
                             </group>
                             <group>
@@ -170,11 +149,7 @@
                                 <strong>Color codes: </strong> <span
                                     class="text-info"
                                 >Refund invoices</span> - Normal invoices</div>
-                            <field
-                                name="move_record_ids"
-                                context="{'partner_record_id': id}"
-                                readonly="True"
-                            >
+                            <field name="move_record_ids" context="{'partner_record_id': id}" readonly="True">
                                 <list
                                     decoration-info="(amount &gt; 0 and parent.operation_key == 'B') or (amount &lt; 0 and parent.operation_key == 'A')"
                                 >
@@ -189,11 +164,7 @@
                                     </group>
                                 </form>
                             </field>
-                            <field
-                                name="cash_record_ids"
-                                context="{'partner_record_id': id}"
-                                readonly="True"
-                            >
+                            <field name="cash_record_ids" context="{'partner_record_id': id}" readonly="True">
                                 <list>
                                     <field name="move_id" />
                                     <field name="date" />
@@ -216,37 +187,21 @@
         <field name="model">l10n.es.aeat.mod347.partner_record</field>
         <field name="arch" type="xml">
             <search string="Partner Record">
-                <field
-                    name="partner_id"
-                    string="Partner"
-                    filter_domain="[('partner_id','ilike',self)]"
-                />
-                <field
-                    name="operation_key"
-                    string="Operation key"
-                    filter_domain="[('operation_key','ilike',self)]"
-                />
+                <field name="partner_id" string="Partner" filter_domain="[('partner_id','ilike',self)]" />
+                <field name="operation_key" string="Operation key" filter_domain="[('operation_key','ilike',self)]" />
                 <field
                     name="partner_vat"
                     string="Record"
                     filter_domain="['|',('partner_vat','ilike',self),('partner_id','ilike',self)]"
                 />
                 <separator />
-                <filter
-                    name="filter_invalid"
-                    string="Invalid records"
-                    domain="[('check_ok', '=', False)]"
-                />
+                <filter name="filter_invalid" string="Invalid records" domain="[('check_ok', '=', False)]" />
                 <filter
                     name="filter_pending"
                     string="Pending records"
                     domain="[('state', 'in', ('pending', 'sent'))]"
                 />
-                <filter
-                    name="filter_exception"
-                    string="Records in exception"
-                    domain="[('state', '=', 'exception')]"
-                />
+                <filter name="filter_exception" string="Records in exception" domain="[('state', '=', 'exception')]" />
                 <separator />
                 <group expand='0' string='Group by...'>
                     <filter
@@ -276,11 +231,7 @@
                 <field name="number" />
                 <field name="city" />
                 <field name="township" />
-                <field
-                    name="error_text"
-                    optional="show"
-                    invisible="check_ok or not partner_id"
-                />
+                <field name="error_text" optional="show" invisible="check_ok or not partner_id" />
             </list>
         </field>
     </record>
@@ -293,11 +244,7 @@
                     <group>
                         <field name="partner_id" />
                         <field name="check_ok" invisible="1" />
-                        <field
-                            name="error_text"
-                            invisible="check_ok"
-                            class="text-danger"
-                        />
+                        <field name="error_text" invisible="check_ok" class="text-danger" />
                     </group>
                     <group>
                         <field name="partner_vat" />
@@ -393,17 +340,8 @@
             </button>
             <sheet position="inside">
                 <div class="oe_button_box" name="button_box">
-                    <button
-                        class="oe_stat_button"
-                        name="btn_list_records"
-                        type="object"
-                        icon="fa-file"
-                    >
-                        <field
-                            name="total_partner_records"
-                            widget="statinfo"
-                            string="Records"
-                        />
+                    <button class="oe_stat_button" name="btn_list_records" type="object" icon="fa-file">
+                        <field name="total_partner_records" widget="statinfo" string="Records" />
                     </button>
                 </div>
             </sheet>
@@ -415,19 +353,10 @@
                     <page string="General">
                         <group>
                             <group string="Calculation parameters">
-                                <field
-                                    name="operations_limit"
-                                    readonly="state != 'draft'"
-                                />
-                                <field
-                                    name="received_cash_limit"
-                                    readonly="state != 'draft'"
-                                />
+                                <field name="operations_limit" readonly="state != 'draft'" />
+                                <field name="received_cash_limit" readonly="state != 'draft'" />
                             </group>
-                            <group
-                                string="Summary"
-                                invisible="state in ('draft', 'cancelled')"
-                            >
+                            <group string="Summary" invisible="state in ('draft', 'cancelled')">
                                 <field name="total_partner_records" />
                                 <field name="total_amount" />
                                 <field name="total_real_estate_records" />
@@ -435,21 +364,11 @@
                             </group>
                         </group>
                     </page>
-                    <page
-                        string="Partner records"
-                        invisible="state in ('draft', 'cancelled')"
-                    >
+                    <page string="Partner records" invisible="state in ('draft', 'cancelled')">
                         <field name="partner_record_ids" nolabel="1" />
                     </page>
-                    <page
-                        string="Real Estate records"
-                        invisible="state in ('draft', 'cancelled')"
-                    >
-                        <div
-                            class="alert alert-info"
-                            role="alert"
-                            style="margin-bottom:0px;"
-                        >
+                    <page string="Real Estate records" invisible="state in ('draft', 'cancelled')">
+                        <div class="alert alert-info" role="alert" style="margin-bottom:0px;">
                             This should be only filled in case the real state rents are exempted of retentions and are not declared through model 115.
                         </div>
                         <field name="real_estate_record_ids" nolabel="1" />
@@ -458,11 +377,7 @@
             </group>
             <form position="inside">
                 <div class="oe_chatter">
-                    <field
-                        name="message_follower_ids"
-                        widget="mail_followers"
-                        groups="base.group_user"
-                    />
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user" />
                     <field name="activity_ids" widget="mail_activity" />
                     <field name="message_ids" widget="mail_thread" />
                 </div>
@@ -484,19 +399,13 @@
           </p>
         </field>
     </record>
-    <record
-        model="ir.actions.act_window.view"
-        id="action_l10n_es_aeat_mod347_report_tree"
-    >
+    <record model="ir.actions.act_window.view" id="action_l10n_es_aeat_mod347_report_tree">
         <field name="sequence" eval="2" />
         <field name="view_mode">list</field>
         <field name="view_id" ref="view_l10n_es_aeat_mod347_report_tree" />
         <field name="act_window_id" ref="action_l10n_es_aeat_mod347_report" />
     </record>
-    <record
-        model="ir.actions.act_window.view"
-        id="action_l10n_es_aeat_mod347_report_form"
-    >
+    <record model="ir.actions.act_window.view" id="action_l10n_es_aeat_mod347_report_form">
         <field name="sequence" eval="3" />
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_l10n_es_aeat_mod347_report_form" />

@@ -59,9 +59,7 @@ class ReportXmlAbstract(models.AbstractModel):
 
         # remove empty lines
         utf8 = "UTF-8"
-        result = "\n".join(
-            line for line in result.splitlines() if line and not line.isspace()
-        ).encode(utf8)
+        result = "\n".join(line for line in result.splitlines() if line and not line.isspace()).encode(utf8)
 
         content = etree.tostring(
             etree.fromstring(result),

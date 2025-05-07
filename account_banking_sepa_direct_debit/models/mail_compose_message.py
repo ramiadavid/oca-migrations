@@ -11,7 +11,5 @@ class MailComposeMessage(models.TransientModel):
     def _action_send_mail(self, auto_commit=False):
         for wizard in self:
             if self.env.context.get("is_sent"):
-                self.env[wizard.model].sudo().browse(
-                    json.loads(wizard.res_ids)
-                ).is_sent = True
+                self.env[wizard.model].sudo().browse(json.loads(wizard.res_ids)).is_sent = True
         return super()._action_send_mail(auto_commit=auto_commit)

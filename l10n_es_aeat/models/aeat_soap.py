@@ -22,13 +22,9 @@ class L10nEsAeatSoap(models.TransientModel):
 
     def connect_soap(self, wsdl, model):
         if "company_id" in model._fields:
-            public_crt, private_key = self.env[
-                "l10n.es.aeat.certificate"
-            ].get_certificates(model.company_id)
+            public_crt, private_key = self.env["l10n.es.aeat.certificate"].get_certificates(model.company_id)
         else:
-            public_crt, private_key = self.env[
-                "l10n.es.aeat.certificate"
-            ].get_certificates()
+            public_crt, private_key = self.env["l10n.es.aeat.certificate"].get_certificates()
 
         session = Session()
         session.cert = (public_crt, private_key)

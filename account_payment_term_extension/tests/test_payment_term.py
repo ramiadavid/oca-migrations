@@ -23,9 +23,7 @@ class TestAccountPaymentTerm(TransactionCase):
         cls.account_payment_term = cls.env["account.payment.term"]
         cls.currency = cls.env.company.currency_id
         cls.company = cls.env.company
-        cls.sixty_days_end_of_month = cls.env.ref(
-            "account_payment_term_extension.sixty_days_end_of_month"
-        )
+        cls.sixty_days_end_of_month = cls.env.ref("account_payment_term_extension.sixty_days_end_of_month")
         cls.account_payment_term_holiday = cls.env["account.payment.term.holiday"]
 
     def _get_date_payment_term_line(self, payment_term_line):
@@ -118,24 +116,22 @@ class TestAccountPaymentTerm(TransactionCase):
         payment_terms_delay_type = delay_setting or False
         if payment_terms_delay_type:
             if payment_terms_delay_type == "months":
-                two_month_payterm_after_invoice_month = (
-                    self.account_payment_term.create(
-                        {
-                            "name": "2 months ",
-                            "line_ids": [
-                                (
-                                    0,
-                                    0,
-                                    {
-                                        "value": "percent",
-                                        "value_amount": 100.0,
-                                        "nb_days": 2,
-                                        "delay_type": "months_after_end_of_month",
-                                    },
-                                )
-                            ],
-                        }
-                    )
+                two_month_payterm_after_invoice_month = self.account_payment_term.create(
+                    {
+                        "name": "2 months ",
+                        "line_ids": [
+                            (
+                                0,
+                                0,
+                                {
+                                    "value": "percent",
+                                    "value_amount": 100.0,
+                                    "nb_days": 2,
+                                    "delay_type": "months_after_end_of_month",
+                                },
+                            )
+                        ],
+                    }
                 )
                 res = two_month_payterm_after_invoice_month._compute_terms(
                     currency=self.currency,
@@ -151,8 +147,7 @@ class TestAccountPaymentTerm(TransactionCase):
                 self.assertEqual(
                     payment_term_date,
                     "2015-05-31",
-                    "Error in the _compute_terms of payment terms with months after "
-                    "invoice month",
+                    "Error in the _compute_terms of payment terms with months after " "invoice month",
                 )
 
     def test_postpone_holiday(self):
@@ -261,27 +256,15 @@ class TestAccountPaymentTerm(TransactionCase):
 
     def test_check_holiday(self):
         with self.assertRaises(ValidationError):
-            self.account_payment_term_holiday.create(
-                {"holiday": "2015-06-01", "date_postponed": "2015-06-01"}
-            )
+            self.account_payment_term_holiday.create({"holiday": "2015-06-01", "date_postponed": "2015-06-01"})
 
         with self.assertRaises(ValidationError):
-            self.account_payment_term_holiday.create(
-                {"holiday": "2015-06-02", "date_postponed": "2015-06-01"}
-            )
+            self.account_payment_term_holiday.create({"holiday": "2015-06-02", "date_postponed": "2015-06-01"})
 
         with self.assertRaises(ValidationError):
-            self.account_payment_term_holiday.create(
-                {"holiday": "2015-06-03", "date_postponed": "2015-06-04"}
-            )
-            self.account_payment_term_holiday.create(
-                {"holiday": "2015-06-03", "date_postponed": "2015-06-05"}
-            )
+            self.account_payment_term_holiday.create({"holiday": "2015-06-03", "date_postponed": "2015-06-04"})
+            self.account_payment_term_holiday.create({"holiday": "2015-06-03", "date_postponed": "2015-06-05"})
 
         with self.assertRaises(ValidationError):
-            self.account_payment_term_holiday.create(
-                {"holiday": "2015-06-06", "date_postponed": "2015-06-07"}
-            )
-            self.account_payment_term_holiday.create(
-                {"holiday": "2015-06-07", "date_postponed": "2015-06-08"}
-            )
+            self.account_payment_term_holiday.create({"holiday": "2015-06-06", "date_postponed": "2015-06-07"})
+            self.account_payment_term_holiday.create({"holiday": "2015-06-07", "date_postponed": "2015-06-08"})

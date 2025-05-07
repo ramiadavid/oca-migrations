@@ -9,11 +9,6 @@ class PurchaseOrder(models.Model):
 
     def _prepare_supplier_info(self, partner, line, price, currency):
         res = super()._prepare_supplier_info(partner, line, price, currency)
-        res.update(
-            dict(
-                (fname, line[fname])
-                for fname in line._get_multiple_discount_field_names()
-            )
-        )
+        res.update({fname: line[fname] for fname in line._get_multiple_discount_field_names()})
         res.pop("discount")
         return res

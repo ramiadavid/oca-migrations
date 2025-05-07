@@ -8,14 +8,11 @@ from io import StringIO
 
 from psycopg2 import OperationalError
 
-from odoo import _, api, models, tools
+from odoo import api, models, tools
 from odoo.service.model import PG_CONCURRENCY_ERRORS_TO_RETRY
 
 from odoo.addons.queue_job.controllers.main import PG_RETRY
-from odoo.addons.queue_job.exception import (
-    FailedJobError,
-    RetryableJobError,
-)
+from odoo.addons.queue_job.exception import FailedJobError, RetryableJobError
 from odoo.addons.queue_job.job import Job
 
 _logger = logging.getLogger(__name__)
@@ -82,7 +79,7 @@ class QueueJob(models.Model):
             if str(err):
                 msg = str(err)
             else:
-                msg = _("Job interrupted and set to Done: nothing to do.")
+                msg = self.env._("Job interrupted and set to Done: nothing to do.")
             job.set_done(msg)
             job.store()
 

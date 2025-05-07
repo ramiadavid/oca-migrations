@@ -46,9 +46,7 @@ class TestL10nEsAeatTaxInfoGroup(TestL10nEsAeatModBase):
         cls.env["account.tax"]._load_records(
             [
                 {
-                    "xml_id": (
-                        f"account.{cls.company.id}_account_tax_template_s_ivag1021b"
-                    ),
+                    "xml_id": (f"account.{cls.company.id}_account_tax_template_s_ivag1021b"),
                     "noupdate": True,
                     "values": {
                         "type_tax_use": "sale",

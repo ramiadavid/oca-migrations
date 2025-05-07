@@ -2,8 +2,7 @@
 # Copyright 2019 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo.tests import common
-from odoo.tests import Form
+from odoo.tests import Form, common
 
 
 class TestPurchaseOrder(common.TransactionCase):
@@ -164,27 +163,17 @@ class TestPurchaseOrder(common.TransactionCase):
         self.po_line1.discount3 = 50.0
         self.po_line2.discount3 = 50.0
         self.order.button_confirm()
-        invoice_form = Form(
-            self.account_move_model.with_context(default_move_type="in_invoice")
-        )
+        invoice_form = Form(self.account_move_model.with_context(default_move_type="in_invoice"))
         invoice_form.partner_id = self.order.partner_id
 
         self.invoice = invoice_form.save()
         self.invoice.purchase_id = self.order.id
         self.invoice._onchange_purchase_auto_complete()
 
-        self.assertEqual(
-            self.po_line1.discount1, self.invoice.invoice_line_ids[0].discount
-        )
-        self.assertEqual(
-            self.po_line1.discount2, self.invoice.invoice_line_ids[0].discount2
-        )
-        self.assertEqual(
-            self.po_line1.discount3, self.invoice.invoice_line_ids[0].discount3
-        )
-        self.assertEqual(
-            self.po_line2.discount3, self.invoice.invoice_line_ids[1].discount3
-        )
+        self.assertEqual(self.po_line1.discount1, self.invoice.invoice_line_ids[0].discount)
+        self.assertEqual(self.po_line1.discount2, self.invoice.invoice_line_ids[0].discount2)
+        self.assertEqual(self.po_line1.discount3, self.invoice.invoice_line_ids[0].discount3)
+        self.assertEqual(self.po_line2.discount3, self.invoice.invoice_line_ids[1].discount3)
         self.assertEqual(self.order.amount_total, self.invoice.amount_total)
 
     def test_05_purchase_order_default_discounts(self):

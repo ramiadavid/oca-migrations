@@ -7,9 +7,7 @@ from odoo.addons.mail.controllers.mail import MailController
 
 
 class Mod347Controller(http.Controller):
-    @http.route(
-        "/mod347/accept", type="http", auth="public", methods=["GET"], website=True
-    )
+    @http.route("/mod347/accept", type="http", auth="public", methods=["GET"], website=True)
     def mod347_accept(self, res_id, token):
         (
             comparison,
@@ -27,9 +25,7 @@ class Mod347Controller(http.Controller):
                 return http.request.render("l10n_es_aeat_mod347.communication_failed")
         return http.request.render("l10n_es_aeat_mod347.communication_success")
 
-    @http.route(
-        "/mod347/reject", type="http", auth="public", methods=["GET"], website=True
-    )
+    @http.route("/mod347/reject", type="http", auth="public", methods=["GET"], website=True)
     def mod347_reject(self, res_id, token):
         (
             comparison,

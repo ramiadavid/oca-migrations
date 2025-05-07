@@ -14,9 +14,7 @@
     "FechaRegContable": "01-10-2020",
     "DesgloseFactura": {
       "DesgloseIVA": {
-        "DetalleIVA": [
-          {"BaseImponible": -100.0, "CuotaSoportada": -10.0, "TipoImpositivo": "10.0"}
-        ]
+        "DetalleIVA": [{"BaseImponible": -100.0, "CuotaSoportada": -10.0, "TipoImpositivo": "10.0"}]
       }
     },
     "CuotaDeducible": -10.0

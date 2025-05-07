@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from markupsafe import Markup
 
-from odoo import _, api, fields, models, tools
+from odoo import api, fields, models, tools
 from odoo.exceptions import ValidationError
 from odoo.tools import html2plaintext
 
@@ -21,8 +21,7 @@ class AccountMove(models.Model):
             ("02", "Rectificación por diferencias"),
             (
                 "03",
-                "Rectificación por descuento por volumen de operaciones "
-                "durante un periodo",
+                "Rectificación por descuento por volumen de operaciones " "durante un periodo",
             ),
             ("04", "Autorizadas por la Agencia Tributaria"),
         ]
@@ -52,13 +51,11 @@ class AccountMove(models.Model):
             ("83", "Base imponible modificada por descuentos y " "bonificaciones"),
             (
                 "84",
-                "Base imponible modificada por resolución firme, judicial "
-                "o administrativa",
+                "Base imponible modificada por resolución firme, judicial " "o administrativa",
             ),
             (
                 "85",
-                "Base imponible modificada cuotas repercutidas no "
-                "satisfechas. Auto de declaración de concurso",
+                "Base imponible modificada cuotas repercutidas no " "satisfechas. Auto de declaración de concurso",
             ),
         ]
     )
@@ -82,28 +79,18 @@ class AccountMove(models.Model):
         for record in self:
             if bool(record.facturae_start_date) != bool(record.facturae_end_date):
                 raise ValidationError(
-                    _(
-                        "Facturae start and end dates are both required if one of "
-                        "them is filled"
-                    )
+                    self.env._("Facturae start and end dates are both required if one of " "them is filled")
                 )
-            if (
-                record.facturae_start_date
-                and record.facturae_start_date > record.facturae_end_date
-            ):
-                raise ValidationError(_("Start date cannot be later than end date"))
+            if record.facturae_start_date and record.facturae_start_date > record.facturae_end_date:
+                raise ValidationError(self.env._("Start date cannot be later than end date"))
 
     @api.depends("partner_id.facturae", "move_type")
     def _compute_facturae(self):
         for record in self:
-            record.facturae = (
-                record.commercial_partner_id.facturae
-                and record.move_type
-                in [
-                    "out_invoice",
-                    "out_refund",
-                ]
-            )
+            record.facturae = record.commercial_partner_id.facturae and record.move_type in [
+                "out_invoice",
+                "out_refund",
+            ]
 
     def get_exchange_rate(self, euro_rate, currency_rate):
         if not euro_rate and not currency_rate:
@@ -119,18 +106,14 @@ class AccountMove(models.Model):
         return euro_date.strftime("%Y-%m-%d")
 
     def get_refund_reason_string(self):
-        return dict(
-            self.fields_get(allfields=["facturae_refund_reason"])[
-                "facturae_refund_reason"
-            ]["selection"]
-        )[self.facturae_refund_reason]
+        return dict(self.fields_get(allfields=["facturae_refund_reason"])["facturae_refund_reason"]["selection"])[
+            self.facturae_refund_reason
+        ]
 
     def get_correction_method_string(self):
-        return dict(
-            self.fields_get(allfields=["correction_method"])["correction_method"][
-                "selection"
-            ]
-        )[self.correction_method]
+        return dict(self.fields_get(allfields=["correction_method"])["correction_method"]["selection"])[
+            self.correction_method
+        ]
 
     def _get_valid_move_statuses(self):
         return ["posted"]
@@ -139,72 +122,61 @@ class AccountMove(models.Model):
         lines = self.line_ids.filtered(lambda r: r.display_type == "product")
         for line in lines:
             if not line.tax_ids:
-                raise ValidationError(
-                    _("Taxes not provided in move line " "%s") % line.name
-                )
+                raise ValidationError(self.env._("Taxes not provided in move line " "%s") % line.name)
         if self.state not in self._get_valid_move_statuses():
             raise ValidationError(
-                _(
-                    "You can only create Facturae files for "
-                    "moves that have been validated."
-                )
+                self.env._("You can only create Facturae files for " "moves that have been validated.")
             )
         if not self.partner_id.vat:
-            raise ValidationError(_("Partner vat not provided"))
+            raise ValidationError(self.env._("Partner vat not provided"))
         if not self.partner_id.street:
-            raise ValidationError(_("Partner street address is not provided"))
+            raise ValidationError(self.env._("Partner street address is not provided"))
         if len(self.partner_id.vat) < 3:
-            raise ValidationError(_("Partner vat is too small"))
+            raise ValidationError(self.env._("Partner vat is too small"))
         if not self.partner_id.state_id:
-            raise ValidationError(_("Partner state not provided"))
+            raise ValidationError(self.env._("Partner state not provided"))
         if not self.partner_id.unidad_tramitadora:
-            raise ValidationError(_("Unidad Tramitadora not provided"))
+            raise ValidationError(self.env._("Unidad Tramitadora not provided"))
         if not self.partner_id.oficina_contable:
-            raise ValidationError(_("Oficina Contable not provided"))
+            raise ValidationError(self.env._("Oficina Contable not provided"))
         if not self.payment_mode_id:
-            raise ValidationError(_("Payment mode is required"))
+            raise ValidationError(self.env._("Payment mode is required"))
         if self.payment_mode_id.facturae_code:
             partner_bank = self.partner_banks_to_show()[:1]
-            if (
-                partner_bank
-                and partner_bank.bank_id.bic
-                and len(partner_bank.bank_id.bic) != 11
-            ):
-                raise ValidationError(_("Selected account BIC must be 11"))
+            if partner_bank and partner_bank.bank_id.bic and len(partner_bank.bank_id.bic) != 11:
+                raise ValidationError(self.env._("Selected account BIC must be 11"))
             if partner_bank and len(partner_bank.acc_number) < 5:
-                raise ValidationError(_("Selected account is too small"))
+                raise ValidationError(self.env._("Selected account is too small"))
         self.validate_company_facturae_fields(self.company_id)
         return
 
     def validate_company_facturae_fields(self, company_id):
         if not company_id.partner_id.vat:
-            raise ValidationError(_("Company vat not provided"))
+            raise ValidationError(self.env._("Company vat not provided"))
         if not company_id.partner_id.street:
-            raise ValidationError(_("Company street not provided"))
+            raise ValidationError(self.env._("Company street not provided"))
         if not company_id.partner_id.city:
-            raise ValidationError(_("Company city not provided"))
+            raise ValidationError(self.env._("Company city not provided"))
         if not company_id.partner_id.state_id:
-            raise ValidationError(_("Company state not provided"))
+            raise ValidationError(self.env._("Company state not provided"))
         if not company_id.partner_id.country_id:
-            raise ValidationError(_("Company country not provided"))
+            raise ValidationError(self.env._("Company country not provided"))
         if not company_id.partner_id.zip:
-            raise ValidationError(_("Company zip not provided"))
+            raise ValidationError(self.env._("Company zip not provided"))
         if len(company_id.vat) < 3:
-            raise ValidationError(_("Company vat is too small"))
+            raise ValidationError(self.env._("Company vat is too small"))
         return
 
     def _get_facturae_move_attachments(self):
         result = []
         if self.partner_id.attach_invoice_as_annex:
-            content, content_type = self.env["ir.actions.report"]._render(
-                "account.account_invoices", self.ids
-            )
+            content, content_type = self.env["ir.actions.report"]._render("account.account_invoices", self.ids)
             result.append(
                 {
                     "data": base64.b64encode(content).decode("utf-8"),
                     "content_type": content_type,
                     "encoding": "BASE64",
-                    "description": _("Invoice %s") % self.name,
+                    "description": self.env._("Invoice %s") % self.name,
                     "compression": False,
                 }
             )
@@ -239,9 +211,7 @@ class AccountMove(models.Model):
             for tax in line.tax_ids:
                 tax_amount = base * tax.amount / 100
                 if self.company_id.tax_calculation_rounding_method == "round_per_line":
-                    tax_amount = tools.float_round(
-                        tax_amount, precision_rounding=self.currency_id.rounding
-                    )
+                    tax_amount = tools.float_round(tax_amount, precision_rounding=self.currency_id.rounding)
                 if tools.float_compare(tax.amount, 0, precision_digits=2) >= 0:
                     output_taxes[tax]["base"] += base
                     output_taxes[tax]["amount"] += tax_amount
@@ -290,22 +260,16 @@ class AccountMoveLine(models.Model):
         for record in self:
             if bool(record.facturae_start_date) != bool(record.facturae_end_date):
                 raise ValidationError(
-                    _(
-                        "Facturae start and end dates are both required if one of "
-                        "them is filled"
-                    )
+                    self.env._("Facturae start and end dates are both required if one of " "them is filled")
                 )
-            if (
-                record.facturae_start_date
-                and record.facturae_start_date > record.facturae_end_date
-            ):
-                raise ValidationError(_("Start date cannot be later than end date"))
+            if record.facturae_start_date and record.facturae_start_date > record.facturae_end_date:
+                raise ValidationError(self.env._("Start date cannot be later than end date"))
 
     def button_edit_facturae_fields(self):
         self.ensure_one()
         view = self.env.ref("l10n_es_facturae.view_facturae_fields")
         return {
-            "name": _("Facturae Configuration"),
+            "name": self.env._("Facturae Configuration"),
             "type": "ir.actions.act_window",
             "view_mode": "form",
             "res_model": self._name,

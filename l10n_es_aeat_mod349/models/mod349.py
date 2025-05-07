@@ -10,7 +10,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 import math
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 from odoo.fields import first
 from odoo.tools import float_is_zero, float_round
 
@@ -71,17 +71,12 @@ class Mod349(models.Model):
 
     def _compute_error_count(self):
         ret_val = super()._compute_error_count()
-        partner_records_error_dict = self.env[
-            "l10n.es.aeat.mod349.partner_record"
-        ].read_group(
+        partner_records_error_dict = self.env["l10n.es.aeat.mod349.partner_record"].read_group(
             domain=[("partner_record_ok", "=", False), ("report_id", "in", self.ids)],
             fields=["report_id"],
             groupby=["report_id"],
         )
-        partner_records_error_dict = {
-            rec["report_id"][0]: rec["report_id_count"]
-            for rec in partner_records_error_dict
-        }
+        partner_records_error_dict = {rec["report_id"][0]: rec["report_id_count"] for rec in partner_records_error_dict}
         for report in self:
             report.error_count += partner_records_error_dict.get(report.id, 0)
         return ret_val
@@ -90,23 +85,15 @@ class Mod349(models.Model):
     def _compute_report_regular_totals(self):
         for report in self:
             report.total_partner_records = len(report.partner_record_ids)
-            report.total_partner_records_amount = sum(
-                report.mapped("partner_record_ids.total_operation_amount")
-            )
+            report.total_partner_records_amount = sum(report.mapped("partner_record_ids.total_operation_amount"))
 
     @api.depends("partner_refund_ids", "partner_refund_ids.total_operation_amount")
     def _compute_report_refund_totals(self):
         for report in self:
             report.total_partner_refunds = len(report.partner_refund_ids)
-            total_origin_amount = sum(
-                report.mapped("partner_refund_ids.total_origin_amount")
-            )
-            total_operation_amount = sum(
-                report.mapped("partner_refund_ids.total_operation_amount")
-            )
-            report.total_partner_refunds_amount = (
-                total_origin_amount - total_operation_amount
-            )
+            total_origin_amount = sum(report.mapped("partner_refund_ids.total_origin_amount"))
+            total_operation_amount = sum(report.mapped("partner_refund_ids.total_operation_amount"))
+            report.total_partner_refunds_amount = total_origin_amount - total_operation_amount
 
     def _create_349_details(self, move_lines):
         for move_line in move_lines:
@@ -115,10 +102,7 @@ class Mod349(models.Model):
                 # from the declaration
                 origin_invoice = move_line.move_id.reversed_entry_id
                 if origin_invoice:
-                    if (
-                        origin_invoice.date < self.date_start
-                        or origin_invoice.date > self.date_end
-                    ):
+                    if origin_invoice.date < self.date_start or origin_invoice.date > self.date_end:
                         self._create_349_refund_detail(move_line)
                         continue
             self._create_349_record_detail(move_line)
@@ -175,9 +159,7 @@ class Mod349(models.Model):
                     record_detail.partner_record_id = record_created
         rounding = self.env.user.company_id.currency_id.rounding
         self.partner_record_ids.filtered(
-            lambda r: float_is_zero(
-                r.total_operation_amount, precision_rounding=rounding
-            )
+            lambda r: float_is_zero(r.total_operation_amount, precision_rounding=rounding)
         ).unlink()
         return True
 
@@ -229,9 +211,7 @@ class Mod349(models.Model):
                 )
                 # There's at least one previous 349 declaration report
                 report = original_details.mapped("report_id")[:1]
-                original_details = original_details.filtered(
-                    lambda d, report=report: d.report_id == report
-                )
+                original_details = original_details.filtered(lambda d, report=report: d.report_id == report)
                 origin_amount = sum(original_details.mapped("amount_untaxed"))
                 period_type = report.period_type
                 year = str(report.year)
@@ -262,9 +242,7 @@ class Mod349(models.Model):
                         ("move_id", "=", origin_invoice.id),
                     ]
                 )
-                origin_amount = abs(
-                    sum((original_amls - visited_move_lines).mapped("balance"))
-                )
+                origin_amount = abs(sum((original_amls - visited_move_lines).mapped("balance")))
                 visited_move_lines |= original_amls
                 # We have to guess the period type, as we don't have that info
                 # through move lines. Inferred from:
@@ -283,9 +261,7 @@ class Mod349(models.Model):
                 else:
                     period_type = month
             key = (partner, op_key, period_type, year)
-            key_vals = data.setdefault(
-                key, {"original_amount": 0, "refund_details": refund_detail_obj}
-            )
+            key_vals = data.setdefault(key, {"original_amount": 0, "refund_details": refund_detail_obj})
             key_vals["original_amount"] += origin_amount
             key_vals["refund_details"] += refund_details
         for key, key_vals in data.items():
@@ -322,10 +298,8 @@ class Mod349(models.Model):
         map_lines = self.env["aeat.349.map.line"].search([])
         tax_templates = map_lines.mapped("tax_xmlid_ids")
         if not tax_templates:
-            raise exceptions.UserError(_("No Tax Mapping was found"))
-        taxes_ids = self.env["aeat.349.map.line"]._get_tax_ids_from_xmlids(
-            tax_templates, self.company_id
-        )
+            raise exceptions.UserError(self.env._("No Tax Mapping was found"))
+        taxes_ids = self.env["aeat.349.map.line"]._get_tax_ids_from_xmlids(tax_templates, self.company_id)
         return self.env["account.tax"].search([("id", "in", taxes_ids)])
 
     def _cleanup_report(self):
@@ -342,9 +316,7 @@ class Mod349(models.Model):
         self._cleanup_report()
         taxes = self._get_taxes()
         # Get all the account moves
-        move_lines = self.env["account.move.line"].search(
-            self._account_move_line_domain(taxes)
-        )
+        move_lines = self.env["account.move.line"].search(self._account_move_line_domain(taxes))
         # If the type of presentation is complementary, remove records that
         # already exist in other presentations
         if self.statement_type == "C":
@@ -383,18 +355,12 @@ class Mod349(models.Model):
             for partner_record in item.partner_record_ids:
                 if not partner_record.partner_record_ok:
                     raise exceptions.UserError(
-                        _(
-                            "All partner records fields (country, VAT number) "
-                            "must be filled."
-                        )
+                        self.env._("All partner records fields (country, VAT number) " "must be filled.")
                     )
             for partner_record in item.partner_refund_ids:
                 if not partner_record.partner_refund_ok:
                     raise exceptions.UserError(
-                        _(
-                            "All partner refunds fields (country, VAT number) "
-                            "must be filled."
-                        )
+                        self.env._("All partner refunds fields (country, VAT number) " "must be filled.")
                     )
 
     def _check_names(self):
@@ -402,9 +368,7 @@ class Mod349(models.Model):
         for item in self:
             # Check Full name (contact_name)
             if not item.contact_name or len(item.contact_name.split(" ")) < 2:
-                raise exceptions.UserError(
-                    _("Contact name (Full name) must have name and surname")
-                )
+                raise exceptions.UserError(self.env._("Contact name (Full name) must have name and surname"))
 
     def button_confirm(self):
         """Checks if all the fields of the report are correctly filled"""
@@ -426,7 +390,9 @@ class Mod349PartnerRecord(models.Model):
     def _selection_operation_key(self):
         return self.env["account.move.line"].fields_get(
             allfields=["l10n_es_aeat_349_operation_key"],
-        )["l10n_es_aeat_349_operation_key"]["selection"]
+        )[
+            "l10n_es_aeat_349_operation_key"
+        ]["selection"]
 
     def _get_and_assign_country_code(self, record):
         # Get country code from partner in a first place
@@ -447,15 +413,12 @@ class Mod349PartnerRecord(models.Model):
     def _process_vat(self, record, errors):
         country_code = self._get_and_assign_country_code(record)
         if not country_code:
-            errors.append(_("VAT without country code"))
+            errors.append(self.env._("VAT without country code"))
         elif country_code not in record.partner_id._get_aeat_europe_codes():
             europe = self.env.ref("base.europe", raise_if_not_found=False)
-            map_european_codes = [
-                record.partner_id._map_aeat_country_iso_code(c)
-                for c in europe.country_ids
-            ]
+            map_european_codes = [record.partner_id._map_aeat_country_iso_code(c) for c in europe.country_ids]
             if country_code not in map_european_codes:
-                errors.append(_("Country code not found in Europe"))
+                errors.append(self.env._("Country code not found in Europe"))
         return errors
 
     @api.depends("partner_vat", "country_id", "total_operation_amount")
@@ -464,13 +427,13 @@ class Mod349PartnerRecord(models.Model):
         for record in self:
             errors = []
             if not record.partner_vat:
-                errors.append(_("Without VAT"))
+                errors.append(self.env._("Without VAT"))
             if not record.country_id:
-                errors.append(_("Without Country"))
+                errors.append(self.env._("Without Country"))
             if not record.total_operation_amount:
-                errors.append(_("Without Total Operation Amount"))
+                errors.append(self.env._("Without Total Operation Amount"))
             if record.total_operation_amount and record.total_operation_amount < 0.0:
-                errors.append(_("Negative amount"))
+                errors.append(self.env._("Negative amount"))
             if record.partner_vat:
                 errors = self._process_vat(record, errors)
             record.partner_record_ok = bool(not errors)
@@ -514,9 +477,7 @@ class Mod349PartnerRecord(models.Model):
     @api.depends("record_detail_ids")
     def _compute_total_operation_amount(self):
         for record in self:
-            record.total_operation_amount = sum(
-                record.mapped("record_detail_ids.amount_untaxed")
-            )
+            record.total_operation_amount = sum(record.mapped("record_detail_ids.amount_untaxed"))
 
 
 class Mod349PartnerRecordDetail(models.Model):
@@ -545,9 +506,7 @@ class Mod349PartnerRecordDetail(models.Model):
         ondelete="set null",
         index=True,
     )
-    move_line_id = fields.Many2one(
-        comodel_name="account.move.line", string="Journal Item", required=True
-    )
+    move_line_id = fields.Many2one(comodel_name="account.move.line", string="Journal Item", required=True)
     move_id = fields.Many2one(
         comodel_name="account.move",
         string="Invoice",
@@ -579,7 +538,9 @@ class Mod349PartnerRefund(models.Model):
     def _selection_operation_key(self):
         return self.env["account.move.line"].fields_get(
             allfields=["l10n_es_aeat_349_operation_key"],
-        )["l10n_es_aeat_349_operation_key"]["selection"]
+        )[
+            "l10n_es_aeat_349_operation_key"
+        ]["selection"]
 
     report_id = fields.Many2one(
         comodel_name="l10n.es.aeat.mod349.report",
@@ -602,9 +563,7 @@ class Mod349PartnerRefund(models.Model):
         string="Total rectified amount",
         store=True,
     )
-    total_origin_amount = fields.Float(
-        string="Original amount", help="Refund original amount"
-    )
+    total_origin_amount = fields.Float(string="Original amount", help="Refund original amount")
     partner_refund_ok = fields.Boolean(
         compute="_compute_partner_refund_ok",
         string="Partner refund OK",
@@ -620,9 +579,7 @@ class Mod349PartnerRefund(models.Model):
         string="Partner refund detail IDS",
     )
 
-    @api.depends(
-        "partner_vat", "country_id", "total_operation_amount", "total_origin_amount"
-    )
+    @api.depends("partner_vat", "country_id", "total_operation_amount", "total_origin_amount")
     def _compute_partner_refund_ok(self):
         """Checks if partner refund line have all fields filled."""
         for record in self:
@@ -670,9 +627,7 @@ class Mod349PartnerRefundDetail(models.Model):
         related="refund_id.partner_id",
         readonly=True,
     )
-    refund_line_id = fields.Many2one(
-        comodel_name="account.move.line", string="Journal Item", required=True
-    )
+    refund_line_id = fields.Many2one(comodel_name="account.move.line", string="Journal Item", required=True)
     move_id = fields.Many2one(
         comodel_name="account.move",
         string="Invoice",

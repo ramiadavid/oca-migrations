@@ -28,9 +28,7 @@ try:
         from cryptography.hazmat.backends import default_backend
 
         def load_key_and_certificates(*args, **kwargs):
-            return pkcs12.load_key_and_certificates(
-                *args, **kwargs, backend=default_backend()
-            )
+            return pkcs12.load_key_and_certificates(*args, **kwargs, backend=default_backend())
 
     else:
         load_key_and_certificates = pkcs12.load_key_and_certificates
@@ -39,16 +37,12 @@ except (OSError, ImportError) as err:
 
 # FIXME To be removed in v16, as it is now specified in the manifest
 if tuple(map(int, cryptography.__version__.split("."))) < (3, 0):
-    _logger.warning(
-        "Cryptography version is not supported. Upgrade to 3.0.0 or greater."
-    )
+    _logger.warning("Cryptography version is not supported. Upgrade to 3.0.0 or greater.")
 
 
 @contextlib.contextmanager
 def pfx_to_pem(p12, directory=None):
-    with tempfile.NamedTemporaryFile(
-        prefix="private_", suffix=".pem", delete=False, dir=directory
-    ) as t_pem:
+    with tempfile.NamedTemporaryFile(prefix="private_", suffix=".pem", delete=False, dir=directory) as t_pem:
         with open(t_pem.name, "wb") as f_pem:
             f_pem.write(
                 p12[0].private_bytes(
@@ -63,9 +57,7 @@ def pfx_to_pem(p12, directory=None):
 
 @contextlib.contextmanager
 def pfx_to_crt(p12, directory=None):
-    with tempfile.NamedTemporaryFile(
-        prefix="public_", suffix=".crt", delete=False, dir=directory
-    ) as t_crt:
+    with tempfile.NamedTemporaryFile(prefix="public_", suffix=".crt", delete=False, dir=directory) as t_crt:
         with open(t_crt.name, "wb") as f_crt:
             f_crt.write(p12[1].public_bytes(serialization.Encoding.PEM))
             f_crt.close()
@@ -79,9 +71,7 @@ class L10nEsAeatCertificatePassword(models.TransientModel):
     password = fields.Char(required=True)
 
     def get_keys(self):
-        record = self.env["l10n.es.aeat.certificate"].browse(
-            self.env.context.get("active_id")
-        )
+        record = self.env["l10n.es.aeat.certificate"].browse(self.env.context.get("active_id"))
         directory = os.path.join(
             os.path.abspath(config["data_dir"]),
             "certificates",

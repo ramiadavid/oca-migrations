@@ -17,9 +17,7 @@ _logger = logging.getLogger(__name__)
 
 class ReportController(report.ReportController):
     @route()
-    def report_routes(
-        self, reportname, docids=None, converter=None, options=None, **kwargs
-    ):
+    def report_routes(self, reportname, docids=None, converter=None, options=None, **kwargs):
         if converter != "xml":
             return super().report_routes(
                 reportname,
@@ -41,9 +39,7 @@ class ReportController(report.ReportController):
                 del data["context"]["lang"]
             context.update(data["context"])
         report_Obj = request.env["ir.actions.report"]
-        xml = report_Obj.with_context(**context)._render_qweb_xml(
-            reportname, docids, data=data
-        )[0]
+        xml = report_Obj.with_context(**context)._render_qweb_xml(reportname, docids, data=data)[0]
         xmlhttpheaders = [("Content-Type", "text/xml"), ("Content-Length", len(xml))]
         return request.make_response(xml, headers=xmlhttpheaders)
 
@@ -62,15 +58,11 @@ class ReportController(report.ReportController):
             report = request.env["ir.actions.report"]._get_report_from_name(reportname)
             filename = None
             if docids:
-                response = self.report_routes(
-                    reportname, docids=docids, converter="xml", context=context
-                )
+                response = self.report_routes(reportname, docids=docids, converter="xml", context=context)
                 ids = [int(x) for x in docids.split(",")]
                 obj = request.env[report.model].browse(ids)
                 if report.print_report_name and not len(obj) > 1:
-                    report_name = safe_eval(
-                        report.print_report_name, {"object": obj, "time": time}
-                    )
+                    report_name = safe_eval(report.print_report_name, {"object": obj, "time": time})
                     filename = f"{report_name}.{report.xml_extension}"
             else:
                 data = url_parse(url).decode_query(cls=dict)
@@ -78,9 +70,7 @@ class ReportController(report.ReportController):
                     context = json.loads(context or "{}")
                     data_context = json.loads(data.pop("context"))
                     context = json.dumps({**context, **data_context})
-                response = self.report_routes(
-                    reportname, converter="xml", context=context, **data
-                )
+                response = self.report_routes(reportname, converter="xml", context=context, **data)
             filename = filename or f"{report.name}.{report.xml_extension}"
             response.headers.add("Content-Disposition", content_disposition(filename))
             return response

@@ -9,7 +9,7 @@
     "version": "18.0.1.0.0",
     "license": "AGPL-3",
     "author": "Akretion, Tecnativa, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/bank-payment",
+    "website": "https://www.processcontrol.es",
     "category": "Banking addons",
     "conflicts": ["account_sepa"],
     "depends": ["account_banking_pain_base"],

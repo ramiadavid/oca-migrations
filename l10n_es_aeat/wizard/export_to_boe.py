@@ -8,7 +8,7 @@
 import base64
 import re
 
-from odoo import _, exceptions, fields, models, tools
+from odoo import exceptions, fields, models, tools
 from odoo.tools.safe_eval import safe_eval
 
 EXPRESSION_PATTERN = re.compile(r"(\$\{.+?\})")
@@ -20,9 +20,7 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
 
     name = fields.Char(string="File name", readonly=True)
     data = fields.Binary(string="File", readonly=True)
-    state = fields.Selection(
-        selection=[("open", "open"), ("get", "get")], default="open"
-    )
+    state = fields.Selection(selection=[("open", "open"), ("get", "get")], default="open")
 
     def _format_string(self, text, length, fill=" ", align="<"):
         """Format the string into a fixed length ASCII (iso-8859-1) record.
@@ -43,9 +41,7 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
 
         text = text.upper()
         text = "".join([unidecode(x) if x not in ("Ñ", "Ç") else x for x in text])
-        text = re.sub(
-            r"[^A-Z0-9\s\.,-_&'´\\:;/\(\)ÑÇ]", "", text, flags=re.UNICODE | re.X
-        )
+        text = re.sub(r"[^A-Z0-9\s\.,-_&'´\\:;/\(\)ÑÇ]", "", text, flags=re.UNICODE | re.X)
         ascii_string = text.encode("iso-8859-1")
         # Cut the string if it is too long
         if len(ascii_string) > length:
@@ -57,11 +53,9 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
         elif align == ">":
             ascii_string = ascii_string.rjust(length, ascii_fill)
         else:
-            raise AssertionError(_("Wrong align option. It should be < or >"))
+            raise AssertionError(self.env._("Wrong align option. It should be < or >"))
         # Sanity-check
-        assert len(ascii_string) == length, _(
-            "The formated string must match the given length"
-        )
+        assert len(ascii_string) == length, self.env._("The formated string must match the given length")
         # Return string
         return ascii_string
 
@@ -111,9 +105,9 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
         elif int_length > 0:
             ascii_string += "%.*d" % (int_length, int_part)
         # Sanity-check
-        assert (
-            len(ascii_string) == (include_sign and 1 or 0) + int_length + dec_length
-        ), _("The formated string must match the given length")
+        assert len(ascii_string) == (include_sign and 1 or 0) + int_length + dec_length, self.env._(
+            "The formated string must match the given length"
+        )
         # Return the string assuring that is not unicode
         return str(ascii_string)
 
@@ -140,18 +134,16 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
         if report.export_config_id:
             contents += self.action_get_file_from_config(report)
         else:
-            raise exceptions.UserError(_("No export configuration selected."))
+            raise exceptions.UserError(self.env._("No export configuration selected."))
         # Generate the file and save as attachment
         file = base64.encodebytes(contents)
-        file_name = _("%(number)s_report_%(date)s.txt") % {
+        file_name = self.env._("%(number)s_report_%(date)s.txt") % {
             "number": report.number,
             "date": fields.Date.today(),
         }
         # Delete old files
         attachment_obj = self.env["ir.attachment"]
-        attachment_ids = attachment_obj.search(
-            [("name", "=", file_name), ("res_model", "=", report._name)]
-        )
+        attachment_ids = attachment_obj.search([("name", "=", file_name), ("res_model", "=", report._name)])
         attachment_ids.unlink()
         attachment_obj.create(
             {

@@ -13,9 +13,7 @@ def compute_purchase_discount(env):
         ]
     )
     for line in purchase_lines_to_compute:
-        discount = line._get_aggregated_multiple_discounts(
-            [line[x] for x in ["discount1", "discount2", "discount3"]]
-        )
+        discount = line._get_aggregated_multiple_discounts([line[x] for x in ["discount1", "discount2", "discount3"]])
         rounded_discount = line._fields["discount"].convert_to_column(discount, line)
         openupgrade.logged_query(
             env.cr,
@@ -45,9 +43,7 @@ def compute_supplierinfo_discount(env):
         ]
     )
     for line in purchase_lines_to_compute:
-        discount = line._get_aggregated_multiple_discounts(
-            [line[x] for x in ["discount1", "discount2", "discount3"]]
-        )
+        discount = line._get_aggregated_multiple_discounts([line[x] for x in ["discount1", "discount2", "discount3"]])
         rounded_discount = line._fields["discount"].convert_to_column(discount, line)
         openupgrade.logged_query(
             env.cr,

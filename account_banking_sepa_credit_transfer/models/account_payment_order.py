@@ -4,7 +4,7 @@
 
 from lxml import etree
 
-from odoo import _, fields, models
+from odoo import fields, models
 from odoo.exceptions import UserError
 
 
@@ -22,7 +22,7 @@ class AccountPaymentOrder(models.Model):
         # to support country-specific extensions such as
         # pain.001.001.03.ch.02 (cf l10n_ch_sepa)
         if not pain_flavor:
-            raise UserError(_("PAIN version '%s' is not supported.") % pain_flavor)
+            raise UserError(self.env._("PAIN version '%s' is not supported.") % pain_flavor)
         if pain_flavor.startswith("pain.001.001.02"):
             bic_xml_tag = "BIC"
             name_maxsize = 70
@@ -55,7 +55,7 @@ class AccountPaymentOrder(models.Model):
             name_maxsize = 70
             root_xml_tag = "CstmrCdtTrfInitn"
         else:
-            raise UserError(_("PAIN version '%s' is not supported.") % pain_flavor)
+            raise UserError(self.env._("PAIN version '%s' is not supported.") % pain_flavor)
         xsd_file = self.payment_method_id.get_xsd_file_path()
         gen_args = {
             "bic_xml_tag": bic_xml_tag,
@@ -92,9 +92,7 @@ class AccountPaymentOrder(models.Model):
                 lines_per_group[key].append(line)
             else:
                 lines_per_group[key] = [line]
-        for (requested_date, priority, local_instrument, categ_purpose), lines in list(
-            lines_per_group.items()
-        ):
+        for (requested_date, priority, local_instrument, categ_purpose), lines in list(lines_per_group.items()):
             # B. Payment info
             requested_date = fields.Date.to_string(requested_date)
             (
@@ -120,9 +118,7 @@ class AccountPaymentOrder(models.Model):
                 },
                 gen_args,
             )
-            self.generate_party_block(
-                payment_info, "Dbtr", "B", self.company_partner_bank_id, gen_args
-            )
+            self.generate_party_block(payment_info, "Dbtr", "B", self.company_partner_bank_id, gen_args)
             charge_bearer = etree.SubElement(payment_info, "ChrgBr")
             if self.sepa:
                 charge_bearer_text = "SLEV"
@@ -135,15 +131,9 @@ class AccountPaymentOrder(models.Model):
                 transactions_count_a += 1
                 transactions_count_b += 1
                 # C. Credit Transfer Transaction Info
-                credit_transfer_transaction_info = etree.SubElement(
-                    payment_info, "CdtTrfTxInf"
-                )
-                payment_identification = etree.SubElement(
-                    credit_transfer_transaction_info, "PmtId"
-                )
-                instruction_identification = etree.SubElement(
-                    payment_identification, "InstrId"
-                )
+                credit_transfer_transaction_info = etree.SubElement(payment_info, "CdtTrfTxInf")
+                payment_identification = etree.SubElement(credit_transfer_transaction_info, "PmtId")
+                instruction_identification = etree.SubElement(payment_identification, "InstrId")
                 instruction_identification.text = self._prepare_field(
                     "Instruction Identification",
                     "str(line.move_id.id)",
@@ -151,9 +141,7 @@ class AccountPaymentOrder(models.Model):
                     35,
                     gen_args=gen_args,
                 )
-                end2end_identification = etree.SubElement(
-                    payment_identification, "EndToEndId"
-                )
+                end2end_identification = etree.SubElement(payment_identification, "EndToEndId")
                 end2end_identification.text = self._prepare_field(
                     "End to End Identification",
                     "str(line.move_id.id)",
@@ -169,15 +157,13 @@ class AccountPaymentOrder(models.Model):
                     gen_args=gen_args,
                 )
                 amount = etree.SubElement(credit_transfer_transaction_info, "Amt")
-                instructed_amount = etree.SubElement(
-                    amount, "InstdAmt", Ccy=currency_name
-                )
+                instructed_amount = etree.SubElement(amount, "InstdAmt", Ccy=currency_name)
                 instructed_amount.text = "%.2f" % line.amount
                 amount_control_sum_a += line.amount
                 amount_control_sum_b += line.amount
                 if not line.partner_bank_id:
                     raise UserError(
-                        _(
+                        self.env._(
                             "Bank account is missing on the bank payment line "
                             "of partner '{partner}' (reference '{reference}')."
                         ).format(partner=line.partner_id.name, reference=line.name)
@@ -195,9 +181,7 @@ class AccountPaymentOrder(models.Model):
                 if line_purpose:
                     purpose = etree.SubElement(credit_transfer_transaction_info, "Purp")
                     etree.SubElement(purpose, "Cd").text = line_purpose
-                self.generate_remittance_info_block(
-                    credit_transfer_transaction_info, line, gen_args
-                )
+                self.generate_remittance_info_block(credit_transfer_transaction_info, line, gen_args)
             if not pain_flavor.startswith("pain.001.001.02"):
                 nb_of_transactions_b.text = str(transactions_count_b)
                 control_sum_b.text = "%.2f" % amount_control_sum_b

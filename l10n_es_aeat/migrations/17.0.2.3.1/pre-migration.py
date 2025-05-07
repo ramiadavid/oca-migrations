@@ -9,9 +9,9 @@ def migrate(env, version):
     # taxpocalypse), and if so, rename them manually
     for comp in env["res.company"].search([]):
         for src, dest in [("s_iva0_e", "s_iva0_g_e"), ("s_iva0_ic", "s_iva0_g_i")]:
-            if env.ref(
-                f"account.{comp.id}_account_tax_template_{src}", False
-            ) and not env.ref(f"account.{comp.id}_account_tax_template_{dest}", False):
+            if env.ref(f"account.{comp.id}_account_tax_template_{src}", False) and not env.ref(
+                f"account.{comp.id}_account_tax_template_{dest}", False
+            ):
                 env["ir.model.data"].search(
                     [
                         ("module", "=", "account"),

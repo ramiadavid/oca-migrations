@@ -13,7 +13,7 @@
 import datetime
 from calendar import monthrange
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 from odoo.tools import float_compare
 
 KEY_TAX_MAPPING = {
@@ -42,9 +42,7 @@ class L10nEsAeatMod347Report(models.Model):
         for record in self:
             record.total_partner_records = len(record.partner_record_ids)
             record.total_amount = sum(record.mapped("partner_record_ids.amount"))
-            record.total_cash_amount = sum(
-                record.mapped("partner_record_ids.cash_amount")
-            )
+            record.total_cash_amount = sum(record.mapped("partner_record_ids.cash_amount"))
             record.total_real_estate_transmissions_amount = sum(
                 record.mapped("partner_record_ids.real_estate_transmissions_amount")
             )
@@ -54,24 +52,20 @@ class L10nEsAeatMod347Report(models.Model):
         """Calculates the total_* fields from the line values."""
         for record in self:
             record.total_real_estate_records = len(record.real_estate_record_ids)
-            record.total_real_estate_amount = sum(
-                record.mapped("real_estate_record_ids.amount")
-            )
+            record.total_real_estate_amount = sum(record.mapped("real_estate_record_ids.amount"))
 
     number = fields.Char(default="347")
     operations_limit = fields.Float(
         string="Invoiced Limit (1)",
         digits="Account",
         default=3005.06,
-        help="The declaration will include partners with the total of "
-        "operations over this limit",
+        help="The declaration will include partners with the total of " "operations over this limit",
     )
     received_cash_limit = fields.Float(
         string="Received cash Limit (2)",
         digits="Account",
         default=6000.00,
-        help="The declaration will show the total of cash operations over "
-        "this limit",
+        help="The declaration will show the total of cash operations over " "this limit",
     )
     total_partner_records = fields.Integer(
         compute="_compute_totals",
@@ -120,9 +114,7 @@ class L10nEsAeatMod347Report(models.Model):
             fields=["report_id"],
             groupby=["report_id"],
         )
-        return {
-            rec["report_id"][0]: rec["report_id_count"] for rec in records_error_group
-        }
+        return {rec["report_id"][0]: rec["report_id_count"] for rec in records_error_group}
 
     def _compute_error_count(self):
         ret_val = super()._compute_error_count()
@@ -130,9 +122,9 @@ class L10nEsAeatMod347Report(models.Model):
         real_estate_record_error_dict = self._error_count("real_estate_record")
 
         for report in self:
-            report.error_count += partner_records_error_dict.get(
+            report.error_count += partner_records_error_dict.get(report.id, 0) + real_estate_record_error_dict.get(
                 report.id, 0
-            ) + real_estate_record_error_dict.get(report.id, 0)
+            )
         return ret_val
 
     def button_confirm(self):
@@ -144,7 +136,7 @@ class L10nEsAeatMod347Report(models.Model):
             for partner_record in item.partner_record_ids:
                 if not partner_record.check_ok:
                     partner_errors.append(
-                        _(
+                        self.env._(
                             "- %(name)s %(id)s",
                             name=partner_record.partner_id.name,
                             id=partner_record.partner_id.id,
@@ -154,36 +146,31 @@ class L10nEsAeatMod347Report(models.Model):
             for real_estate_record in item.real_estate_record_ids:
                 if not real_estate_record.check_ok:
                     real_state_errors.append(
-                        _(
+                        self.env._(
                             "- %(name)s %(id)s",
                             name=real_estate_record.partner_id.name,
                             id=real_estate_record.partner_id.id,
                         )
                     )
-            error = _(
-                "Please review partner and real estate records, "
-                "some of them are in red color:\n\n"
-            )
+            error = self.env._("Please review partner and real estate records, " "some of them are in red color:\n\n")
             if partner_errors:
-                error += _("Partner record errors:\n")
+                error += self.env._("Partner record errors:\n")
                 error += "\n".join(partner_errors)
                 error += "\n\n"
             if real_state_errors:
-                error += _("Real estate record errors:\n")
+                error += self.env._("Real estate record errors:\n")
                 error += "\n".join(real_state_errors)
             if partner_errors or real_state_errors:
                 raise exceptions.ValidationError(error)
         return super().button_confirm()
 
     def button_send_mails(self):
-        self.partner_record_ids.filtered(
-            lambda x: x.state == "pending"
-        ).send_email_direct()
+        self.partner_record_ids.filtered(lambda x: x.state == "pending").send_email_direct()
 
     def btn_list_records(self):
         return {
             "domain": "[('report_id','in'," + str(self.ids) + ")]",
-            "name": _("Partner records"),
+            "name": self.env._("Partner records"),
             "view_mode": "tree,form",
             "res_model": "l10n.es.aeat.mod347.partner_record",
             "type": "ir.actions.act_window",
@@ -214,9 +201,7 @@ class L10nEsAeatMod347Report(models.Model):
                 # Odoo Spanish states codes use car license plates approach
                 # (CR, A, M...), instead of ZIP (01, 02...), so we need to
                 # convert them, but fallbacking in existing one if not found.
-                "partner_state_code": self.SPANISH_STATES.get(
-                    partner.state_id.code, partner.state_id.code
-                ),
+                "partner_state_code": self.SPANISH_STATES.get(partner.state_id.code, partner.state_id.code),
                 "partner_country_code": country_code,
             }
         else:
@@ -240,9 +225,7 @@ class L10nEsAeatMod347Report(models.Model):
             ["partner_id", "balance"],
             ["partner_id"],
         )
-        filtered_groups = list(
-            filter(lambda d: abs(d["balance"]) > self.operations_limit, groups)
-        )
+        filtered_groups = list(filter(lambda d: abs(d["balance"]) > self.operations_limit, groups))
         for group in filtered_groups:
             partner = partner_obj.browse(group["partner_id"][0])
             vals = {
@@ -270,9 +253,7 @@ class L10nEsAeatMod347Report(models.Model):
                 for move_group in move_groups
             ]
             if partner_record:
-                vals["move_record_ids"][0:0] = [
-                    (2, x) for x in partner_record.move_record_ids.ids
-                ]
+                vals["move_record_ids"][0:0] = [(2, x) for x in partner_record.move_record_ids.ids]
                 partner_record.write(vals)
             else:
                 partner_record_obj.create(vals)
@@ -292,9 +273,7 @@ class L10nEsAeatMod347Report(models.Model):
             ("date", "<=", self.date_end),
             ("partner_id.not_in_mod347", "=", False),
         ]
-        cash_groups = move_line_obj.read_group(
-            domain, ["partner_id", "balance"], ["partner_id"]
-        )
+        cash_groups = move_line_obj.read_group(domain, ["partner_id", "balance"], ["partner_id"])
         for cash_group in cash_groups:
             partner = partner_obj.browse(cash_group["partner_id"][0])
             partner_record_obj = self.env["l10n.es.aeat.mod347.partner_record"]
@@ -384,84 +363,69 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
             ("C", "C - Cobros por cuenta de terceros superiores al límite (3)"),
             (
                 "D",
-                "D - Adquisiciones efectuadas por Entidades Públicas "
-                "(...) superiores al límite (1)",
+                "D - Adquisiciones efectuadas por Entidades Públicas " "(...) superiores al límite (1)",
             ),
             (
                 "E",
-                "E - Subvenciones, auxilios y ayudas satisfechas por Ad. "
-                "Públicas superiores al límite (1)",
+                "E - Subvenciones, auxilios y ayudas satisfechas por Ad. " "Públicas superiores al límite (1)",
             ),
             ("F", "F - Ventas agencia viaje"),
             ("G", "G - Compras agencia viaje"),
         ],
     )
-    partner_id = fields.Many2one(
-        comodel_name="res.partner", string="Partner", required=True
-    )
+    partner_id = fields.Many2one(comodel_name="res.partner", string="Partner", required=True)
     partner_vat = fields.Char(string="VAT number", size=9)
-    representative_vat = fields.Char(
-        string="L.R. VAT number", size=9, help="Legal Representative VAT number"
-    )
+    representative_vat = fields.Char(string="L.R. VAT number", size=9, help="Legal Representative VAT number")
     community_vat = fields.Char(
         string="Community vat number",
         size=17,
-        help="VAT number for professionals established in other state "
-        "member without national VAT",
+        help="VAT number for professionals established in other state " "member without national VAT",
     )
     partner_country_code = fields.Char(string="Country Code", size=2)
     partner_state_code = fields.Char(string="State Code", size=2)
     first_quarter = fields.Float(
         string="First quarter operations",
         digits="Account",
-        help="Total amount of first quarter in, out and refund invoices "
-        "for this partner",
+        help="Total amount of first quarter in, out and refund invoices " "for this partner",
         tracking=True,
     )
     first_quarter_real_estate_transmission = fields.Float(
         string="First quarter real estate",
         digits="Account",
-        help="Total amount of first quarter real estate transmissions "
-        "for this partner",
+        help="Total amount of first quarter real estate transmissions " "for this partner",
     )
     second_quarter = fields.Float(
         string="Second quarter operations",
         digits="Account",
-        help="Total amount of second quarter in, out and refund invoices "
-        "for this partner",
+        help="Total amount of second quarter in, out and refund invoices " "for this partner",
         tracking=True,
     )
     second_quarter_real_estate_transmission = fields.Float(
         string="Second quarter real estate",
         digits="Account",
-        help="Total amount of second quarter real estate transmissions "
-        "for this partner",
+        help="Total amount of second quarter real estate transmissions " "for this partner",
     )
     third_quarter = fields.Float(
         string="Third quarter operations",
         digits="Account",
-        help="Total amount of third quarter in, out and refund invoices "
-        "for this partner",
+        help="Total amount of third quarter in, out and refund invoices " "for this partner",
         tracking=True,
     )
     third_quarter_real_estate_transmission = fields.Float(
         string="Third quarter real estate",
         digits="Account",
-        help="Total amount of third quarter real estate transmissions "
-        "for this partner",
+        help="Total amount of third quarter real estate transmissions " "for this partner",
     )
     fourth_quarter = fields.Float(
         string="Fourth quarter operations",
         digits="Account",
-        help="Total amount of fourth quarter in, out and refund invoices "
-        "for this partner",
+        help="Total amount of fourth quarter in, out and refund invoices " "for this partner",
         tracking=True,
     )
     fourth_quarter_real_estate_transmission = fields.Float(
         string="Fourth quarter real estate",
         digits="Account",
-        help="Total amount of fourth quarter real estate transmissions "
-        "for this partner",
+        help="Total amount of fourth quarter real estate transmissions " "for this partner",
     )
     amount = fields.Float(
         string="Operations amount",
@@ -477,20 +441,16 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
         digits="Account",
     )
     insurance_operation = fields.Boolean(
-        help="Only for insurance companies. Set to identify insurance "
-        "operations aside from the rest.",
+        help="Only for insurance companies. Set to identify insurance " "operations aside from the rest.",
     )
     cash_basis_operation = fields.Boolean(
-        help="Only for cash basis operations. Set to identify cash basis "
-        "operations aside from the rest.",
+        help="Only for cash basis operations. Set to identify cash basis " "operations aside from the rest.",
     )
     tax_person_operation = fields.Boolean(
-        help="Only for taxable person operations. Set to identify taxable "
-        "person operations aside from the rest.",
+        help="Only for taxable person operations. Set to identify taxable " "person operations aside from the rest.",
     )
     related_goods_operation = fields.Boolean(
-        help="Only for related goods operations. Set to identify related "
-        "goods operations aside from the rest.",
+        help="Only for related goods operations. Set to identify related " "goods operations aside from the rest.",
     )
     bussiness_real_estate_rent = fields.Boolean(
         help="Set to identify real estate rent operations aside from the rest."
@@ -518,20 +478,18 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
     )
     error_text = fields.Char(compute="_compute_check_ok", store=True)
 
-    @api.depends(
-        "partner_country_code", "partner_state_code", "partner_vat", "community_vat"
-    )
+    @api.depends("partner_country_code", "partner_state_code", "partner_vat", "community_vat")
     def _compute_check_ok(self):
         for record in self:
             errors = []
             if not record.partner_country_code:
-                errors.append(_("Without country code"))
+                errors.append(self.env._("Without country code"))
             if not record.partner_state_code:
-                errors.append(_("Without state code"))
+                errors.append(self.env._("Without state code"))
             if record.partner_state_code and not record.partner_state_code.isdigit():
-                errors.append(_("State code can only contain digits"))
+                errors.append(self.env._("State code can only contain digits"))
             if not (record.partner_vat or record.partner_country_code != "ES"):
-                errors.append(_("VAT must be defined for Spanish Contacts"))
+                errors.append(self.env._("VAT must be defined for Spanish Contacts"))
             record.check_ok = not bool(errors)
             record.error_text = ", ".join(errors)
 
@@ -549,11 +507,7 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
             day_end = monthrange(year, month_end)[1]
             date_start = datetime.date(year, month_start, day_start)
             date_end = datetime.date(year, month_end, day_end)
-            return sum(
-                records.filtered(
-                    lambda x: date_start <= x.move_id.date <= date_end
-                ).mapped("amount")
-            )
+            return sum(records.filtered(lambda x: date_start <= x.move_id.date <= date_end).mapped("amount"))
 
         for record in self:
             year = record.report_id.year
@@ -594,7 +548,7 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
             mark_invoice_as_sent=True,
         )
         return {
-            "name": _("Compose Email"),
+            "name": self.env._("Compose Email"),
             "type": "ir.actions.act_window",
             "view_mode": "form",
             "res_model": "mail.compose.message",
@@ -640,9 +594,7 @@ class L10nEsAeatMod347PartnerRecord(models.Model):
         recipients = super().message_get_suggested_recipients()
         partner_obj = self.env["res.partner"]
         for record in self:
-            partner = partner_obj.browse(
-                record.partner_id.address_get(["invoice"])["invoice"]
-            )
+            partner = partner_obj.browse(record.partner_id.address_get(["invoice"])["invoice"])
             record._message_add_suggested_recipient(
                 recipients,
                 partner=partner,
@@ -734,7 +686,7 @@ class L10nEsAeatMod347RealStateRecord(models.Model):
         for record in self:
             errors = []
             if not record.state_code:
-                errors.append(_("Without state code"))
+                errors.append(self.env._("Without state code"))
             record.check_ok = not bool(errors)
             record.error_text = ", ".join(errors)
 

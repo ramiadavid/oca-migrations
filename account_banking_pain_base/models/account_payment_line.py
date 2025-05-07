@@ -12,8 +12,7 @@ class AccountPaymentLine(models.Model):
     priority = fields.Selection(
         [("NORM", "Normal"), ("HIGH", "High")],
         default="NORM",
-        help="This field will be used as 'Instruction Priority' in "
-        "the generated PAIN file.",
+        help="This field will be used as 'Instruction Priority' in " "the generated PAIN file.",
     )
     # local_instrument is used for instant credit transfers which
     # will begin on November 2017, cf account_banking_sepa_credit_transfer
@@ -168,9 +167,7 @@ class AccountPaymentLine(models.Model):
     # The field struct_communication_type has been dropped in v9
     # We now use communication_type ; you should add an option
     # in communication_type with selection_add=[]
-    communication_type = fields.Selection(
-        selection_add=[("ISO", "ISO")], ondelete={"ISO": "cascade"}
-    )
+    communication_type = fields.Selection(selection_add=[("ISO", "ISO")], ondelete={"ISO": "cascade"})
 
     @api.model
     def _get_payment_line_grouping_fields(self):

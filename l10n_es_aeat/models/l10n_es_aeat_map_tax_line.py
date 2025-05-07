@@ -10,9 +10,7 @@ class L10nEsAeatMapTaxLine(models.Model):
     _description = "AEAT tax mapping line"
 
     field_number = fields.Integer(required=True)
-    tax_xmlid_ids = fields.Many2many(
-        comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes templates"
-    )
+    tax_xmlid_ids = fields.Many2many(comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes templates")
     account_xmlid_ids = fields.Many2many(
         comodel_name="l10n.es.aeat.map.tax.line.account",
         string="Account Template",

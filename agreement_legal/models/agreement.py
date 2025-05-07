@@ -7,7 +7,7 @@ from datetime import timedelta
 
 from lxml import etree
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 
 class Agreement(models.Model):
@@ -17,23 +17,17 @@ class Agreement(models.Model):
     version = fields.Integer(
         default=1,
         copy=False,
-        help="The versions are used to keep track of document history and "
-        "previous versions can be referenced.",
+        help="The versions are used to keep track of document history and " "previous versions can be referenced.",
     )
-    revision = fields.Integer(
-        default=0, copy=False, help="The revision will increase with every save event."
-    )
+    revision = fields.Integer(default=0, copy=False, help="The revision will increase with every save event.")
     description = fields.Text(tracking=True, help="Description of the agreement")
-    dynamic_description = fields.Text(
-        compute="_compute_dynamic_description", help="Compute dynamic description"
-    )
+    dynamic_description = fields.Text(compute="_compute_dynamic_description", help="Compute dynamic description")
     start_date = fields.Date(tracking=True, help="When the agreement starts.")
     end_date = fields.Date(tracking=True, help="When the agreement ends.")
     color = fields.Integer()
     active = fields.Boolean(
         default=True,
-        help="If unchecked, it will allow you to hide the agreement without "
-        "removing it.",
+        help="If unchecked, it will allow you to hide the agreement without " "removing it.",
     )
     company_signed_date = fields.Date(
         string="Signed on",
@@ -57,16 +51,13 @@ class Agreement(models.Model):
     )
     special_terms = fields.Text(
         tracking=True,
-        help="Any terms that you have agreed to and want to track on the "
-        "agreement/contract.",
+        help="Any terms that you have agreed to and want to track on the " "agreement/contract.",
     )
-    dynamic_special_terms = fields.Text(
-        compute="_compute_dynamic_special_terms", help="Compute dynamic special terms"
-    )
+    dynamic_special_terms = fields.Text(compute="_compute_dynamic_special_terms", help="Compute dynamic special terms")
     code = fields.Char(
         string="Reference",
         required=True,
-        default=lambda self: _("New"),
+        default=lambda self: self.env._("New"),
         tracking=True,
         copy=False,
         help="ID used for internal contract tracking.",
@@ -76,9 +67,7 @@ class Agreement(models.Model):
         tracking=True,
         help="Date that a request for termination was received.",
     )
-    termination_date = fields.Date(
-        tracking=True, help="Date that the contract was terminated."
-    )
+    termination_date = fields.Date(tracking=True, help="Date that the contract was terminated.")
     reviewed_date = fields.Date(tracking=True)
     reviewed_user_id = fields.Many2one("res.users", string="Reviewed By", tracking=True)
     approved_date = fields.Date(tracking=True)
@@ -96,28 +85,18 @@ class Agreement(models.Model):
         copy=True,
         help="The primary partner contact (If Applicable).",
     )
-    partner_contact_phone = fields.Char(
-        related="partner_contact_id.phone", string="Partner Phone"
-    )
-    partner_contact_email = fields.Char(
-        related="partner_contact_id.email", string="Partner Email"
-    )
+    partner_contact_phone = fields.Char(related="partner_contact_id.phone", string="Partner Phone")
+    partner_contact_email = fields.Char(related="partner_contact_id.email", string="Partner Email")
     company_contact_id = fields.Many2one(
         "res.partner",
         string="Company Contact",
         copy=True,
         help="The primary contact in the company.",
     )
-    company_contact_phone = fields.Char(
-        related="company_contact_id.phone", string="Phone"
-    )
-    company_contact_email = fields.Char(
-        related="company_contact_id.email", string="Email"
-    )
+    company_contact_phone = fields.Char(related="company_contact_id.phone", string="Phone")
+    company_contact_email = fields.Char(related="company_contact_id.email", string="Email")
     use_parties_content = fields.Boolean(help="Use custom content for parties")
-    company_partner_id = fields.Many2one(
-        related="company_id.partner_id", string="Company's Partner"
-    )
+    company_partner_id = fields.Many2one(related="company_id.partner_id", string="Company's Partner")
 
     def _get_default_parties(self):
         deftext = """
@@ -144,19 +123,14 @@ class Agreement(models.Model):
         """
         return deftext
 
-    parties = fields.Html(
-        tracking=True, default=_get_default_parties, help="Parties of the agreement"
-    )
-    dynamic_parties = fields.Html(
-        compute="_compute_dynamic_parties", help="Compute dynamic parties"
-    )
+    parties = fields.Html(tracking=True, default=_get_default_parties, help="Parties of the agreement")
+    dynamic_parties = fields.Html(compute="_compute_dynamic_parties", help="Compute dynamic parties")
     agreement_type_id = fields.Many2one(tracking=True)
     agreement_subtype_id = fields.Many2one(
         "agreement.subtype",
         string="Agreement Sub-type",
         tracking=True,
-        help="Select the sub-type of this agreement. Sub-Types are related to "
-        "agreement types.",
+        help="Select the sub-type of this agreement. Sub-Types are related to " "agreement types.",
     )
     assigned_user_id = fields.Many2one(
         "res.users",
@@ -168,8 +142,7 @@ class Agreement(models.Model):
         "res.users",
         string="Signed By",
         tracking=True,
-        help="The user at our company who authorized/signed the agreement or "
-        "contract.",
+        help="The user at our company who authorized/signed the agreement or " "contract.",
     )
     partner_signed_user_id = fields.Many2one(
         "res.partner",
@@ -184,22 +157,12 @@ class Agreement(models.Model):
         "agreement is an amendment to another agreement. This list will "
         "only show other agreements related to the same account.",
     )
-    create_uid_parent = fields.Many2one(
-        related="parent_agreement_id.create_uid", string="Created by (parent)"
-    )
-    create_date_parent = fields.Datetime(
-        related="parent_agreement_id.create_date", string="Created on (parent)"
-    )
-    recital_ids = fields.One2many(
-        "agreement.recital", "agreement_id", string="Recitals", copy=True
-    )
-    sections_ids = fields.One2many(
-        "agreement.section", "agreement_id", string="Sections", copy=True
-    )
+    create_uid_parent = fields.Many2one(related="parent_agreement_id.create_uid", string="Created by (parent)")
+    create_date_parent = fields.Datetime(related="parent_agreement_id.create_date", string="Created on (parent)")
+    recital_ids = fields.One2many("agreement.recital", "agreement_id", string="Recitals", copy=True)
+    sections_ids = fields.One2many("agreement.section", "agreement_id", string="Sections", copy=True)
     clauses_ids = fields.One2many("agreement.clause", "agreement_id", string="Clauses")
-    appendix_ids = fields.One2many(
-        "agreement.appendix", "agreement_id", string="Appendices", copy=True
-    )
+    appendix_ids = fields.One2many("agreement.appendix", "agreement_id", string="Appendices", copy=True)
     previous_version_agreements_ids = fields.One2many(
         "agreement",
         "parent_agreement_id",
@@ -214,9 +177,7 @@ class Agreement(models.Model):
         copy=False,
         domain=[("active", "=", True)],
     )
-    line_ids = fields.One2many(
-        "agreement.line", "agreement_id", string="Products/Services", copy=False
-    )
+    line_ids = fields.One2many("agreement.line", "agreement_id", string="Products/Services", copy=False)
     state = fields.Selection(
         [("draft", "Draft"), ("active", "Active"), ("inactive", "Inactive")],
         default="draft",
@@ -225,8 +186,7 @@ class Agreement(models.Model):
     notification_address_id = fields.Many2one(
         "res.partner",
         string="Notification Address",
-        help="The address to send notifications to, if different from "
-        "customer address.(Address Type = Other)",
+        help="The address to send notifications to, if different from " "customer address.(Address Type = Other)",
     )
     signed_contract_filename = fields.Char(string="Filename")
     signed_contract = fields.Binary(string="Signed Document", tracking=True)
@@ -250,17 +210,13 @@ class Agreement(models.Model):
          field lets you select the target field within the destination document
           model (sub-model).""",
     )
-    default_value = fields.Char(
-        help="Optional value to use if the target field is empty."
-    )
+    default_value = fields.Char(help="Optional value to use if the target field is empty.")
     copyvalue = fields.Char(
         string="Placeholder Expression",
         help="""Final placeholder expression, to be copy-pasted in the desired
          template field.""",
     )
-    template_id = fields.Many2one(
-        "agreement", string="Template", domain=[("is_template", "=", True)]
-    )
+    template_id = fields.Many2one("agreement", string="Template", domain=[("is_template", "=", True)])
     readonly = fields.Boolean(related="stage_id.readonly")
     to_review_date = fields.Date(
         compute="_compute_to_review_date",
@@ -273,9 +229,7 @@ class Agreement(models.Model):
     def _compute_to_review_date(self):
         for record in self:
             if record.end_date:
-                record.to_review_date = record.end_date + timedelta(
-                    days=-record.agreement_type_id.review_days
-                )
+                record.to_review_date = record.end_date + timedelta(days=-record.agreement_type_id.review_days)
 
     @api.model
     def _alert_to_review_date(self):
@@ -287,15 +241,13 @@ class Agreement(models.Model):
         )
         for agreement in agreements:
             if (
-                self.env["mail.activity"].search_count(
-                    [("res_id", "=", agreement.id), ("res_model", "=", self._name)]
-                )
+                self.env["mail.activity"].search_count([("res_id", "=", agreement.id), ("res_model", "=", self._name)])
                 == 0
             ):
                 agreement.activity_schedule(
                     "agreement_legal.mail_activity_review_agreement",
                     user_id=agreement.agreement_type_id.review_user_id.id,
-                    note=_("Your activity is going to end soon"),
+                    note=self.env._("Your activity is going to end soon"),
                 )
 
     # compute the dynamic content for jinja expression
@@ -331,14 +283,10 @@ class Agreement(models.Model):
         self.sub_object_id = False
         self.copyvalue = False
         if self.field_id and not self.field_id.relation:
-            self.copyvalue = "{{{{object.{} or {}}}}}".format(
-                self.field_id.name, self.default_value or "''"
-            )
+            self.copyvalue = "{{{{object.{} or {}}}}}".format(self.field_id.name, self.default_value or "''")
             self.sub_model_object_field_id = False
         if self.field_id and self.field_id.relation:
-            self.sub_object_id = self.env["ir.model"].search(
-                [("model", "=", self.field_id.relation)]
-            )[0]
+            self.sub_object_id = self.env["ir.model"].search([("model", "=", self.field_id.relation)])[0]
         if self.sub_model_object_field_id:
             self.copyvalue = "{{{{object.{}.{} or {}}}}}".format(
                 self.field_id.name,
@@ -349,9 +297,7 @@ class Agreement(models.Model):
     # Used for Kanban grouped_by view
     @api.model
     def _read_group_stage_ids(self, stages, domain, order):
-        stage_ids = self.env["agreement.stage"].search(
-            [("stage_type", "=", "agreement")]
-        )
+        stage_ids = self.env["agreement.stage"].search([("stage_type", "=", "agreement")])
         return stage_ids
 
     stage_id = fields.Many2one(
@@ -430,8 +376,8 @@ class Agreement(models.Model):
         return self.action_view_agreement(res)
 
     def _fill_create_vals(self, vals):
-        if vals.get("code", _("New")) == _("New"):
-            vals["code"] = self.env["ir.sequence"].next_by_code("agreement") or _("New")
+        if vals.get("code", self.env._("New")) == self.env._("New"):
+            vals["code"] = self.env["ir.sequence"].next_by_code("agreement") or self.env._("New")
         if not vals.get("stage_id"):
             vals["stage_id"] = self._get_default_stage_id()
         return vals
@@ -457,7 +403,7 @@ class Agreement(models.Model):
         """Assign a value for code is New"""
         default = dict(default or {})
         if not default.get("code", False):
-            default.setdefault("code", _("New"))
+            default.setdefault("code", self.env._("New"))
         res = super().copy(default)
         res.sections_ids.mapped("clauses_ids").write({"agreement_id": res.id})
         return res
@@ -477,18 +423,14 @@ class Agreement(models.Model):
                 attrs = ast.literal_eval(node.attrib.get("attrs", "{}"))
                 if attrs:
                     if attrs.get("readonly"):
-                        attrs["readonly"] = ["|", ("readonly", "=", True)] + attrs[
-                            "readonly"
-                        ]
+                        attrs["readonly"] = ["|", ("readonly", "=", True)] + attrs["readonly"]
                     else:
                         attrs["readonly"] = [("readonly", "=", True)]
                 else:
                     attrs["readonly"] = [("readonly", "=", True)]
                 node.set("attrs", simplejson.dumps(attrs))
                 modifiers = ast.literal_eval(
-                    node.attrib.get("modifiers", "{}")
-                    .replace("true", "True")
-                    .replace("false", "False")
+                    node.attrib.get("modifiers", "{}").replace("true", "True").replace("false", "False")
                 )
                 readonly = modifiers.get("readonly")
                 invisible = modifiers.get("invisible")

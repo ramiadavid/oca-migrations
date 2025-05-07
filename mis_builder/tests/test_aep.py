@@ -11,8 +11,7 @@ from odoo.tools.safe_eval import safe_eval
 
 from ..models import aep
 from ..models.accounting_none import AccountingNone
-from ..models.aep import AccountingExpressionProcessor as AEP
-from ..models.aep import _is_domain
+from ..models.aep import AccountingExpressionProcessor as AEP, _is_domain
 from .common import load_doctests
 
 load_tests = load_doctests(aep)
@@ -31,9 +30,7 @@ class TestAEP(common.TransactionCase):
         self.company = self.res_company.create(
             {
                 "name": "AEP Company",
-                "country_id": (
-                    self.env["res.country"].search([("code", "=", "US")], limit=1).id
-                ),
+                "country_id": (self.env["res.country"].search([("code", "=", "US")], limit=1).id),
             }
         )
         # create receivable bs account
@@ -114,22 +111,15 @@ class TestAEP(common.TransactionCase):
         self.aep.parse_expr("balp[700I%]")
         self.aep.parse_expr("fldp.quantity[700%]")
         self.aep.parse_expr("balp[]" "[('account_id.code', '=', '400AR')]")
-        self.aep.parse_expr(
-            "balp[]" "[('account_id.account_type', '=', " " 'asset_receivable')]"
-        )
+        self.aep.parse_expr("balp[]" "[('account_id.account_type', '=', " " 'asset_receivable')]")
         self.aep.parse_expr("balp[('account_type', '=', " "      'asset_receivable')]")
         self.aep.parse_expr(
-            "balp['&', "
-            "     ('account_type', '=', "
-            "      'asset_receivable'), "
-            "     ('code', '=', '400AR')]"
+            "balp['&', " "     ('account_type', '=', " "      'asset_receivable'), " "     ('code', '=', '400AR')]"
         )
         self.aep.parse_expr("bal_700IN")  # deprecated
         self.aep.parse_expr("bals[700IN]")  # deprecated
 
-    def _create_move(
-        self, date, amount, debit_acc, credit_acc, post=True, credit_quantity=0
-    ):
+    def _create_move(self, date, amount, debit_acc, credit_acc, post=True, credit_quantity=0):
         move = self.move_model.create(
             {
                 "journal_id": self.journal.id,
@@ -186,9 +176,7 @@ class TestAEP(common.TransactionCase):
         aep = AEP(self.company)
         with self.assertRaises(UserError) as cm:
             aep.parse_expr("fldi.quantity[700%]")
-        self.assertIn(
-            "`fld` can only be used with mode `p` (variation)", str(cm.exception)
-        )
+        self.assertIn("`fld` can only be used with mode `p` (variation)", str(cm.exception))
         with self.assertRaises(UserError) as cm:
             aep.parse_expr("fldp[700%]")
         self.assertIn("`fld` must have a field name", str(cm.exception))
@@ -199,9 +187,7 @@ class TestAEP(common.TransactionCase):
     def test_aep_basic(self):
         self.aep.done_parsing()
         # let's query for december
-        self._do_queries(
-            datetime.date(self.prev_year, 12, 1), datetime.date(self.prev_year, 12, 31)
-        )
+        self._do_queries(datetime.date(self.prev_year, 12, 1), datetime.date(self.prev_year, 12, 31))
         # initial balance must be None
         self.assertIs(self._eval("bali[400AR]"), AccountingNone)
         self.assertIs(self._eval("bali[700IN]"), AccountingNone)
@@ -209,9 +195,7 @@ class TestAEP(common.TransactionCase):
         self.assertEqual(self._eval("balp[400AR]"), 100)
         self.assertEqual(self._eval("balp[][('account_id.code', '=', '400AR')]"), 100)
         self.assertEqual(
-            self._eval(
-                "balp[]" "[('account_id.account_type', '=', " "  'asset_receivable')]"
-            ),
+            self._eval("balp[]" "[('account_id.account_type', '=', " "  'asset_receivable')]"),
             100,
         )
         self.assertEqual(
@@ -220,10 +204,7 @@ class TestAEP(common.TransactionCase):
         )
         self.assertEqual(
             self._eval(
-                "balp['&', "
-                "     ('account_type', '=', "
-                "      'asset_receivable'), "
-                "     ('code', '=', '400AR')]"
+                "balp['&', " "     ('account_type', '=', " "      'asset_receivable'), " "     ('code', '=', '400AR')]"
             ),
             100,
         )
@@ -233,9 +214,7 @@ class TestAEP(common.TransactionCase):
         self.assertEqual(self._eval("bale[700IN]"), -100)
 
         # let's query for January
-        self._do_queries(
-            datetime.date(self.curr_year, 1, 1), datetime.date(self.curr_year, 1, 31)
-        )
+        self._do_queries(datetime.date(self.curr_year, 1, 1), datetime.date(self.curr_year, 1, 31))
         # initial balance is None for income account (it's not carried over)
         self.assertEqual(self._eval("bali[400AR]"), 100)
         self.assertIs(self._eval("bali[700IN]"), AccountingNone)
@@ -251,9 +230,7 @@ class TestAEP(common.TransactionCase):
         self.assertEqual(self._eval("fldp.quantity[700%]"), 3)
 
         # let's query for March
-        self._do_queries(
-            datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31)
-        )
+        self._do_queries(datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31))
         # initial balance is the ending balance fo January
         self.assertEqual(self._eval("bali[400AR]"), 400)
         self.assertEqual(self._eval("bali[700IN]"), -300)
@@ -288,26 +265,18 @@ class TestAEP(common.TransactionCase):
         # TODO allocate profits, and then...
 
         # let's query for December where there is no data
-        self._do_queries(
-            datetime.date(self.curr_year, 12, 1), datetime.date(self.curr_year, 12, 31)
-        )
+        self._do_queries(datetime.date(self.curr_year, 12, 1), datetime.date(self.curr_year, 12, 31))
         self.assertIs(self._eval("balp[700IN]"), AccountingNone)
 
     def test_aep_by_account(self):
         self.aep.done_parsing()
-        self._do_queries(
-            datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31)
-        )
+        self._do_queries(datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31))
         variation = self._eval_by_account_id("balp[]")
         self.assertEqual(variation, {self.account_ar.id: 500, self.account_in.id: -500})
         variation = self._eval_by_account_id("pbalp[]")
-        self.assertEqual(
-            variation, {self.account_ar.id: 500, self.account_in.id: AccountingNone}
-        )
+        self.assertEqual(variation, {self.account_ar.id: 500, self.account_in.id: AccountingNone})
         variation = self._eval_by_account_id("nbalp[]")
-        self.assertEqual(
-            variation, {self.account_ar.id: AccountingNone, self.account_in.id: -500}
-        )
+        self.assertEqual(variation, {self.account_ar.id: AccountingNone, self.account_in.id: -500})
         variation = self._eval_by_account_id("balp[700IN]")
         self.assertEqual(variation, {self.account_in.id: -500})
         variation = self._eval_by_account_id("crdp[700IN] - debp[400AR]")
@@ -318,9 +287,7 @@ class TestAEP(common.TransactionCase):
     def test_aep_by_account_no_data(self):
         """Test that accounts with no data are not returned."""
         self.aep.done_parsing()
-        self._do_queries(
-            datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31)
-        )
+        self._do_queries(datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31))
         variation = self._eval("balp[700I%]")
         self.assertEqual(variation, -500)
         variation_by_account = self._eval_by_account_id("balp[700I%]")
@@ -328,24 +295,16 @@ class TestAEP(common.TransactionCase):
 
     def test_aep_convenience_methods(self):
         initial = AEP.get_balances_initial(self.company, time.strftime("%Y") + "-03-01")
-        self.assertEqual(
-            initial, {self.account_ar.id: (400, 0), self.account_in.id: (0, 300)}
-        )
+        self.assertEqual(initial, {self.account_ar.id: (400, 0), self.account_in.id: (0, 300)})
         variation = AEP.get_balances_variation(
             self.company,
             time.strftime("%Y") + "-03-01",
             time.strftime("%Y") + "-03-31",
         )
-        self.assertEqual(
-            variation, {self.account_ar.id: (500, 0), self.account_in.id: (0, 500)}
-        )
+        self.assertEqual(variation, {self.account_ar.id: (500, 0), self.account_in.id: (0, 500)})
         end = AEP.get_balances_end(self.company, time.strftime("%Y") + "-03-31")
-        self.assertEqual(
-            end, {self.account_ar.id: (900, 0), self.account_in.id: (0, 800)}
-        )
-        unallocated = AEP.get_unallocated_pl(
-            self.company, time.strftime("%Y") + "-03-15"
-        )
+        self.assertEqual(end, {self.account_ar.id: (900, 0), self.account_in.id: (0, 800)})
+        unallocated = AEP.get_unallocated_pl(self.company, time.strftime("%Y") + "-03-15")
         self.assertEqual(unallocated, (0, 100))
 
     def test_float_is_zero(self):
@@ -464,9 +423,7 @@ class TestAEP(common.TransactionCase):
         tax.active = False
         move._post()
         # let's query for december 1st
-        self._do_queries(
-            datetime.date(self.prev_year, 12, 1), datetime.date(self.prev_year, 12, 1)
-        )
+        self._do_queries(datetime.date(self.prev_year, 12, 1), datetime.date(self.prev_year, 12, 1))
         # let's see if there was a match
         self.assertEqual(self._eval(expr), -100)
 
@@ -503,17 +460,13 @@ class TestAEP(common.TransactionCase):
         self.aep.parse_expr("bali[]")
         self.aep.done_parsing()
         # test variation and ending balance
-        self._do_queries(
-            datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31)
-        )
+        self._do_queries(datetime.date(self.curr_year, 3, 1), datetime.date(self.curr_year, 3, 31))
         variation = self._eval_by_account_id("balp[]")
         self.assertEqual(variation, {self.account_ar.id: 550, self.account_in.id: -550})
         ending = self._eval_by_account_id("bale[]")
         self.assertEqual(ending, {self.account_ar.id: 950, self.account_in.id: -850})
         # initial balance at beginning of the next period is the ending balance
         # of previous period
-        self._do_queries(
-            datetime.date(self.curr_year, 4, 1), datetime.date(self.curr_year, 4, 30)
-        )
+        self._do_queries(datetime.date(self.curr_year, 4, 1), datetime.date(self.curr_year, 4, 30))
         initial = self._eval_by_account_id("bali[]")
         self.assertEqual(initial, {self.account_ar.id: 950, self.account_in.id: -850})

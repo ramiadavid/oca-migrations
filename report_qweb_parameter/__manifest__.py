@@ -10,7 +10,7 @@
         and check minimal length
     """,
     "author": "Creu Blanca, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/reporting-engine",
+    "website": "https://www.processcontrol.es",
     "category": "Technical Settings",
     "depends": ["web"],
     "demo": ["demo/test_report_field_length.xml"],

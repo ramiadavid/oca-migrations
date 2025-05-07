@@ -18,9 +18,7 @@ def post_init_hook(env):
     Args:
      * env(odoo.api.Environment) - provides access to the models
     """
-    report_domain = [
-        ("report_name", "=", "report_xml.demo_report_xml_view")  # report tech name
-    ]
+    report_domain = [("report_name", "=", "report_xml.demo_report_xml_view")]  # report tech name
     demo_report = env["ir.actions.report"].search(report_domain, limit=1)
     if demo_report:
         dir_path = os.path.dirname(__file__)

@@ -51,10 +51,7 @@ class TripleDiscountMixin(models.AbstractModel):
     def _compute_discount(self):
         for record in self:
             record.discount = record._get_aggregated_discount_from_values(
-                {
-                    fname: record[fname]
-                    for fname in record._get_multiple_discount_field_names()
-                }
+                {fname: record[fname] for fname in record._get_multiple_discount_field_names()}
             )
 
     def _get_aggregated_discount_from_values(self, values):
@@ -73,7 +70,5 @@ class TripleDiscountMixin(models.AbstractModel):
         discount_values = []
         for discount in discounts:
             discount_values.append(1 - (discount or 0.0) / 100.0)
-        aggregated_discount = (
-            1 - functools.reduce((lambda x, y: x * y), discount_values)
-        ) * 100
+        aggregated_discount = (1 - functools.reduce((lambda x, y: x * y), discount_values)) * 100
         return aggregated_discount

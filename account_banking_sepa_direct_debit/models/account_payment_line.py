@@ -1,7 +1,7 @@
 # Copyright 2019 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, models
+from odoo import models
 from odoo.exceptions import UserError
 
 
@@ -10,9 +10,7 @@ class AccountPaymentLine(models.Model):
 
     def draft2open_payment_line_check(self):
         res = super().draft2open_payment_line_check()
-        sepa_dd_lines = self.filtered(
-            lambda line: line.order_id.payment_method_id.code == "sepa_direct_debit"
-        )
+        sepa_dd_lines = self.filtered(lambda line: line.order_id.payment_method_id.code == "sepa_direct_debit")
         sepa_dd_lines._check_sepa_direct_debit_ready()
         return res
 
@@ -25,14 +23,14 @@ class AccountPaymentLine(models.Model):
         for rec in self:
             if not rec.mandate_id:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Missing SEPA Direct Debit mandate on the line with "
                         "partner {partner_name} (reference {reference})."
                     ).format(partner_name=rec.partner_id.name, reference=rec.name)
                 )
             if rec.mandate_id.state != "valid":
                 raise UserError(
-                    _(
+                    self.env._(
                         "The SEPA Direct Debit mandate with reference "
                         "{mandate_ref} for partner {partner_name} has "
                         "expired."
@@ -43,7 +41,7 @@ class AccountPaymentLine(models.Model):
                 )
             if rec.mandate_id.type == "oneoff" and rec.mandate_id.last_debit_date:
                 raise UserError(
-                    _(
+                    self.env._(
                         "The SEPA Direct Debit mandate with reference "
                         "{mandate_ref} for partner {partner_name} has type set "
                         "to 'One-Off' but has a last debit date set to "

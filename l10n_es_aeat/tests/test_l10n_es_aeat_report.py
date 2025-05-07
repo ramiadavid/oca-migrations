@@ -79,9 +79,7 @@ class TestL10nEsAeatReport(common.TransactionCase):
         self.assertTrue(TEST_MODEL_NAME in self.env)
         company = self.env["res.company"].create({"name": "Test company"})
         self.assertTrue(
-            self.env["ir.sequence"].search(
-                [("name", "=", "aeat999-sequence"), ("company_id", "=", company.id)]
-            )
+            self.env["ir.sequence"].search([("name", "=", "aeat999-sequence"), ("company_id", "=", company.id)])
         )
 
     def test_default_representative_vat(self):

@@ -4,7 +4,7 @@
 
 from lxml import etree
 
-from odoo import _, exceptions, fields, models
+from odoo import exceptions, fields, models
 from odoo.exceptions import UserError
 
 
@@ -38,7 +38,7 @@ class AccountPaymentOrder(models.Model):
             root_xml_tag = "CstmrDrctDbtInitn"
         else:
             raise UserError(
-                _(
+                self.env._(
                     "Payment Type Code '%s' is not supported. The only "
                     "Payment Type Code supported for SEPA Direct Debit are "
                     "'pain.008.001.02', 'pain.008.001.03' and "
@@ -87,10 +87,7 @@ class AccountPaymentOrder(models.Model):
                 seq_type = seq_type_map[seq_type_label]
             else:
                 raise exceptions.UserError(
-                    _(
-                        "Invalid mandate type in '%s'. Valid ones are 'Recurrent' "
-                        "or 'One-Off'"
-                    )
+                    self.env._("Invalid mandate type in '%s'. Valid ones are 'Recurrent' " "or 'One-Off'")
                     % payment_line.mandate_id.unique_mandate_reference
                 )
             # The field line.date is the requested payment date
@@ -133,22 +130,17 @@ class AccountPaymentOrder(models.Model):
                 gen_args,
             )
 
-            self.generate_party_block(
-                payment_info, "Cdtr", "B", self.company_partner_bank_id, gen_args
-            )
+            self.generate_party_block(payment_info, "Cdtr", "B", self.company_partner_bank_id, gen_args)
             charge_bearer = etree.SubElement(payment_info, "ChrgBr")
             if self.sepa:
                 charge_bearer_text = "SLEV"
             else:
                 charge_bearer_text = self.charge_bearer
             charge_bearer.text = charge_bearer_text
-            creditor_scheme_identification = etree.SubElement(
-                payment_info, "CdtrSchmeId"
-            )
+            creditor_scheme_identification = etree.SubElement(payment_info, "CdtrSchmeId")
             self.generate_creditor_scheme_identification(
                 creditor_scheme_identification,
-                "self.payment_mode_id.sepa_creditor_identifier or "
-                "self.company_id.sepa_creditor_identifier",
+                "self.payment_mode_id.sepa_creditor_identifier or " "self.company_id.sepa_creditor_identifier",
                 "SEPA Creditor Identifier",
                 {"self": self},
                 "SEPA",
@@ -161,9 +153,7 @@ class AccountPaymentOrder(models.Model):
                 # C. Direct Debit Transaction Info
                 dd_transaction_info = etree.SubElement(payment_info, "DrctDbtTxInf")
                 payment_identification = etree.SubElement(dd_transaction_info, "PmtId")
-                instruction_identification = etree.SubElement(
-                    payment_identification, "InstrId"
-                )
+                instruction_identification = etree.SubElement(payment_identification, "InstrId")
                 instruction_identification.text = self._prepare_field(
                     "Instruction Identification",
                     "str(line.move_id.id)",
@@ -171,9 +161,7 @@ class AccountPaymentOrder(models.Model):
                     35,
                     gen_args=gen_args,
                 )
-                end2end_identification = etree.SubElement(
-                    payment_identification, "EndToEndId"
-                )
+                end2end_identification = etree.SubElement(payment_identification, "EndToEndId")
                 end2end_identification.text = self._prepare_field(
                     "End to End Identification",
                     "str(line.move_id.id)",
@@ -188,17 +176,13 @@ class AccountPaymentOrder(models.Model):
                     3,
                     gen_args=gen_args,
                 )
-                instructed_amount = etree.SubElement(
-                    dd_transaction_info, "InstdAmt", Ccy=currency_name
-                )
+                instructed_amount = etree.SubElement(dd_transaction_info, "InstdAmt", Ccy=currency_name)
                 instructed_amount.text = "%.2f" % line.amount
                 amount_control_sum_a += line.amount
                 amount_control_sum_b += line.amount
                 dd_transaction = etree.SubElement(dd_transaction_info, "DrctDbtTx")
                 mandate_related_info = etree.SubElement(dd_transaction, "MndtRltdInf")
-                mandate_identification = etree.SubElement(
-                    mandate_related_info, "MndtId"
-                )
+                mandate_identification = etree.SubElement(mandate_related_info, "MndtId")
                 mandate = line.payment_line_ids[:1].mandate_id
                 mandate_identification.text = self._prepare_field(
                     "Unique Mandate Reference",
@@ -207,9 +191,7 @@ class AccountPaymentOrder(models.Model):
                     35,
                     gen_args=gen_args,
                 )
-                mandate_signature_date = etree.SubElement(
-                    mandate_related_info, "DtOfSgntr"
-                )
+                mandate_signature_date = etree.SubElement(mandate_related_info, "DtOfSgntr")
                 mandate_signature_date.text = self._prepare_field(
                     "Mandate Signature Date",
                     "signature_date",
@@ -221,23 +203,13 @@ class AccountPaymentOrder(models.Model):
                     gen_args=gen_args,
                 )
                 if sequence_type == "FRST" and mandate.last_debit_date:
-                    amendment_indicator = etree.SubElement(
-                        mandate_related_info, "AmdmntInd"
-                    )
+                    amendment_indicator = etree.SubElement(mandate_related_info, "AmdmntInd")
                     amendment_indicator.text = "true"
-                    amendment_info_details = etree.SubElement(
-                        mandate_related_info, "AmdmntInfDtls"
-                    )
-                    ori_debtor_account = etree.SubElement(
-                        amendment_info_details, "OrgnlDbtrAcct"
-                    )
+                    amendment_info_details = etree.SubElement(mandate_related_info, "AmdmntInfDtls")
+                    ori_debtor_account = etree.SubElement(amendment_info_details, "OrgnlDbtrAcct")
                     ori_debtor_account_id = etree.SubElement(ori_debtor_account, "Id")
-                    ori_debtor_agent_other = etree.SubElement(
-                        ori_debtor_account_id, "Othr"
-                    )
-                    ori_debtor_agent_other_id = etree.SubElement(
-                        ori_debtor_agent_other, "Id"
-                    )
+                    ori_debtor_agent_other = etree.SubElement(ori_debtor_account_id, "Othr")
+                    ori_debtor_agent_other_id = etree.SubElement(ori_debtor_agent_other, "Id")
                     ori_debtor_agent_other_id.text = "SMNDA"
                     # Until 20/11/2016, SMNDA meant
                     # "Same Mandate New Debtor Agent"
@@ -299,7 +271,7 @@ class AccountPaymentOrder(models.Model):
             first_mandates.write({"recurrent_sequence_type": "recurring"})
             for first_mandate in first_mandates:
                 first_mandate.message_post(
-                    body=_(
+                    body=self.env._(
                         "Automatically switched from <b>First</b> to "
                         "<b>Recurring</b> when the debit order "
                         "<a href=# data-oe-model=account.payment.order "

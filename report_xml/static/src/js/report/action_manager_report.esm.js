@@ -29,21 +29,16 @@ async function triggerDownload(action, {onClose}, env) {
         env.services.ui.unblock();
     }
     if (action.close_on_report_download) {
-        return env.services.action.doAction(
-            {type: "ir.actions.act_window_close"},
-            {onClose}
-        );
+        return env.services.action.doAction({type: "ir.actions.act_window_close"}, {onClose});
     }
     if (onClose) {
         onClose();
     }
 }
-registry
-    .category("ir.actions.report handlers")
-    .add("xml_handler", async function (action, options, env) {
-        if (action.report_type === "qweb-xml") {
-            await triggerDownload(action, options, env);
-            return true;
-        }
-        return false;
-    });
+registry.category("ir.actions.report handlers").add("xml_handler", async function (action, options, env) {
+    if (action.report_type === "qweb-xml") {
+        await triggerDownload(action, options, env);
+        return true;
+    }
+    return false;
+});

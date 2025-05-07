@@ -1,19 +1,18 @@
 # Copyright 2017 Creu Blanca
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import _, models
+from odoo import models
 from odoo.exceptions import ValidationError
 
 
 class IrQWeb(models.AbstractModel):
     _inherit = "ir.qweb"
 
-    @staticmethod
-    def check_length(value, min_length=False, max_length=False):
+    def check_length(self, value, min_length=False, max_length=False):
         if min_length and len(value) < min_length:
-            raise ValidationError(_("Length cannot be less than %s") % str(min_length))
+            raise ValidationError(self.env._("Length cannot be less than %s") % str(min_length))
         if max_length and len(value) > max_length:
-            raise ValidationError(_("Length cannot be more than %s") % str(max_length))
+            raise ValidationError(self.env._("Length cannot be more than %s") % str(max_length))
         return value
 
     def _compile_directive_esc(self, el, compile_context, level):

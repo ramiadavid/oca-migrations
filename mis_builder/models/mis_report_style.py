@@ -5,7 +5,7 @@
 
 import sys
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 from .accounting_none import AccountingNone
@@ -55,9 +55,7 @@ class MisReportKpiStyle(models.Model):
     def check_positive_val(self):
         for record in self:
             if record.indent_level < 0:
-                raise ValidationError(
-                    _("Indent level must be greater than " "or equal to 0")
-                )
+                raise ValidationError(self.env._("Indent level must be greater than " "or equal to 0"))
 
     _font_style_selection = [("normal", "Normal"), ("italic", "Italic")]
 
@@ -118,11 +116,11 @@ class MisReportKpiStyle(models.Model):
     divider_inherit = fields.Boolean(default=True)
     divider = fields.Selection(
         [
-            ("1e-6", _("µ")),
-            ("1e-3", _("m")),
-            ("1", _("1")),
-            ("1e3", _("k")),
-            ("1e6", _("M")),
+            ("1e-6", "µ"),
+            ("1e-3", "m"),
+            ("1", "1"),
+            ("1e3", "k"),
+            ("1e6", "M"),
         ],
         string="Factor",
         default="1",
@@ -132,9 +130,7 @@ class MisReportKpiStyle(models.Model):
     hide_always_inherit = fields.Boolean(default=True)
     hide_always = fields.Boolean(default=False)
 
-    _sql_constraints = [
-        ("style_name_uniq", "unique(name)", "Style name should be unique")
-    ]
+    _sql_constraints = [("style_name_uniq", "unique(name)", "Style name should be unique")]
 
     @api.model
     def merge(self, styles):
@@ -174,9 +170,7 @@ class MisReportKpiStyle(models.Model):
             return self.render_str(lang, value)
 
     @api.model
-    def render_num(
-        self, lang, value, divider=1.0, dp=0, prefix=None, suffix=None, sign="-"
-    ):
+    def render_num(self, lang, value, divider=1.0, dp=0, prefix=None, suffix=None, sign="-"):
         # format number following user language
         if value is None or value is AccountingNone:
             return ""
@@ -239,7 +233,7 @@ class MisReportKpiStyle(models.Model):
         if var_type == TYPE_PCT:
             delta = value - base_value
             if delta and round(delta, (style_props.dp or 0) + 2) != 0:
-                delta_style.update(divider=0.01, prefix="", suffix=_("pp"))
+                delta_style.update(divider=0.01, prefix="", suffix=self.env._("pp"))
             else:
                 delta = AccountingNone
         elif var_type == TYPE_NUM:
@@ -308,7 +302,4 @@ class MisReportKpiStyle(models.Model):
         ]
         if props.indent_level is not None and not no_indent:
             css_attributes.append(("text-indent", f"{props.indent_level}em"))
-        return (
-            "; ".join(["{}: {}".format(*a) for a in css_attributes if a[1] is not None])
-            or None
-        )
+        return "; ".join(["{}: {}".format(*a) for a in css_attributes if a[1] is not None]) or None

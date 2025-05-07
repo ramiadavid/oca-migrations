@@ -1,0 +1,117 @@
+exclude: |
+  (?x).svg$|.md$|^.github/|/static/(src/)?lib/|^tools/|^SUBMODULES|^.glossary
+default_language_version:
+  python: python3
+  node: "16.17.0"
+repos:
+  - repo: local
+    hooks:
+      # These files are most likely copier diff rejection junks; if found,
+      # review them manually, fix the problem (if needed) and remove them
+      - id: forbidden-files
+        name: forbidden files
+        entry: found forbidden files; remove them
+        language: fail
+        files: "\\.rej$"
+  - repo: https://github.com/ProcessControlProd/maintainer-tools
+    rev: 1.0.0
+    hooks:
+      - id: fix-manifest-website
+        args: ["https://www.processcontrol.es"]
+      - id: gen-addon-icon
+  - repo: https://github.com/myint/autoflake
+    rev: v2.2.0
+    hooks:
+      - id: autoflake
+        args:
+          - --expand-star-imports
+          - --ignore-init-module-imports
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-duplicate-keys
+          - --remove-unused-variables
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        args:
+          - -l120
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.3
+    hooks:
+      - id: prettier
+        name: prettier (with plugin-xml)
+        additional_dependencies:
+          - "prettier@2.7.1"
+          - "@prettier/plugin-xml@2.2.0"
+        args:
+          - --plugin=@prettier/plugin-xml
+        files: \.(css|htm|html|js|json|jsx|less|md|scss|toml|ts|xml|yaml|yml)$
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.48.0
+    hooks:
+      - id: eslint
+        additional_dependencies:
+          - "eslint@8.48.0"
+          - "eslint-plugin-simple-import-sort@10.0.0"
+          - "eslint-plugin-import"
+        verbose: true
+        args:
+          - --color
+          - --fix
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: debug-statements
+      - id: fix-encoding-pragma
+        args: ["--remove"]
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-xml
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.8.0
+    hooks:
+      - id: pyupgrade
+        args: ["--keep-percent-format"]
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort except __init__.py
+        args:
+          - --settings=.
+        exclude: /__init__\.py$
+  - repo: https://github.com/ProcessControlOCA/setuptools-odoo
+    rev: 3.3.3
+    hooks:
+      - id: setuptools-odoo-get-requirements
+        args:
+          - --output
+          - requirements.txt
+          - --header
+          - "# generated from manifests external_dependencies"
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        name: flake8
+        additional_dependencies: ["flake8-bugbear==24.12.12"]
+  - repo: https://github.com/OCA/pylint-odoo
+    rev: v9.0.4
+    hooks:
+      - id: pylint_odoo
+        name: pylint with optional checks
+        args:
+          - --rcfile=.pylintrc
+          - --exit-zero
+        verbose: true
+      - id: pylint_odoo
+        args:
+          - --rcfile=.pylintrc-mandatory

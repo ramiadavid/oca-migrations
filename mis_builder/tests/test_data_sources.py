@@ -5,12 +5,7 @@ import odoo.tests.common as common
 
 from ..models.accounting_none import AccountingNone
 from ..models.mis_report import CMP_DIFF
-from ..models.mis_report_instance import (
-    MODE_NONE,
-    SRC_ACTUALS_ALT,
-    SRC_CMPCOL,
-    SRC_SUMCOL,
-)
+from ..models.mis_report_instance import MODE_NONE, SRC_ACTUALS_ALT, SRC_CMPCOL, SRC_SUMCOL
 from .common import assert_matrix
 
 
@@ -203,9 +198,7 @@ class TestMisReportInstanceDataSources(common.TransactionCase):
             )
         )
         matrix = self.instance._compute_matrix()
-        assert_matrix(
-            matrix, [[11, 13, 2], [11, 30, 19], [11, 13, 2], [AccountingNone, 17, 17]]
-        )
+        assert_matrix(matrix, [[11, 13, 2], [11, 30, 19], [11, 13, 2], [AccountingNone, 17, 17]])
 
     def test_actuals(self):
         matrix = self.instance._compute_matrix()

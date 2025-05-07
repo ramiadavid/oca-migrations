@@ -10,7 +10,7 @@ import calendar
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -28,9 +28,7 @@ class AccountPaymentTerm(models.Model):
     )
 
     def apply_holidays(self, date):
-        holiday = self.holiday_ids.search(
-            [("payment_id", "=", self.id), ("holiday", "=", date)]
-        )
+        holiday = self.holiday_ids.search([("payment_id", "=", self.id), ("holiday", "=", date)])
         if holiday:
             return holiday.date_postponed
         return date
@@ -76,25 +74,26 @@ class AccountPaymentTerm(models.Model):
 
     def _compute_terms(
         self,
-        date_ref, currency, company, tax_amount, tax_amount_currency, sign, untaxed_amount, untaxed_amount_currency,
-        cash_rounding=None
+        date_ref,
+        currency,
+        company,
+        tax_amount,
+        tax_amount_currency,
+        sign,
+        untaxed_amount,
+        untaxed_amount_currency,
+        cash_rounding=None,
     ):
         """Complete overwrite of compute method for adding extra options."""
         # FIXME: Find an inheritable way of doing this
         self.ensure_one()
         company_currency = company.currency_id
         total_amount = remaining_amount = tax_amount + untaxed_amount
-        total_amount_currency = remaining_amount_currency = (
-            tax_amount_currency + untaxed_amount_currency
-        )
+        total_amount_currency = remaining_amount_currency = tax_amount_currency + untaxed_amount_currency
         pay_term = {
             "total_amount": total_amount,
-            "discount_percentage": self.discount_percentage
-            if self.early_discount
-            else 0.0,
-            "discount_date": date_ref + relativedelta(days=(self.discount_days or 0))
-            if self.early_discount
-            else False,
+            "discount_percentage": self.discount_percentage if self.early_discount else 0.0,
+            "discount_date": date_ref + relativedelta(days=(self.discount_days or 0)) if self.early_discount else False,
             "discount_balance": 0,
             "line_ids": [],
         }
@@ -107,16 +106,11 @@ class AccountPaymentTerm(models.Model):
                     total_amount - untaxed_amount * discount_percentage
                 )
                 pay_term["discount_amount_currency"] = currency.round(
-                    total_amount_currency
-                    - untaxed_amount_currency * discount_percentage
+                    total_amount_currency - untaxed_amount_currency * discount_percentage
                 )
             else:
-                pay_term["discount_balance"] = company_currency.round(
-                    total_amount * (1 - discount_percentage)
-                )
-                pay_term["discount_amount_currency"] = currency.round(
-                    total_amount_currency * (1 - discount_percentage)
-                )
+                pay_term["discount_balance"] = company_currency.round(total_amount * (1 - discount_percentage))
+                pay_term["discount_amount_currency"] = currency.round(total_amount_currency * (1 - discount_percentage))
 
         residual_amount = total_amount
         residual_amount_currency = total_amount_currency
@@ -145,25 +139,14 @@ class AccountPaymentTerm(models.Model):
                 term_vals["foreign_amount"] = residual_amount_currency
             elif line.value == "fixed":
                 # Fixed amounts
-                line_amount = line.compute_line_amount(
-                    total_amount, remaining_amount, precision_digits
-                )
-                company_line_amount = line.compute_line_amount(
-                    total_amount, remaining_amount, company_precision_digits
-                )
+                line_amount = line.compute_line_amount(total_amount, remaining_amount, precision_digits)
+                company_line_amount = line.compute_line_amount(total_amount, remaining_amount, company_precision_digits)
                 term_vals["company_amount"] = sign * company_line_amount
                 term_vals["foreign_amount"] = sign * line_amount
             elif line.value == "percent_amount_untaxed":
                 if company_currency != currency:
-                    raise UserError(
-                        _(
-                            "Percentage of amount untaxed can't be used with foreign "
-                            "currencies"
-                        )
-                    )
-                line_amount = line.compute_line_amount(
-                    untaxed_amount, untaxed_amount, precision_digits
-                )
+                    raise UserError(self.env._("Percentage of amount untaxed can't be used with foreign " "currencies"))
+                line_amount = line.compute_line_amount(untaxed_amount, untaxed_amount, precision_digits)
                 company_line_amount = line.compute_line_amount(
                     untaxed_amount_currency,
                     untaxed_amount_currency,
@@ -173,9 +156,7 @@ class AccountPaymentTerm(models.Model):
                 term_vals["foreign_amount"] = line_amount
             else:
                 # Percentage amounts
-                line_amount = line.compute_line_amount(
-                    total_amount, remaining_amount, precision_digits
-                )
+                line_amount = line.compute_line_amount(total_amount, remaining_amount, precision_digits)
                 company_line_amount = line.compute_line_amount(
                     total_amount_currency,
                     remaining_amount_currency,

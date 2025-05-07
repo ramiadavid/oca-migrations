@@ -171,10 +171,7 @@ def named_simple_array(typename, field_names):
     our needs in mis_builder, ie referring to subkpi values
     by name.
     """
-    props = {
-        field_name: property(operator.itemgetter(i))
-        for i, field_name in enumerate(field_names)
-    }
+    props = {field_name: property(operator.itemgetter(i)) for i, field_name in enumerate(field_names)}
     return type(typename, (SimpleArray,), props)
 
 

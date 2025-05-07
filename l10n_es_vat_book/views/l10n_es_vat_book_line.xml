@@ -26,14 +26,8 @@
                                     <field name="tax_amount" />
                                     <field name="total_amount" />
                                     <field name="special_tax_group" invisible="1" />
-                                    <field
-                                        name="special_tax_id"
-                                        column_invisible="not parent.special_tax_group"
-                                    />
-                                    <field
-                                        name="special_tax_amount"
-                                        column_invisible="not parent.special_tax_group"
-                                    />
+                                    <field name="special_tax_id" column_invisible="not parent.special_tax_group" />
+                                    <field name="special_tax_amount" column_invisible="not parent.special_tax_group" />
                                     <field
                                         name="total_amount_special_include"
                                         column_invisible="not parent.special_tax_group"
@@ -51,9 +45,7 @@
                                             <field name="special_tax_group" />
                                             <field name="special_tax_id" />
                                             <field name="special_tax_amount" />
-                                            <field
-                                                name="total_amount_special_include"
-                                            />
+                                            <field name="total_amount_special_include" />
                                         </group>
                                     </group>
                                     <group name="move_lines_grp" string="Move Lines">

@@ -10,7 +10,6 @@ class AccountMove(models.Model):
 
     not_in_mod347 = fields.Boolean(
         "Force not included in 347 report",
-        help="If you mark this field, this invoice will not be included in "
-        "any AEAT 347 model report.",
+        help="If you mark this field, this invoice will not be included in " "any AEAT 347 model report.",
         default=False,
     )

@@ -25,11 +25,7 @@
                 <field name="facturae" invisible="1" />
             </xpath>
             <group name="accounting_entries" position="after">
-                <group
-                    name="group_facturae"
-                    string="Facturae"
-                    groups="account.group_account_invoice"
-                >
+                <group name="group_facturae" string="Facturae" groups="account.group_account_invoice">
                     <field name="facturae" />
                     <field name="facturae_version" invisible="not facturae" />
                     <field name="organo_gestor" invisible="not facturae" />
@@ -41,11 +37,7 @@
                 </group>
             </group>
             <page name="accounting_disabled" position="inside">
-                <group
-                    name="group_facturae_wo_accounting"
-                    string="Facturae"
-                    groups="account.group_account_invoice"
-                >
+                <group name="group_facturae_wo_accounting" string="Facturae" groups="account.group_account_invoice">
                     <field name="facturae" />
                     <field name="facturae_version" invisible="not facturae" />
                     <field name="organo_gestor" invisible="not facturae" />

@@ -20,9 +20,7 @@
     </record>
 
     <record id="agreement.market4" model="agreement">
-        <field
-            name="description"
-        >Wazo IPBX deployment and maintenance (AGR-TEL001)</field>
+        <field name="description">Wazo IPBX deployment and maintenance (AGR-TEL001)</field>
         <field name="agreement_type_id" ref="agreement_type_loi" />
     </record>
 

@@ -89,9 +89,7 @@ class TestPeriodDates(common.TransactionCase):
 
     def test_rel_week_ytd(self):
         self.instance.write(dict(comparison_mode=True, date="2019-05-27"))
-        self.period.write(
-            dict(mode=MODE_REL, type="w", offset="1", duration=2, is_ytd=True)
-        )
+        self.period.write(dict(mode=MODE_REL, type="w", offset="1", duration=2, is_ytd=True))
         self.assertDateEqual(self.period.date_from, "2019-01-01")
         self.assertDateEqual(self.period.date_to, "2019-06-16")
         self.assertTrue(self.period.valid)

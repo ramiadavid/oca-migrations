@@ -7,11 +7,7 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <notebook position="inside">
-                <page
-                    string='Facturae'
-                    name="page_facturae"
-                    groups="base.group_erp_manager"
-                >
+                <page string='Facturae' name="page_facturae" groups="base.group_erp_manager">
                     <group>
                         <field name="facturae_version" />
                         <field name="facturae_hide_discount" />

@@ -21,7 +21,7 @@
     "name": "Suministro Inmediato de Información en el IVA",
     "version": "18.0.1.0.0",
     "category": "Accounting & Finance",
-    "website": "https://github.com/OCA/l10n-spain",
+    "website": "https://www.processcontrol.es",
     "author": "Acysos S.L.,"
     "Diagram,"
     "Minorisa,"

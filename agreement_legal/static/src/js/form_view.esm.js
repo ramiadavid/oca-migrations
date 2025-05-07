@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
 import {registry} from "@web/core/registry";
+import {useService} from "@web/core/utils/hooks";
 import {FormController} from "@web/views/form/form_controller";
 import {formView} from "@web/views/form/form_view";
-import {useService} from "@web/core/utils/hooks";
 
 export class AgreementFormController extends FormController {
     setup() {

@@ -74,11 +74,7 @@ class TestL10nEsAeatCertificateBase(common.TransactionCase):
         cls.certificate_name = "Test Certificate"
         one_day = timedelta(1, 0, 0)
         builder = (
-            builder.subject_name(
-                x509.Name(
-                    [x509.NameAttribute(oid.NameOID.COMMON_NAME, cls.certificate_name)]
-                )
-            )
+            builder.subject_name(x509.Name([x509.NameAttribute(oid.NameOID.COMMON_NAME, cls.certificate_name)]))
             .issuer_name(
                 x509.Name(
                     [
@@ -111,14 +107,10 @@ class TestL10nEsAeatCertificateBase(common.TransactionCase):
         """Obtain Keys from .pfx and activate the cetificate"""
         if not passwd:
             passwd = self.certificate_password
-        wizard = self.env["l10n.es.aeat.certificate.password"].create(
-            {"password": passwd}
-        )
+        wizard = self.env["l10n.es.aeat.certificate.password"].create({"password": passwd})
         wizard.with_context(active_id=self.sii_cert.id).get_keys()
         self.sii_cert.action_active()
-        self.sii_cert.company_id.write(
-            {"name": "ENTIDAD FICTICIO ACTIVO", "vat": "ESJ7102572J"}
-        )
+        self.sii_cert.company_id.write({"name": "ENTIDAD FICTICIO ACTIVO", "vat": "ESJ7102572J"})
         self.assertEqual(self.certificate_name, self.sii_cert.name)
 
 

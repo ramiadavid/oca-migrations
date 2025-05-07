@@ -119,7 +119,7 @@ class AccountingNoneType:
             return AccountingNone
         return other
 
-    def __iadd__(self, other):
+    def __idadd__(self, other):
         if other is None:
             return AccountingNone
         return other

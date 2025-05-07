@@ -5,9 +5,7 @@ from collections import OrderedDict
 
 from odoo import exceptions
 
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import (
-    TestL10nEsAeatModBase,
-)
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import TestL10nEsAeatModBase
 
 
 class TestL10nEsAeatMod390Base(TestL10nEsAeatModBase):
@@ -272,9 +270,7 @@ class TestL10nEsAeatMod390(TestL10nEsAeatMod390Base):
         self.model390.button_calculate()
         # Check tax lines
         for field, result in self.taxes_result.items():
-            lines = self.model390.tax_line_ids.filtered(
-                lambda x, field=field: x.field_number == int(field)
-            )
+            lines = self.model390.tax_line_ids.filtered(lambda x, field=field: x.field_number == int(field))
             self.assertAlmostEqual(
                 sum(lines.mapped("amount")),
                 result,
@@ -309,9 +305,7 @@ class TestL10nEsAeatMod390(TestL10nEsAeatMod390Base):
         self.model390.casilla_95 = 108.55
         self.model390.button_confirm()
         # Export to BOE
-        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create(
-            {"name": "test_export_to_boe.txt"}
-        )
+        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create({"name": "test_export_to_boe.txt"})
         export_config_xml_ids = [
             "l10n_es_aeat_mod390.aeat_mod390_2023_main_export_config",
             "l10n_es_aeat_mod390.aeat_mod390_2024_main_export_config",

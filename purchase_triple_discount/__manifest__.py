@@ -5,7 +5,7 @@
     "version": "18.0.1.0.0",
     "category": "Purchase Management",
     "author": "Tecnativa," "GRAP," "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/purchase-workflow",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "summary": "Manage triple discount on purchase order lines",
     "depends": [

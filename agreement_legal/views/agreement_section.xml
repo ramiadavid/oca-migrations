@@ -23,12 +23,7 @@
             <form string="Section">
                 <sheet>
                     <div class="oe_button_box" name="button_box" />
-                    <widget
-                        name="web_ribbon"
-                        title="Archived"
-                        bg_color="bg-danger"
-                        invisible="active"
-                    />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active" />
                     <field name="active" invisible="1" />
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
@@ -71,10 +66,8 @@
                                     <ol>
                                         <li>Select the section field</li>
                                         <li>Select the sub-field</li>
-                                        <li
-                                        >Enter the default value if the field is empty</li>
-                                        <li
-                                        >Copy and paste the placeholder expression in the content</li>
+                                        <li>Enter the default value if the field is empty</li>
+                                        <li>Copy and paste the placeholder expression in the content</li>
                                     </ol>
                                 </p>
                             </group>

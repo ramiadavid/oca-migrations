@@ -3,9 +3,7 @@
 
 from odoo.tests.common import Form
 
-from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import (
-    TestL10nEsAeatModBase,
-)
+from odoo.addons.l10n_es_aeat.tests.test_l10n_es_aeat_mod_base import TestL10nEsAeatModBase
 
 
 class TestL10nEsAeatMod347(TestL10nEsAeatModBase):
@@ -27,13 +25,9 @@ class TestL10nEsAeatMod347(TestL10nEsAeatModBase):
                 "date_end": "2019-12-31",
             }
         )
-        cls.customer_2 = cls.customer.copy(
-            {"name": "Test customer 2", "vat": "ES12345678Z"}
-        )
+        cls.customer_2 = cls.customer.copy({"name": "Test customer 2", "vat": "ES12345678Z"})
         cls.customer_3 = cls.customer.copy({"name": "Test customer 3"})
-        cls.customer_4 = cls.customer.copy(
-            {"name": "Test customer 4", "vat": "ESB29805314"}
-        )
+        cls.customer_4 = cls.customer.copy({"name": "Test customer 4", "vat": "ESB29805314"})
         # TODO: Zip set is not necessary https://github.com/odoo/odoo/pull/94333
         cls.customer_5 = cls.customer.copy(
             {
@@ -65,39 +59,23 @@ class TestL10nEsAeatMod347(TestL10nEsAeatModBase):
         cls.taxes_sale = {
             "S_IVA10S,S_IRPF20": (4000, 400),
         }
-        cls.invoice_2 = cls._invoice_sale_create(
-            "2019-04-01", {"partner_id": cls.customer_2.id}
-        )
+        cls.invoice_2 = cls._invoice_sale_create("2019-04-01", {"partner_id": cls.customer_2.id})
         # # Invoice higher than limit manually excluded
-        cls.invoice_3 = cls._invoice_sale_create(
-            "2019-01-01", {"partner_id": cls.customer_3.id, "not_in_mod347": True}
-        )
+        cls.invoice_3 = cls._invoice_sale_create("2019-01-01", {"partner_id": cls.customer_3.id, "not_in_mod347": True})
         # # Invoice higher than cash limit
         cls.taxes_sale = {
             "S_IVA10S": (6000, 600),
         }
-        cls.invoice_4 = cls._invoice_sale_create(
-            "2019-07-01", {"partner_id": cls.customer_4.id}
-        )
+        cls.invoice_4 = cls._invoice_sale_create("2019-07-01", {"partner_id": cls.customer_4.id})
         # Create payment from invoice
         cls.payment_model = cls.env["account.payment.register"]
-        payment_form = Form(
-            cls.payment_model.with_context(
-                active_model="account.move", active_ids=cls.invoice_4.ids
-            )
-        )
+        payment_form = Form(cls.payment_model.with_context(active_model="account.move", active_ids=cls.invoice_4.ids))
         payment_form.journal_id = cls.journal_cash
         payment_form.payment_date = "2019-07-01"
         payment_form.save().action_create_payments()
         # Invoice outside period higher than cash limit
-        cls.invoice_5 = cls._invoice_sale_create(
-            "2018-01-01", {"partner_id": cls.customer_5.id}
-        )
-        payment_form = Form(
-            cls.payment_model.with_context(
-                active_model="account.move", active_ids=cls.invoice_5.ids
-            )
-        )
+        cls.invoice_5 = cls._invoice_sale_create("2018-01-01", {"partner_id": cls.customer_5.id})
+        payment_form = Form(cls.payment_model.with_context(active_model="account.move", active_ids=cls.invoice_5.ids))
         payment_form.journal_id = cls.journal_cash
         payment_form.payment_date = "2019-01-01"
         payment_form.save().action_create_payments()
@@ -137,16 +115,10 @@ class TestL10nEsAeatMod347(TestL10nEsAeatModBase):
             ("B", self.customer_5, 0, 6600, 0, 0, 0, 0),
         ]
         self.assertEqual(self.model347.total_partner_records, len(partner_record_vals))
-        self.assertAlmostEqual(
-            self.model347.total_amount, sum(x[2] for x in partner_record_vals)
-        )
-        self.assertAlmostEqual(
-            self.model347.total_cash_amount, sum(x[3] for x in partner_record_vals)
-        )
+        self.assertAlmostEqual(self.model347.total_amount, sum(x[2] for x in partner_record_vals))
+        self.assertAlmostEqual(self.model347.total_cash_amount, sum(x[3] for x in partner_record_vals))
         for vals in partner_record_vals:
-            partner_record = self.model347.partner_record_ids.filtered(
-                lambda x, v=vals: x.partner_id == v[1]
-            )
+            partner_record = self.model347.partner_record_ids.filtered(lambda x, v=vals: x.partner_id == v[1])
             self.assertEqual(partner_record.operation_key, vals[0])
             self.assertAlmostEqual(partner_record.amount, vals[2])
             self.assertAlmostEqual(partner_record.cash_amount, vals[3])
@@ -155,30 +127,20 @@ class TestL10nEsAeatMod347(TestL10nEsAeatModBase):
             self.assertAlmostEqual(partner_record.third_quarter, vals[6])
             self.assertAlmostEqual(partner_record.fourth_quarter, vals[7])
         # Check VAT handle
-        partner_record = self.model347.partner_record_ids.filtered(
-            lambda x: x.partner_id == self.customer_2
-        )
+        partner_record = self.model347.partner_record_ids.filtered(lambda x: x.partner_id == self.customer_2)
         self.assertEqual(partner_record.partner_vat, "12345678Z")
         self.assertEqual(partner_record.partner_country_code, "ES")
-        partner_record = self.model347.partner_record_ids.filtered(
-            lambda x: x.partner_id == self.customer_4
-        )
+        partner_record = self.model347.partner_record_ids.filtered(lambda x: x.partner_id == self.customer_4)
         self.assertEqual(partner_record.partner_vat, "B29805314")
         self.assertEqual(partner_record.partner_country_code, "ES")
-        partner_record = self.model347.partner_record_ids.filtered(
-            lambda x: x.partner_id == self.customer_5
-        )
+        partner_record = self.model347.partner_record_ids.filtered(lambda x: x.partner_id == self.customer_5)
         self.assertEqual(partner_record.partner_vat, "12345678Z")
         self.assertEqual(partner_record.partner_country_code, "ES")
-        partner_record = self.model347.partner_record_ids.filtered(
-            lambda x: x.partner_id == self.customer_6
-        )
+        partner_record = self.model347.partner_record_ids.filtered(lambda x: x.partner_id == self.customer_6)
         self.assertEqual(partner_record.partner_vat, "B29805314")
         self.assertEqual(partner_record.partner_country_code, "ES")
         # Export to BOE
-        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create(
-            {"name": "test_export_to_boe.txt"}
-        )
+        export_to_boe = self.env["l10n.es.aeat.report.export_to_boe"].create({"name": "test_export_to_boe.txt"})
         export_config_xml_ids = [
             "l10n_es_aeat_mod347.aeat_mod347_main_export_config",
         ]

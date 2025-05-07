@@ -4,7 +4,7 @@
 import base64
 import logging
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 from odoo.tools.safe_eval import safe_eval
 
 _logger = logging.getLogger(__name__)
@@ -33,9 +33,7 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
                 if not safe_eval(line.conditional_expression):
                     continue
             if line.export_type == "subconfig":
-                offset, sub_lines = self._compare_boe_lines(
-                    line.subconfig_id, data, offset=offset
-                )
+                offset, sub_lines = self._compare_boe_lines(line.subconfig_id, data, offset=offset)
                 lines += sub_lines
             else:
                 lines.append(
@@ -68,7 +66,7 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
         # Allow a bit of difference according presence of final CR+LF
         if abs(offset - len(data)) > 2:
             raise exceptions.UserError(
-                _(
+                self.env._(
                     "The length of the file is different from the expected one, "
                     "or there are conditional parts in the export configuration "
                     "that can't be evaled statically."
@@ -98,9 +96,7 @@ class L10nEsAeatReportExportToBoeLine(models.TransientModel):
         readonly=True,
         ondelete="cascade",
     )
-    sequence = fields.Integer(
-        string="Sequence", related="export_line_id.sequence", readonly=True
-    )
+    sequence = fields.Integer(string="Sequence", related="export_line_id.sequence", readonly=True)
     name = fields.Char(string="Name", related="export_line_id.name", readonly=True)
     content = fields.Char()
     content_float = fields.Float(compute="_compute_content_float", string="Amount")
@@ -117,9 +113,7 @@ class L10nEsAeatReportExportToBoeLine(models.TransientModel):
                     sign = -1
             if line.export_line_id.decimal_size:
                 try:
-                    line.content_float = sign * (
-                        float(content) / 10**line.export_line_id.decimal_size
-                    )
+                    line.content_float = sign * (float(content) / 10**line.export_line_id.decimal_size)
                 except Exception as e:
                     _logger.debug(e)
             else:

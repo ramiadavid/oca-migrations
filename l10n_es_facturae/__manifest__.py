@@ -21,7 +21,7 @@
     "Creu Blanca, "
     "Odoo Community Association (OCA)",
     "category": "Accounting & Finance",
-    "website": "https://github.com/OCA/l10n-spain",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "depends": [
         "account_payment_partner",

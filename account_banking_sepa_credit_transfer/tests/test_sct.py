@@ -60,9 +60,9 @@ class TestSCT(TransactionCase):
                 "code": "TP.1",
             }
         )
-        (cls.partner_asus + cls.partner_c2c + cls.partner_agrolait).with_company(
-            cls.main_company.id
-        ).write({"property_account_payable_id": cls.account_payable.id})
+        (cls.partner_asus + cls.partner_c2c + cls.partner_agrolait).with_company(cls.main_company.id).write(
+            {"property_account_payable_id": cls.account_payable.id}
+        )
         cls.general_journal = cls.journal_model.create(
             {
                 "name": "General journal",
@@ -83,9 +83,7 @@ class TestSCT(TransactionCase):
             {
                 "company_id": cls.main_company.id,
                 "partner_id": cls.main_company.partner_id.id,
-                "bank_id": (
-                    cls.env.ref("account_payment_mode.bank_la_banque_postale").id
-                ),
+                "bank_id": (cls.env.ref("account_payment_mode.bank_la_banque_postale").id),
             }
         )
         cls.bank_journal = cls.journal_model.create(
@@ -112,12 +110,10 @@ class TestSCT(TransactionCase):
         )
 
         # update payment mode
-        cls.payment_mode = cls.env.ref(
-            "account_banking_sepa_credit_transfer.payment_mode_outbound_sepa_ct1"
-        ).copy({"company_id": cls.main_company.id})
-        cls.payment_mode.write(
-            {"bank_account_link": "fixed", "fixed_journal_id": cls.bank_journal.id}
+        cls.payment_mode = cls.env.ref("account_banking_sepa_credit_transfer.payment_mode_outbound_sepa_ct1").copy(
+            {"company_id": cls.main_company.id}
         )
+        cls.payment_mode.write({"bank_account_link": "fixed", "fixed_journal_id": cls.bank_journal.id})
         # Trigger the recompute of account type on res.partner.bank
         cls.partner_bank_model.search([])._compute_acc_type()
 
@@ -197,9 +193,7 @@ class TestSCT(TransactionCase):
         self.assertEqual(agrolait_pay_line1.currency_id, self.eur_currency)
         self.assertEqual(agrolait_pay_line1.partner_bank_id, invoice1.partner_bank_id)
         self.assertEqual(
-            agrolait_pay_line1.currency_id.compare_amounts(
-                agrolait_pay_line1.amount_currency, 42
-            ),
+            agrolait_pay_line1.currency_id.compare_amounts(agrolait_pay_line1.amount_currency, 42),
             0,
         )
         self.assertEqual(agrolait_pay_line1.communication_type, "normal")
@@ -214,9 +208,7 @@ class TestSCT(TransactionCase):
         agrolait_bank_line = self.payment_order.payment_ids[0]
         self.assertEqual(agrolait_bank_line.currency_id, self.eur_currency)
         self.assertEqual(
-            agrolait_bank_line.currency_id.compare_amounts(
-                agrolait_bank_line.amount, 49.0
-            ),
+            agrolait_bank_line.currency_id.compare_amounts(agrolait_bank_line.amount, 49.0),
             0,
         )
         self.assertEqual(agrolait_bank_line.payment_reference, "F1341 - F1342 - A1301")
@@ -234,13 +226,9 @@ class TestSCT(TransactionCase):
         namespaces.pop(None)
         pay_method_xpath = xml_root.xpath("//p:PmtInf/p:PmtMtd", namespaces=namespaces)
         self.assertEqual(pay_method_xpath[0].text, "TRF")
-        sepa_xpath = xml_root.xpath(
-            "//p:PmtInf/p:PmtTpInf/p:SvcLvl/p:Cd", namespaces=namespaces
-        )
+        sepa_xpath = xml_root.xpath("//p:PmtInf/p:PmtTpInf/p:SvcLvl/p:Cd", namespaces=namespaces)
         self.assertEqual(sepa_xpath[0].text, "SEPA")
-        debtor_acc_xpath = xml_root.xpath(
-            "//p:PmtInf/p:DbtrAcct/p:Id/p:IBAN", namespaces=namespaces
-        )
+        debtor_acc_xpath = xml_root.xpath("//p:PmtInf/p:DbtrAcct/p:Id/p:IBAN", namespaces=namespaces)
         self.assertEqual(
             debtor_acc_xpath[0].text,
             self.payment_order.company_partner_bank_id.sanitized_acc_number,
@@ -291,9 +279,7 @@ class TestSCT(TransactionCase):
         self.assertEqual(asus_pay_line1.currency_id, self.usd_currency)
         self.assertEqual(asus_pay_line1.partner_bank_id, invoice1.partner_bank_id)
         self.assertEqual(
-            asus_pay_line1.currency_id.compare_amounts(
-                asus_pay_line1.amount_currency, 2042
-            ),
+            asus_pay_line1.currency_id.compare_amounts(asus_pay_line1.amount_currency, 2042),
             0,
         )
         self.assertEqual(asus_pay_line1.communication_type, "normal")
@@ -323,13 +309,9 @@ class TestSCT(TransactionCase):
         namespaces.pop(None)
         pay_method_xpath = xml_root.xpath("//p:PmtInf/p:PmtMtd", namespaces=namespaces)
         self.assertEqual(pay_method_xpath[0].text, "TRF")
-        sepa_xpath = xml_root.xpath(
-            "//p:PmtInf/p:PmtTpInf/p:SvcLvl/p:Cd", namespaces=namespaces
-        )
+        sepa_xpath = xml_root.xpath("//p:PmtInf/p:PmtTpInf/p:SvcLvl/p:Cd", namespaces=namespaces)
         self.assertEqual(len(sepa_xpath), 0)
-        debtor_acc_xpath = xml_root.xpath(
-            "//p:PmtInf/p:DbtrAcct/p:Id/p:IBAN", namespaces=namespaces
-        )
+        debtor_acc_xpath = xml_root.xpath("//p:PmtInf/p:DbtrAcct/p:Id/p:IBAN", namespaces=namespaces)
         self.assertEqual(
             debtor_acc_xpath[0].text,
             self.payment_order.company_partner_bank_id.sanitized_acc_number,

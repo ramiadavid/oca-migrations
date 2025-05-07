@@ -40,9 +40,7 @@ class VatNumberXlsx(models.AbstractModel):
         )
 
     def create_issued_sheet(self, workbook, book, draft_export):
-        title_format = workbook.add_format(
-            {"bold": 1, "border": 1, "align": "center", "valign": "vjustify"}
-        )
+        title_format = workbook.add_format({"bold": 1, "border": 1, "align": "center", "valign": "vjustify"})
         header_format = workbook.add_format(
             {
                 "bold": 1,
@@ -52,9 +50,7 @@ class VatNumberXlsx(models.AbstractModel):
                 "fg_color": "#F2F2F2",
             }
         )
-        subheader_format = workbook.add_format(
-            {"bold": 1, "border": 1, "align": "center", "valign": "vjustify"}
-        )
+        subheader_format = workbook.add_format({"bold": 1, "border": 1, "align": "center", "valign": "vjustify"})
         decimal_format = workbook.add_format({"num_format": "0.00"})
         date_format = workbook.add_format({"num_format": "dd/mm/yyyy"})
 
@@ -141,9 +137,7 @@ class VatNumberXlsx(models.AbstractModel):
 
         return sheet
 
-    def fill_issued_row_data(
-        self, sheet, row, line, tax_line, with_total, draft_export
-    ):
+    def fill_issued_row_data(self, sheet, row, line, tax_line, with_total, draft_export):
         """Fill issued data"""
         # We don't want to fail on empty records, like in the case of PoS
         # cash sales, which dont't have a partner. Just return empty values.
@@ -161,9 +155,7 @@ class VatNumberXlsx(models.AbstractModel):
         if country_code != "ES":
             sheet.write("G" + str(row), country_code)
         sheet.write("H" + str(row), vat_number)
-        if not vat_number and (
-            line.partner_id.aeat_anonymous_cash_customer or not line.partner_id
-        ):
+        if not vat_number and (line.partner_id.aeat_anonymous_cash_customer or not line.partner_id):
             sheet.write("I" + str(row), "Venta anónima")
         else:
             sheet.write("I" + str(row), (line.partner_id.name or "")[:40])
@@ -177,9 +169,7 @@ class VatNumberXlsx(models.AbstractModel):
         sheet.write("N" + str(row), tax_line.tax_id.amount)
         sheet.write("O" + str(row), tax_line.tax_amount)
         if tax_line.special_tax_id:
-            map_vals = line.vat_book_id.get_special_taxes_dic()[
-                tax_line.special_tax_id.id
-            ]
+            map_vals = line.vat_book_id.get_special_taxes_dic()[tax_line.special_tax_id.id]
             sheet.write(
                 map_vals["fee_type_xlsx_column"] + str(row),
                 tax_line.special_tax_id.amount,
@@ -194,9 +184,7 @@ class VatNumberXlsx(models.AbstractModel):
             sheet.write(num_row, last_column, tax_line.tax_id.name)
 
     def create_received_sheet(self, workbook, book, draft_export):
-        title_format = workbook.add_format(
-            {"bold": 1, "border": 1, "align": "center", "valign": "vjustify"}
-        )
+        title_format = workbook.add_format({"bold": 1, "border": 1, "align": "center", "valign": "vjustify"})
         header_format = workbook.add_format(
             {
                 "bold": 1,
@@ -206,9 +194,7 @@ class VatNumberXlsx(models.AbstractModel):
                 "fg_color": "#F2F2F2",
             }
         )
-        subheader_format = workbook.add_format(
-            {"bold": 1, "border": 1, "align": "center", "valign": "vjustify"}
-        )
+        subheader_format = workbook.add_format({"bold": 1, "border": 1, "align": "center", "valign": "vjustify"})
         decimal_format = workbook.add_format({"num_format": "0.00"})
         date_format = workbook.add_format({"num_format": "dd/mm/yyyy"})
 
@@ -219,9 +205,7 @@ class VatNumberXlsx(models.AbstractModel):
         sheet.write("A3", "NIF: %s" % book.company_vat)
         sheet.merge_range("A4:D4", "NOMBRE/RAZÓN SOCIAL: %s" % book.company_id.name)
 
-        sheet.merge_range(
-            "C6:D6", "Identificación Factura del Expedidor", header_format
-        )
+        sheet.merge_range("C6:D6", "Identificación Factura del Expedidor", header_format)
         sheet.merge_range("G6:I6", "NIF Expedidor", header_format)
 
         sheet.merge_range("A6:A7", "Fecha Expedición", header_format)
@@ -296,9 +280,7 @@ class VatNumberXlsx(models.AbstractModel):
 
         return sheet
 
-    def fill_received_row_data(
-        self, sheet, row, line, tax_line, with_total, draft_export
-    ):
+    def fill_received_row_data(self, sheet, row, line, tax_line, with_total, draft_export):
         """Fill received data"""
         date_invoice = line.move_id.date
         # We don't want to fail on empty records, like in the case of PoS
@@ -332,9 +314,7 @@ class VatNumberXlsx(models.AbstractModel):
         if tax_line.tax_id not in self._get_undeductible_taxes(line.vat_book_id):
             sheet.write("Q" + str(row), tax_line.tax_amount)
         if tax_line.special_tax_id:
-            map_vals = line.vat_book_id.get_special_taxes_dic()[
-                tax_line.special_tax_id.id
-            ]
+            map_vals = line.vat_book_id.get_special_taxes_dic()[tax_line.special_tax_id.id]
             sheet.write(
                 map_vals["fee_type_xlsx_column"] + str(row),
                 tax_line.special_tax_id.amount,
@@ -364,9 +344,7 @@ class VatNumberXlsx(models.AbstractModel):
             for tax_line in line.tax_line_ids:
                 if not tax_line.special_tax_group:
                     # TODO: Payments bucle
-                    self.fill_issued_row_data(
-                        issued_sheet, row, line, tax_line, with_total, draft_export
-                    )
+                    self.fill_issued_row_data(issued_sheet, row, line, tax_line, with_total, draft_export)
                     with_total = False
                     row += 1
 
@@ -380,8 +358,6 @@ class VatNumberXlsx(models.AbstractModel):
             for tax_line in line.tax_line_ids:
                 if not tax_line.special_tax_group:
                     # TODO: Payments bucle
-                    self.fill_received_row_data(
-                        received_sheet, row, line, tax_line, with_total, draft_export
-                    )
+                    self.fill_received_row_data(received_sheet, row, line, tax_line, with_total, draft_export)
                     with_total = False
                     row += 1

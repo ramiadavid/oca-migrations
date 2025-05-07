@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <template
-        id="report_invoice_document"
-        inherit_id="account.report_invoice_document"
-        priority="100"
-    >
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document" priority="100">
         <xpath expr="//t[@t-set='display_discount']" position="after">
             <attribute name="t-value">False</attribute>
         </xpath>
@@ -18,25 +14,13 @@
             <attribute name="style">visibility: hidden;</attribute>
         </xpath>
         <xpath expr="//th[@name='th_discount']" position="after">
-            <th
-                name="th_discount1"
-                t-if="display_discount"
-                t-att-class="discount_class"
-            >
+            <th name="th_discount1" t-if="display_discount" t-att-class="discount_class">
                 <span>Disc.1 %</span>
             </th>
-            <th
-                name="th_discount2"
-                t-if="display_discount"
-                t-att-class="discount_class"
-            >
+            <th name="th_discount2" t-if="display_discount" t-att-class="discount_class">
                 <span>Disc.2 %</span>
             </th>
-            <th
-                name="th_discount3"
-                t-if="display_discount"
-                t-att-class="discount_class"
-            >
+            <th name="th_discount3" t-if="display_discount" t-att-class="discount_class">
                 <span>Disc.3 %</span>
             </th>
         </xpath>

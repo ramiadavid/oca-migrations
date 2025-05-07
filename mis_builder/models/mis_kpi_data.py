@@ -3,7 +3,7 @@
 
 from collections import defaultdict
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.osv import expression
 
@@ -87,9 +87,7 @@ class MisKpiData(models.AbstractModel):
         for item in self.search(domain):
             item_dt_from = fields.Date.from_string(item.date_from)
             item_dt_to = fields.Date.from_string(item.date_to)
-            i_days, item_days = self._intersect_days(
-                item_dt_from, item_dt_to, dt_from, dt_to
-            )
+            i_days, item_days = self._intersect_days(item_dt_from, item_dt_to, dt_from, dt_to)
             if item.kpi_expression_id.kpi_id.accumulation_method == ACC_SUM:
                 # accumulate pro-rata overlap between item and reporting period
                 res[item.kpi_expression_id] += item.amount * i_days / item_days
@@ -99,7 +97,7 @@ class MisKpiData(models.AbstractModel):
                 res_avg[item.kpi_expression_id].append((i_days, item.amount))
             else:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Unexpected accumulation method %(method)s for %(name)s.",
                         method=item.kpi_expression_id.kpi_id.accumulation_method,
                         name=item.name,
@@ -107,7 +105,5 @@ class MisKpiData(models.AbstractModel):
                 )
         # compute weighted average for ACC_AVG
         for kpi_expression, amounts in res_avg.items():
-            res[kpi_expression] = sum(d * a for d, a in amounts) / sum(
-                d for d, a in amounts
-            )
+            res[kpi_expression] = sum(d * a for d, a in amounts) / sum(d for d, a in amounts)
         return res

@@ -4,10 +4,7 @@
 from odoo.tests.common import TransactionCase
 
 from odoo.addons.mis_builder.models.expression_evaluator import ExpressionEvaluator
-from odoo.addons.mis_builder.models.mis_report_subreport import (
-    InvalidNameError,
-    ParentLoopError,
-)
+from odoo.addons.mis_builder.models.mis_report_subreport import InvalidNameError, ParentLoopError
 
 
 class TestMisSubreport(TransactionCase):
@@ -27,9 +24,7 @@ class TestMisSubreport(TransactionCase):
         cls.report = cls.env["mis.report"].create(
             dict(
                 name="test report",
-                subreport_ids=[
-                    (0, 0, dict(name="subreport", subreport_id=cls.subreport.id))
-                ],
+                subreport_ids=[(0, 0, dict(name="subreport", subreport_id=cls.subreport.id))],
             )
         )
         cls.report_kpi1 = cls.env["mis.report.kpi"].create(

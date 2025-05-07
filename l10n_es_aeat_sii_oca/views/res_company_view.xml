@@ -21,25 +21,14 @@
                         </group>
                         <group name="sii_description" string="Description config">
                             <field name="sii_description_method" />
-                            <field
-                                name="sii_description"
-                                invisible="sii_description_method != 'fixed'"
-                            />
+                            <field name="sii_description" invisible="sii_description_method != 'fixed'" />
                             <field name="sii_header_customer" />
                             <field name="sii_header_supplier" />
                         </group>
                         <group name="cron_config" string="Cron Config">
                             <field name="send_mode" />
-                            <field
-                                name='sent_time'
-                                widget='float_time'
-                                invisible="send_mode != 'fixed'"
-                            />
-                            <field
-                                name='delay_time'
-                                widget='float_time'
-                                invisible="send_mode != 'delayed'"
-                            />
+                            <field name='sent_time' widget='float_time' invisible="send_mode != 'fixed'" />
+                            <field name='delay_time' widget='float_time' invisible="send_mode != 'delayed'" />
                         </group>
                     </group>
                 </page>

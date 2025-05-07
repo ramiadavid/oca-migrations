@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
 import {registry} from "@web/core/registry";
+import {useService} from "@web/core/utils/hooks";
 import {ListController} from "@web/views/list/list_controller";
 import {listView} from "@web/views/list/list_view";
-import {useService} from "@web/core/utils/hooks";
 
 export class AgreementListController extends ListController {
     setup() {

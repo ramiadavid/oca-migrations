@@ -8,7 +8,7 @@ import logging
 
 from requests import Session
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -54,8 +54,7 @@ class AeatMixin(models.AbstractModel):
         default="not_sent",
         readonly=True,
         copy=False,
-        help="Indicates the state of this document in relation with the "
-        "presentation at the AEAT",
+        help="Indicates the state of this document in relation with the " "presentation at the AEAT",
     )
     aeat_send_error = fields.Text(
         string="AEAT Send Error",
@@ -134,9 +133,7 @@ class AeatMixin(models.AbstractModel):
 
     def _connect_aeat(self, mapping_key):
         self.ensure_one()
-        public_crt, private_key = self.env["l10n.es.aeat.certificate"].get_certificates(
-            company=self.company_id
-        )
+        public_crt, private_key = self.env["l10n.es.aeat.certificate"].get_certificates(company=self.company_id)
         params = self._connect_params_aeat(mapping_key)
         session = Session()
         session.cert = (public_crt, private_key)
@@ -156,8 +153,6 @@ class AeatMixin(models.AbstractModel):
         country_code = self._get_aeat_country_code()
         is_simplified_invoice = self._is_aeat_simplified_invoice()
         if country_code == "ES" and not partner.vat and not is_simplified_invoice:
-            raise UserError(_("The partner has not a VAT configured."))
+            raise UserError(self.env._("The partner has not a VAT configured."))
         if not self.company_id.chart_template:
-            raise UserError(
-                _("You have to select what account chart template use this" " company.")
-            )
+            raise UserError(self.env._("You have to select what account chart template use this" " company."))

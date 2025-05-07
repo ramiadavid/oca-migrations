@@ -38,8 +38,7 @@ class ResPartner(models.Model):
     # 07 - Not registered on census
     aeat_simplified_invoice = fields.Boolean(
         string="Simplified invoices in AEAT?",
-        help="Checking this mark, invoices done to this partner will be "
-        "sent to AEAT as simplified invoices.",
+        help="Checking this mark, invoices done to this partner will be " "sent to AEAT as simplified invoices.",
     )
     aeat_sending_enabled = fields.Boolean(
         compute="_compute_aeat_sending_enabled",
@@ -84,9 +83,7 @@ class ResPartner(models.Model):
     def _get_aeat_europe_codes(self):
         europe = self.env.ref("base.europe", raise_if_not_found=False)
         if not europe:
-            europe = self.env["res.country.group"].search(
-                [("name", "=", "Europe")], limit=1
-            )
+            europe = self.env["res.country.group"].search([("name", "=", "Europe")], limit=1)
         return europe.country_ids.mapped("code") + ["XI"]
 
     @ormcache("self.vat, self.country_id")
@@ -108,10 +105,7 @@ class ResPartner(models.Model):
                 country_code = prefix
             else:
                 country_code = ""
-            if (
-                self._map_aeat_country_code(country_code)
-                in self._get_aeat_europe_codes()
-            ):
+            if self._map_aeat_country_code(country_code) in self._get_aeat_europe_codes():
                 identifier_type = "02"
             else:
                 country_code = self._map_aeat_country_code(country_code, extended=True)

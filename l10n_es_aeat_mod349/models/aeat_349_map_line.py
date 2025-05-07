@@ -21,12 +21,12 @@ class Aeat349MapLines(models.Model):
     def _selection_operation_key(self):
         return self.env["account.move.line"].fields_get(
             allfields=["l10n_es_aeat_349_operation_key"],
-        )["l10n_es_aeat_349_operation_key"]["selection"]
+        )[
+            "l10n_es_aeat_349_operation_key"
+        ]["selection"]
 
     physical_product = fields.Boolean(string="Involves physical product")
-    tax_xmlid_ids = fields.Many2many(
-        comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes templates"
-    )
+    tax_xmlid_ids = fields.Many2many(comodel_name="l10n.es.aeat.map.tax.line.tax", string="Taxes templates")
     operation_key = fields.Selection(
         selection=_selection_operation_key,
         required=True,

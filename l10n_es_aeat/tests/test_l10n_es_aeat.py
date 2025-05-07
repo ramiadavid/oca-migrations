@@ -20,9 +20,7 @@ class TestL10nEsAeat(TransactionCase):
         )
 
     def test_parse_vat_info_es_wo_prefix(self):
-        self.partner.write(
-            {"vat": "12345678Z", "country_id": self.env.ref("base.es").id}
-        )
+        self.partner.write({"vat": "12345678Z", "country_id": self.env.ref("base.es").id})
         country_code, identifier_type, vat_number = self.partner._parse_aeat_vat_info()
         self.assertEqual(country_code, "ES")
         self.assertEqual(identifier_type, "")
@@ -37,9 +35,7 @@ class TestL10nEsAeat(TransactionCase):
 
     def test_parse_vat_info_es_passport_exception(self):
         with self.assertRaises(exceptions.ValidationError):
-            self.partner.write(
-                {"vat": "ZZ_MY_PASSPORT", "country_id": self.env.ref("base.es").id}
-            )
+            self.partner.write({"vat": "ZZ_MY_PASSPORT", "country_id": self.env.ref("base.es").id})
 
     def test_parse_vat_info_es_passport(self):
         self.partner.write(
@@ -55,9 +51,7 @@ class TestL10nEsAeat(TransactionCase):
         self.assertEqual(identifier, "ZZ_MY_PASSPORT")
 
     def test_parse_vat_info_fr_wo_prefix(self):
-        self.partner.write(
-            {"vat": "61954506077", "country_id": self.env.ref("base.fr").id}
-        )
+        self.partner.write({"vat": "61954506077", "country_id": self.env.ref("base.fr").id})
         country_code, identifier_type, vat_number = self.partner._parse_aeat_vat_info()
         self.assertEqual(country_code, "FR")
         self.assertEqual(vat_number, "61954506077")
@@ -70,9 +64,7 @@ class TestL10nEsAeat(TransactionCase):
         self.assertEqual(vat_number, "61954506077")
 
     def test_parse_vat_info_gf_wo_prefix(self):
-        self.partner.write(
-            {"vat": "61954506077", "country_id": self.env.ref("base.gf").id}
-        )
+        self.partner.write({"vat": "61954506077", "country_id": self.env.ref("base.gf").id})
         country_code, identifier_type, vat_number = self.partner._parse_aeat_vat_info()
         self.assertEqual(country_code, "FR")
         self.assertEqual(identifier_type, "04")
@@ -86,9 +78,7 @@ class TestL10nEsAeat(TransactionCase):
         self.assertEqual(vat_number, "GF61954506077")
 
     def test_parse_vat_info_cu_wo_prefix(self):
-        self.partner.write(
-            {"vat": "12345678Z", "country_id": self.env.ref("base.cu").id}
-        )
+        self.partner.write({"vat": "12345678Z", "country_id": self.env.ref("base.cu").id})
         country_code, identifier_type, vat_number = self.partner._parse_aeat_vat_info()
         self.assertEqual(country_code, "CU")
         self.assertEqual(identifier_type, "04")
@@ -102,13 +92,9 @@ class TestL10nEsAeat(TransactionCase):
         self.assertEqual(vat_number, "CU12345678Z")
 
     def test_unique_date_range(self):
-        self.env["l10n.es.aeat.map.tax"].create(
-            {"date_from": "2020-01-01", "model": 303}
-        )
+        self.env["l10n.es.aeat.map.tax"].create({"date_from": "2020-01-01", "model": 303})
         with self.assertRaises(exceptions.UserError):
-            self.env["l10n.es.aeat.map.tax"].create(
-                {"date_to": "2021-01-01", "model": 303}
-            )
+            self.env["l10n.es.aeat.map.tax"].create({"date_to": "2021-01-01", "model": 303})
 
     def test_map_aeat_iso_code_greece(self):
         res_partner_obj = self.env["res.partner"]

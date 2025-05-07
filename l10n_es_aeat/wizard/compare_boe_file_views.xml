@@ -24,18 +24,8 @@
                     </field>
                 </div>
                 <footer invisible="state != 'open'">
-                    <button
-                        name="button_compare_file"
-                        string="Compare"
-                        type="object"
-                        class="oe_highlight"
-                    />
-                    <button
-                        special="cancel"
-                        string="Cancel"
-                        type="object"
-                        class="oe_link"
-                    />
+                    <button name="button_compare_file" string="Compare" type="object" class="oe_highlight" />
+                    <button special="cancel" string="Cancel" type="object" class="oe_link" />
                 </footer>
                 <footer invisible="state != 'compare'">
                     <button special="cancel" string="Close" type="object" />

@@ -28,20 +28,14 @@
                                     <span class="fa fa-print" /> Print </button>
                                 <button t-on-click="exportXls" class="btn">
                                     <span class="fa fa-download" /> Export </button>
-                                <button
-                                    t-on-click="displaySettings"
-                                    t-if="widget_show_settings_button"
-                                    class="btn"
-                                >
+                                <button t-on-click="displaySettings" t-if="widget_show_settings_button" class="btn">
                                     <span class="fa fa-cog" /> Settings </button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="o_list_renderer o_renderer table-responsive">
-                    <table
-                        class="o_list_table table table-sm table-hover table-striped mis_builder"
-                    >
+                    <table class="o_list_table table table-sm table-hover table-striped mis_builder">
                         <thead>
                             <tr
                                 t-foreach="state.mis_report_data.header"
@@ -68,11 +62,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr
-                                t-foreach="state.mis_report_data.body"
-                                t-as="row"
-                                t-key="row_index"
-                            >
+                            <tr t-foreach="state.mis_report_data.body" t-as="row" t-key="row_index">
                                 <td t-att="{'style': row.style}">
                                     <t t-esc="row.label" />
                                     <t t-if="row.description">

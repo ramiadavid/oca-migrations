@@ -21,19 +21,11 @@ class TestMultiCompanyAEP(common.TransactionCase):
         self.currency_model = self.env["res.currency"]
         self.curr_year = datetime.date.today().year
         self.prev_year = self.curr_year - 1
-        self.usd = self.currency_model.with_context(active_test=False).search(
-            [("name", "=", "USD")]
-        )
-        self.eur = self.currency_model.with_context(active_test=False).search(
-            [("name", "=", "EUR")]
-        )
+        self.usd = self.currency_model.with_context(active_test=False).search([("name", "=", "USD")])
+        self.eur = self.currency_model.with_context(active_test=False).search([("name", "=", "EUR")])
         # create company A and B
-        self.company_eur = self.res_company.create(
-            {"name": "CYEUR", "currency_id": self.eur.id}
-        )
-        self.company_usd = self.res_company.create(
-            {"name": "CYUSD", "currency_id": self.usd.id}
-        )
+        self.company_eur = self.res_company.create({"name": "CYEUR", "currency_id": self.eur.id})
+        self.company_usd = self.res_company.create({"name": "CYUSD", "currency_id": self.usd.id})
         self.env["res.currency.rate"].search([]).unlink()
         for company, divider in [(self.company_eur, 1.0), (self.company_usd, 2.0)]:
             # create receivable bs account
@@ -184,25 +176,17 @@ class TestMultiCompanyAEP(common.TransactionCase):
         date_from = datetime.date(self.prev_year, 12, 1)
         date_to = datetime.date(self.prev_year, 12, 31)
         today = datetime.date.today()
-        self.env["res.currency.rate"].create(
-            dict(currency_id=self.usd.id, name=date_to, rate=1.1)
-        )
-        self.env["res.currency.rate"].create(
-            dict(currency_id=self.usd.id, name=today, rate=1.2)
-        )
+        self.env["res.currency.rate"].create(dict(currency_id=self.usd.id, name=date_to, rate=1.1))
+        self.env["res.currency.rate"].create(dict(currency_id=self.usd.id, name=today, rate=1.2))
         # let's query for december, one company, default currency = eur
         aep = self._do_queries(self.company_eur, None, date_from, date_to)
         self.assertEqual(self._eval(aep, "balp[700IN]"), -100)
         # let's query for december, two companies
-        aep = self._do_queries(
-            self.company_eur | self.company_usd, self.eur, date_from, date_to
-        )
+        aep = self._do_queries(self.company_eur | self.company_usd, self.eur, date_from, date_to)
         self.assertAlmostEqual(self._eval(aep, "balp[700IN]"), -100 - 50 / 1.1)
         # let's query for december, one company, currency = usd
         aep = self._do_queries(self.company_eur, self.usd, date_from, date_to)
         self.assertAlmostEqual(self._eval(aep, "balp[700IN]"), -100 * 1.1)
         # let's query for december, two companies, currency = usd
-        aep = self._do_queries(
-            self.company_eur | self.company_usd, self.usd, date_from, date_to
-        )
+        aep = self._do_queries(self.company_eur | self.company_usd, self.usd, date_from, date_to)
         self.assertAlmostEqual(self._eval(aep, "balp[700IN]"), -100 * 1.1 - 50)

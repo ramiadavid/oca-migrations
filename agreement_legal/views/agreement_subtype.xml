@@ -20,12 +20,7 @@
         <field name="arch" type="xml">
             <form string="Agreement Sub-Types">
                 <sheet>
-                    <widget
-                        name="web_ribbon"
-                        title="Archived"
-                        bg_color="bg-danger"
-                        invisible="active"
-                    />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active" />
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
                         <h1><field name="name" /></h1>
@@ -51,11 +46,7 @@
                 <field name="name" />
                 <field name="agreement_type_id" />
                 <separator />
-                <filter
-                    name="archived"
-                    string="Archived"
-                    domain="[('active', '=', False)]"
-                />
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]" />
                 <group name="groupby">
                     <filter
                         name="agreement_type_groupby"

@@ -25,9 +25,7 @@
                            Date Range:
                           </td>
                         <td class="td_detail_table">
-                              <span t-esc="o._format_date(o.date_start)" />-<span
-                                t-esc="o._format_date(o.date_end)"
-                            />
+                              <span t-esc="o._format_date(o.date_start)" />-<span t-esc="o._format_date(o.date_end)" />
                           </td>
                     </tr>
                 </tbody>

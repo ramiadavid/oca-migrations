@@ -3,7 +3,7 @@
 # (c) 2019 Acysos S.L.
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import _, exceptions, fields, models
+from odoo import exceptions, fields, models
 
 
 class L10nEsAeatCertificate(models.Model):
@@ -32,7 +32,7 @@ class L10nEsAeatCertificate(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Insert Password"),
+            "name": self.env._("Insert Password"),
             "res_model": "l10n.es.aeat.certificate.password",
             "view_mode": "form",
             "views": [(False, "form")],
@@ -41,9 +41,7 @@ class L10nEsAeatCertificate(models.Model):
 
     def action_active(self):
         self.ensure_one()
-        other_configs = self.search(
-            [("id", "!=", self.id), ("company_id", "=", self.company_id.id)]
-        )
+        other_configs = self.search([("id", "!=", self.id), ("company_id", "=", self.company_id.id)])
         for config_id in other_configs:
             config_id.state = "draft"
         self.state = "active"
@@ -71,12 +69,8 @@ class L10nEsAeatCertificate(models.Model):
             public_crt = aeat_certificate.public_key
             private_key = aeat_certificate.private_key
         else:
-            public_crt = self.env["ir.config_parameter"].get_param(
-                "l10n_es_aeat_certificate.publicCrt", False
-            )
-            private_key = self.env["ir.config_parameter"].get_param(
-                "l10n_es_aeat_certificate.privateKey", False
-            )
+            public_crt = self.env["ir.config_parameter"].get_param("l10n_es_aeat_certificate.publicCrt", False)
+            private_key = self.env["ir.config_parameter"].get_param("l10n_es_aeat_certificate.privateKey", False)
         if not public_crt or not private_key:
-            raise exceptions.UserError(_("Error! There aren't certificates."))
+            raise exceptions.UserError(self.env._("Error! There aren't certificates."))
         return public_crt, private_key

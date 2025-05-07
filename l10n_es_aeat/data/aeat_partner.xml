@@ -12,10 +12,6 @@
         <field name="street">C/ Lérida 32-34</field>
         <field name="phone">91 583 80 72</field>
         <field name="website">https://www.agenciatributaria.gob.es</field>
-        <field
-            name="image_1920"
-            type="base64"
-            file="l10n_es_aeat/static/description/icon.png"
-        />
+        <field name="image_1920" type="base64" file="l10n_es_aeat/static/description/icon.png" />
     </record>
 </odoo>

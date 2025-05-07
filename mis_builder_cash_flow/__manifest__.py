@@ -7,7 +7,7 @@
     "version": "18.0.1.0.0",
     "license": "AGPL-3",
     "author": "ADHOC SA, " "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/account-financial-reporting",
+    "website": "https://www.processcontrol.es",
     "depends": ["mis_builder"],
     "data": [
         "security/mis_cash_flow_security.xml",

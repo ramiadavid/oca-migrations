@@ -4,7 +4,6 @@
 import logging
 from collections import OrderedDict, defaultdict
 
-from odoo import _
 from odoo.exceptions import UserError
 
 from .accounting_none import AccountingNone
@@ -28,9 +27,7 @@ class KpiMatrixRow:
         self.description = ""
         self.parent_row = parent_row
         if not self.account_id:
-            self.style_props = self._matrix._style_model.merge(
-                [self.kpi.report_id.style_id, self.kpi.style_id]
-            )
+            self.style_props = self._matrix._style_model.merge([self.kpi.report_id.style_id, self.kpi.style_id])
         else:
             self.style_props = self._matrix._style_model.merge(
                 [self.kpi.report_id.style_id, self.kpi.auto_expand_accounts_style_id]
@@ -184,9 +181,7 @@ class KpiMatrix:
         self._cols[col_key] = col
         return col
 
-    def declare_comparison(
-        self, cmpcol_key, col_key, base_col_key, label, description=None
-    ):
+    def declare_comparison(self, cmpcol_key, col_key, base_col_key, label, description=None):
         """Declare a new comparison column.
 
         Invoke the declare_* methods in display order.
@@ -194,9 +189,7 @@ class KpiMatrix:
         self._comparison_todo[cmpcol_key] = (col_key, base_col_key, label, description)
         self._cols[cmpcol_key] = None  # reserve slot in insertion order
 
-    def declare_sum(
-        self, sumcol_key, col_to_sum_keys, label, description=None, sum_accdet=False
-    ):
+    def declare_sum(self, sumcol_key, col_to_sum_keys, label, description=None, sum_accdet=False):
         """Declare a new summation column.
 
         Invoke the declare_* methods in display order.
@@ -210,13 +203,9 @@ class KpiMatrix:
 
         Invoke this after declaring the kpi and the column.
         """
-        self.set_values_detail_account(
-            kpi, col_key, None, vals, drilldown_args, tooltips
-        )
+        self.set_values_detail_account(kpi, col_key, None, vals, drilldown_args, tooltips)
 
-    def set_values_detail_account(
-        self, kpi, col_key, account_id, vals, drilldown_args, tooltips=True
-    ):
+    def set_values_detail_account(self, kpi, col_key, account_id, vals, drilldown_args, tooltips=True):
         """Set values for a kpi and a column and a detail account.
 
         Invoke this after declaring the kpi and the column.
@@ -234,16 +223,12 @@ class KpiMatrix:
         cell_tuple = []
         assert len(vals) == col.colspan
         assert len(drilldown_args) == col.colspan
-        for val, drilldown_arg, subcol in zip(
-            vals, drilldown_args, col.iter_subcols(), strict=True
-        ):
+        for val, drilldown_arg, subcol in zip(vals, drilldown_args, col.iter_subcols(), strict=True):
             if isinstance(val, DataError):
                 val_rendered = val.name
                 val_comment = val.msg
             else:
-                val_rendered = self._style_model.render(
-                    self.lang, row.style_props, kpi.type, val
-                )
+                val_rendered = self._style_model.render(self.lang, row.style_props, kpi.type, val)
                 if row.kpi.multi and subcol.subkpi:
                     val_comment = "{}.{} = {}".format(
                         row.kpi.name,
@@ -256,9 +241,7 @@ class KpiMatrix:
             if row.kpi.style_expression:
                 # evaluate style expression
                 try:
-                    style_name = mis_safe_eval(
-                        row.kpi.style_expression, col.locals_dict
-                    )
+                    style_name = mis_safe_eval(row.kpi.style_expression, col.locals_dict)
                 except Exception:
                     _logger.error(
                         "Error evaluating style expression <%s>",
@@ -268,9 +251,7 @@ class KpiMatrix:
                 if style_name:
                     style = self._style_model.search([("name", "=", style_name)])
                     if style:
-                        cell_style_props = self._style_model.merge(
-                            [row.style_props, style[0]]
-                        )
+                        cell_style_props = self._style_model.merge([row.style_props, style[0]])
                     else:
                         _logger.error("Style '%s' not found.", style_name)
             cell = KpiMatrixCell(
@@ -309,7 +290,7 @@ class KpiMatrix:
             common_subkpis = self._common_subkpis([col, base_col])
             if (col.subkpis or base_col.subkpis) and not common_subkpis:
                 raise UserError(
-                    _(
+                    self.env._(
                         "Columns %(descr)s and %(base_descr)s are not comparable",
                         descr=col.description,
                         base_descr=base_col.description,
@@ -334,9 +315,7 @@ class KpiMatrix:
                     vals = [AccountingNone] * (len(common_subkpis) or 1)
                 else:
                     vals = [
-                        cell.val
-                        for cell in cell_tuple
-                        if not common_subkpis or cell.subcol.subkpi in common_subkpis
+                        cell.val for cell in cell_tuple if not common_subkpis or cell.subcol.subkpi in common_subkpis
                     ]
                 if base_cell_tuple is None:
                     base_vals = [AccountingNone] * (len(common_subkpis) or 1)
@@ -395,10 +374,8 @@ class KpiMatrix:
             common_subkpis = self._common_subkpis(sumcols)
             if any(c.subkpis for c in sumcols) and not common_subkpis:
                 raise UserError(
-                    _(
-                        "Sum cannot be computed in column {} "
-                        "because the columns to sum have no "
-                        "common subkpis"
+                    self.env._(
+                        "Sum cannot be computed in column {} " "because the columns to sum have no " "common subkpis"
                     ).format(label)
                 )
             sum_col = KpiMatrixCol(
@@ -411,9 +388,7 @@ class KpiMatrix:
             self._cols[sumcol_key] = sum_col
             for row in self.iter_rows():
                 acc = SimpleArray([AccountingNone] * (len(common_subkpis) or 1))
-                if row.kpi.accumulation_method == ACC_SUM and not (
-                    row.account_id and not sum_accdet
-                ):
+                if row.kpi.accumulation_method == ACC_SUM and not (row.account_id and not sum_accdet):
                     for sign, col_to_sum in col_to_sum_keys:
                         cell_tuple = self._cols[col_to_sum].get_cell_tuple_for_row(row)
                         if cell_tuple is None:
@@ -422,8 +397,7 @@ class KpiMatrix:
                             vals = [
                                 cell.val
                                 for cell in cell_tuple
-                                if not common_subkpis
-                                or cell.subcol.subkpi in common_subkpis
+                                if not common_subkpis or cell.subcol.subkpi in common_subkpis
                             ]
                         if sign == "+":
                             acc += SimpleArray(vals)
@@ -505,9 +479,7 @@ class KpiMatrix:
 
         body = []
         for row in self.iter_rows():
-            if (
-                row.style_props.hide_empty and row.is_empty()
-            ) or row.style_props.hide_always:
+            if (row.style_props.hide_empty and row.is_empty()) or row.style_props.hide_always:
                 continue
             row_data = {
                 "row_id": row.row_id,
@@ -530,9 +502,7 @@ class KpiMatrix:
                         "val": val,
                         "val_r": cell.val_rendered,
                         "val_c": cell.val_comment,
-                        "style": self._style_model.to_css_style(
-                            cell.style_props, no_indent=True
-                        ),
+                        "style": self._style_model.to_css_style(cell.style_props, no_indent=True),
                     }
                     if cell.drilldown_arg:
                         col_data["drilldown_arg"] = cell.drilldown_arg

@@ -23,12 +23,7 @@
             <form string="Recital">
                 <sheet>
                     <div class="oe_button_box" name="button_box" />
-                    <widget
-                        name="web_ribbon"
-                        title="Archived"
-                        bg_color="bg-danger"
-                        invisible="active"
-                    />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active" />
                     <field name="active" invisible="1" />
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
@@ -70,8 +65,7 @@
                                 <li>Select the recital field</li>
                                 <li>Select the sub-field</li>
                                 <li>Enter the default value if the field is empty</li>
-                                <li
-                                >Copy and paste the placeholder expression in the content</li>
+                                <li>Copy and paste the placeholder expression in the content</li>
                             </ol>
                         </p>
                     </group>
@@ -87,11 +81,7 @@
         <field name="arch" type="xml">
             <search string="Recitals">
                 <field name="name" />
-                <filter
-                    name="group_agreement"
-                    icon="terp-partner"
-                    context="{'group_by':'agreement_id'}"
-                />
+                <filter name="group_agreement" icon="terp-partner" context="{'group_by':'agreement_id'}" />
             </search>
         </field>
     </record>

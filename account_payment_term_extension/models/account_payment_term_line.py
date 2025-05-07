@@ -8,7 +8,7 @@
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import _, api, exceptions, fields, models
+from odoo import api, exceptions, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools import date_utils
 from odoo.tools.float_utils import float_round
@@ -97,7 +97,7 @@ class AccountPaymentTermLine(models.Model):
             except Exception:
                 error = True
             if error:
-                raise exceptions.Warning(_("Payment days field format is not valid."))
+                raise exceptions.Warning(self.env._("Payment days field format is not valid."))
 
     def _get_due_date(self, date_ref):
         res = super()._get_due_date(date_ref)
@@ -105,33 +105,21 @@ class AccountPaymentTermLine(models.Model):
         if self.delay_type == "weeks_after":
             return due_date + relativedelta(weeks=self.nb_days)
         elif self.delay_type == "weeks_after_end_of_month":
-            return date_utils.end_of(due_date, "month") + relativedelta(
-                weeks=self.nb_days
-            )
+            return date_utils.end_of(due_date, "month") + relativedelta(weeks=self.nb_days)
         elif self.delay_type == "weeks_after_end_of_next_month":
-            return date_utils.end_of(
-                due_date + relativedelta(months=1), "month"
-            ) + relativedelta(weeks=self.nb_days)
+            return date_utils.end_of(due_date + relativedelta(months=1), "month") + relativedelta(weeks=self.nb_days)
         elif self.delay_type == "months_after":
             return due_date + relativedelta(months=self.nb_days)
         elif self.delay_type == "months_after_end_of_month":
-            return date_utils.end_of(due_date, "month") + relativedelta(
-                months=self.nb_days
-            )
+            return date_utils.end_of(due_date, "month") + relativedelta(months=self.nb_days)
         return res
 
     @api.constrains("value", "value_amount")
     def _check_value_amount_untaxed(self):
         for term_line in self:
-            if (
-                term_line.value == "percent_amount_untaxed"
-                and not 0 <= term_line.value_amount <= 100
-            ):
+            if term_line.value == "percent_amount_untaxed" and not 0 <= term_line.value_amount <= 100:
                 raise ValidationError(
-                    _(
-                        "Percentages on the Payment Terms lines "
-                        "must be between 0 and 100."
-                    )
+                    self.env._("Percentages on the Payment Terms lines " "must be between 0 and 100.")
                 )
 
     def compute_line_amount(self, total_amount, remaining_amount, precision_digits):

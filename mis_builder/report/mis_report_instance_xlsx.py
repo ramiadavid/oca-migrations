@@ -6,7 +6,7 @@ import numbers
 from collections import defaultdict
 from datetime import datetime
 
-from odoo import _, fields, models
+from odoo import fields, models
 
 from ..models.accounting_none import AccountingNone
 from ..models.data_error import DataError
@@ -32,9 +32,7 @@ class MisBuilderXlsx(models.AbstractModel):
         style_obj = self.env["mis.report.style"]
 
         # create worksheet
-        report_name = "{} - {}".format(
-            objects[0].name, ", ".join([a.name for a in objects[0].query_company_ids])
-        )
+        report_name = "{} - {}".format(objects[0].name, ", ".join([a.name for a in objects[0].query_company_ids]))
         sheet = workbook.add_worksheet(report_name[:31])
         row_pos = 0
         col_pos = 0
@@ -45,9 +43,7 @@ class MisBuilderXlsx(models.AbstractModel):
 
         # document title
         bold = workbook.add_format({"bold": True})
-        header_format = workbook.add_format(
-            {"bold": True, "align": "center", "bg_color": "#F0EEEE"}
-        )
+        header_format = workbook.add_format({"bold": True, "align": "center", "bg_color": "#F0EEEE"})
         sheet.write(row_pos, 0, report_name, bold)
         row_pos += 2
 
@@ -78,9 +74,7 @@ class MisBuilderXlsx(models.AbstractModel):
                 )
             else:
                 sheet.write(row_pos, col_pos, label, header_format)
-                col_width[col_pos] = max(
-                    col_width[col_pos], len(col.label or ""), len(col.description or "")
-                )
+                col_width[col_pos] = max(col_width[col_pos], len(col.label or ""), len(col.description or ""))
             col_pos += col.colspan
         row_pos += 1
 
@@ -103,9 +97,7 @@ class MisBuilderXlsx(models.AbstractModel):
 
         # rows
         for row in matrix.iter_rows():
-            if (
-                row.style_props.hide_empty and row.is_empty()
-            ) or row.style_props.hide_always:
+            if (row.style_props.hide_empty and row.is_empty()) or row.style_props.hide_always:
                 continue
             row_xlsx_style = style_obj.to_xlsx_style(TYPE_STR, row.style_props)
             row_format = workbook.add_format(row_xlsx_style)
@@ -115,18 +107,14 @@ class MisBuilderXlsx(models.AbstractModel):
                 label += "\n" + row.description
                 sheet.set_row(row_pos, ROW_HEIGHT * 2)
             sheet.write(row_pos, col_pos, label, row_format)
-            label_col_width = max(
-                label_col_width, len(row.label or ""), len(row.description or "")
-            )
+            label_col_width = max(label_col_width, len(row.label or ""), len(row.description or ""))
             for cell in row.iter_cells():
                 col_pos += 1
                 if not cell or cell.val is AccountingNone:
                     # TODO col/subcol format
                     sheet.write(row_pos, col_pos, "", row_format)
                     continue
-                cell_xlsx_style = style_obj.to_xlsx_style(
-                    cell.val_type, cell.style_props, no_indent=True
-                )
+                cell_xlsx_style = style_obj.to_xlsx_style(cell.val_type, cell.style_props, no_indent=True)
                 cell_xlsx_style["align"] = "right"
                 cell_format = workbook.add_format(cell_xlsx_style)
                 if isinstance(cell.val, DataError):
@@ -136,32 +124,22 @@ class MisBuilderXlsx(models.AbstractModel):
                     val = ""
                 else:
                     divider = float(cell.style_props.get("divider", 1))
-                    if (
-                        divider != 1
-                        and isinstance(cell.val, numbers.Number)
-                        and not cell.val_type == "pct"
-                    ):
+                    if divider != 1 and isinstance(cell.val, numbers.Number) and not cell.val_type == "pct":
                         val = cell.val / divider
                     else:
                         val = cell.val
                 sheet.write(row_pos, col_pos, val, cell_format)
-                col_width[col_pos] = max(
-                    col_width[col_pos], len(cell.val_rendered or "")
-                )
+                col_width[col_pos] = max(col_width[col_pos], len(cell.val_rendered or ""))
             row_pos += 1
 
         # Add date/time footer
         row_pos += 1
-        footer_format = workbook.add_format(
-            {"italic": True, "font_color": "#202020", "size": 9}
-        )
+        footer_format = workbook.add_format({"italic": True, "font_color": "#202020", "size": 9})
         lang_model = self.env["res.lang"]
         lang = lang_model._lang_get(self.env.user.lang)
 
-        now_tz = fields.Datetime.context_timestamp(
-            self.env["res.users"], datetime.now()
-        )
-        create_date = _(
+        now_tz = fields.Datetime.context_timestamp(self.env["res.users"], datetime.now())
+        create_date = self.env._(
             "Generated on %(gen_date)s at %(gen_time)s",
             gen_date=now_tz.strftime(lang.date_format),
             gen_time=now_tz.strftime(lang.time_format),

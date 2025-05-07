@@ -46,10 +46,7 @@ class AccountMove(models.Model):
                     repartition_lines = tax.invoice_repartition_line_ids
                 else:
                     repartition_lines = tax.refund_repartition_line_ids
-                if (
-                    len(repartition_lines) > 2
-                    and line.tax_repartition_line_id.factor_percent < 0
-                ):
+                if len(repartition_lines) > 2 and line.tax_repartition_line_id.factor_percent < 0:
                     # taxes with more than one "tax" repartition line must be discarded
                     continue
                 line._process_aeat_tax_fee_info(res, tax, sign)
@@ -65,9 +62,7 @@ class AccountMoveLine(models.Model):
         """
         taxes = tax.amount_type == "group" and tax.children_tax_ids or tax
         for tax in taxes:
-            res.setdefault(
-                tax, {"tax": tax, "base": 0, "amount": 0, "deductible_amount": 0}
-            )
+            res.setdefault(tax, {"tax": tax, "base": 0, "amount": 0, "deductible_amount": 0})
             res[tax]["base"] += self.balance * sign
 
     def _process_aeat_tax_fee_info(self, res, tax, sign):
@@ -76,9 +71,7 @@ class AccountMoveLine(models.Model):
         """
         taxes = tax.amount_type == "group" and tax.children_tax_ids or tax
         for tax in taxes:
-            res.setdefault(
-                tax, {"tax": tax, "base": 0, "amount": 0, "deductible_amount": 0}
-            )
+            res.setdefault(tax, {"tax": tax, "base": 0, "amount": 0, "deductible_amount": 0})
             amount = self.balance * sign
             res[tax]["amount"] += amount
             res[tax]["deductible_amount"] += amount

@@ -1,13 +1,13 @@
 /** @odoo-module **/
 
 import {Component, onWillStart, useState, useSubEnv} from "@odoo/owl";
-import {useBus, useService} from "@web/core/utils/hooks";
 import {DateTimeInput} from "@web/core/datetime/datetime_input";
-import {SearchBar} from "@web/search/search_bar/search_bar";
-import {SearchModel} from "@web/search/search_model";
 import {parseDate} from "@web/core/l10n/dates";
 import {registry} from "@web/core/registry";
 import {user} from "@web/core/user";
+import {useBus, useService} from "@web/core/utils/hooks";
+import {SearchBar} from "@web/search/search_bar/search_bar";
+import {SearchModel} from "@web/search/search_model";
 
 export class MisReportWidget extends Component {
     setup() {
@@ -52,8 +52,7 @@ export class MisReportWidget extends Component {
         this.source_aml_model_name = result.source_aml_model_name;
         this.widget_show_filters = result.widget_show_filters;
         this.widget_show_settings_button = result.widget_show_settings_button;
-        this.widget_search_view_id =
-            result.widget_search_view_id && result.widget_search_view_id[0];
+        this.widget_search_view_id = result.widget_search_view_id && result.widget_search_view_id[0];
         this.state.pivot_date = parseDate(result.pivot_date);
         this.widget_show_pivot_date = result.widget_show_pivot_date;
         if (this.showSearchBar) {
@@ -69,11 +68,7 @@ export class MisReportWidget extends Component {
     }
 
     get showSearchBar() {
-        return (
-            this.source_aml_model_name &&
-            this.widget_show_filters &&
-            this.widget_search_view_id
-        );
+        return this.source_aml_model_name && this.widget_show_filters && this.widget_search_view_id;
     }
 
     get showPivotDate() {
@@ -122,51 +117,36 @@ export class MisReportWidget extends Component {
 
     async drilldown(event) {
         const drilldown = $(event.target).data("drilldown");
-        const action = await this.orm.call(
-            "mis.report.instance",
-            "drilldown",
-            [this._instanceId(), drilldown],
-            {context: this.context}
-        );
+        const action = await this.orm.call("mis.report.instance", "drilldown", [this._instanceId(), drilldown], {
+            context: this.context,
+        });
         this.action.doAction(action);
     }
 
     async refresh() {
-        this.state.mis_report_data = await this.orm.call(
-            "mis.report.instance",
-            "compute",
-            [this._instanceId()],
-            {context: this.context}
-        );
+        this.state.mis_report_data = await this.orm.call("mis.report.instance", "compute", [this._instanceId()], {
+            context: this.context,
+        });
     }
 
     async printPdf() {
-        const action = await this.orm.call(
-            "mis.report.instance",
-            "print_pdf",
-            [this._instanceId()],
-            {context: this.context}
-        );
+        const action = await this.orm.call("mis.report.instance", "print_pdf", [this._instanceId()], {
+            context: this.context,
+        });
         this.action.doAction(action);
     }
 
     async exportXls() {
-        const action = await this.orm.call(
-            "mis.report.instance",
-            "export_xls",
-            [this._instanceId()],
-            {context: this.context}
-        );
+        const action = await this.orm.call("mis.report.instance", "export_xls", [this._instanceId()], {
+            context: this.context,
+        });
         this.action.doAction(action);
     }
 
     async displaySettings() {
-        const action = await this.orm.call(
-            "mis.report.instance",
-            "display_settings",
-            [this._instanceId()],
-            {context: this.context}
-        );
+        const action = await this.orm.call("mis.report.instance", "display_settings", [this._instanceId()], {
+            context: this.context,
+        });
         this.action.doAction(action);
     }
 

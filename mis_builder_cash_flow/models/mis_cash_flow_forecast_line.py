@@ -1,6 +1,6 @@
 # Copyright 2019 ADHOC SA
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -29,6 +29,4 @@ class MisCashFlowForecastLine(models.Model):
     @api.constrains("company_id", "account_id")
     def _check_company_id_account_id(self):
         if self.filtered(lambda x: x.company_id != x.account_id.company_id):
-            raise ValidationError(
-                _("The Company and the Company of the Account must be the same.")
-            )
+            raise ValidationError(self.env._("The Company and the Company of the Account must be the same."))

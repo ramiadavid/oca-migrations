@@ -12,7 +12,7 @@
     "name": "Libro de IVA",
     "version": "18.0.1.0.0",
     "author": "PRAXYA, ForgeFlow, Tecnativa, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/l10n-spain",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "category": "Accounting",
     "depends": ["l10n_es_aeat", "report_xlsx"],

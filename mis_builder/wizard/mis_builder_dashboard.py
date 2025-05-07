@@ -26,11 +26,7 @@ class AddMisReportInstanceDashboard(models.TransientModel):
         if self.env.context.get("active_id", False):
             res = super().default_get(fields_list)
             # get report instance name
-            res["name"] = (
-                self.env["mis.report.instance"]
-                .browse(self.env.context["active_id"])
-                .name
-            )
+            res["name"] = self.env["mis.report.instance"].browse(self.env.context["active_id"]).name
         return res
 
     def action_add_to_dashboard(self):
@@ -46,8 +42,7 @@ class AddMisReportInstanceDashboard(models.TransientModel):
             .sudo()
             .create(
                 {
-                    "name": "mis.report.instance.result.view.action.%d"
-                    % self.env.context["active_id"],
+                    "name": "mis.report.instance.result.view.action.%d" % self.env.context["active_id"],
                     "res_model": active_model,
                     "res_id": active_id,
                     "target": "current",

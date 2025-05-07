@@ -40,12 +40,7 @@
                             icon="fa-magic"
                         />
                     </div>
-                    <widget
-                        name="web_ribbon"
-                        text="Archived"
-                        bg_color="bg-danger"
-                        invisible="active"
-                    />
+                    <widget name="web_ribbon" text="Archived" bg_color="bg-danger" invisible="active" />
                     <field name="active" invisible="1" />
                     <group>
                         <group>
@@ -97,11 +92,7 @@
                         <field name="size" />
                         <field name="alignment" />
                     </group>
-                    <group
-                        name="group_field_specification"
-                        string='Field especification'
-                        colspan="2"
-                    >
+                    <group name="group_field_specification" string='Field especification' colspan="2">
                         <field name="export_type" />
                         <field
                             name="subconfig_id"
@@ -113,23 +104,9 @@
                         <field name="repeat_expression" />
                         <field name="conditional_expression" />
                     </group>
-                    <group
-                        name="group_value"
-                        string='Value'
-                        colspan="4"
-                        col="4"
-                        invisible="export_type == 'subconfig'"
-                    >
-                        <field
-                            name="fixed_value"
-                            readonly="expression and not fixed_value"
-                            force_save="1"
-                        />
-                        <field
-                            name="expression"
-                            readonly="not expression and fixed_value"
-                            force_save="1"
-                        />
+                    <group name="group_value" string='Value' colspan="4" col="4" invisible="export_type == 'subconfig'">
+                        <field name="fixed_value" readonly="expression and not fixed_value" force_save="1" />
+                        <field name="expression" readonly="not expression and fixed_value" force_save="1" />
                     </group>
                     <group
                         name="group_advanced_configuration"
@@ -137,20 +114,14 @@
                         colspan="4"
                         invisible="export_type in ('string', 'subconfig')"
                     >
-                        <group
-                            invisible="export_type not in ('float', 'integer')"
-                            colspan="2"
-                        >
+                        <group invisible="export_type not in ('float', 'integer')" colspan="2">
                             <group>
                                 <field name="apply_sign" />
                             </group>
                             <group invisible="not apply_sign">
                                 <field name="positive_sign" />
                                 <field name="negative_sign" />
-                                <field
-                                    name="decimal_size"
-                                    invisible="export_type != 'float'"
-                                />
+                                <field name="decimal_size" invisible="export_type != 'float'" />
                             </group>
                         </group>
                         <group invisible="export_type != 'boolean'">

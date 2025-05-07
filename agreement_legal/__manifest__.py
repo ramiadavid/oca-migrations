@@ -8,7 +8,7 @@
     "Open Source Integrators, "
     "Yves Goldberg (Ygol Internetwork), "
     "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/agreement",
+    "website": "https://www.processcontrol.es",
     "category": "Partner",
     "license": "AGPL-3",
     "version": "18.0.1.0.0",

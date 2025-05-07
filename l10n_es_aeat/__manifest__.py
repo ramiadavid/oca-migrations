@@ -13,13 +13,9 @@
     "name": "AEAT Base",
     "summary": "Modulo base para declaraciones de la AEAT",
     "version": "18.0.1.0.0",
-    "author": "Pexego, "
-    "Acysos S.L., "
-    "AvanzOSC, "
-    "Tecnativa, "
-    "Odoo Community Association (OCA)",
+    "author": "Pexego, " "Acysos S.L., " "AvanzOSC, " "Tecnativa, " "Odoo Community Association (OCA)",
     "license": "AGPL-3",
-    "website": "https://github.com/OCA/l10n-spain",
+    "website": "https://www.processcontrol.es",
     "category": "Accounting & Finance",
     "development_status": "Mature",
     "depends": ["l10n_es", "account_tax_balance"],
