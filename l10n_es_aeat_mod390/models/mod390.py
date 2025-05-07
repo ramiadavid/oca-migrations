@@ -24,10 +24,9 @@ ACTIVITY_CODE_SELECTION = [
     ),
     ("6", "6: Otras actividades no sujetas al IAE"),
 ]
-REPRESENTATIVE_HELP = request.env._("Nombre y apellidos del representante")
-NOTARY_CODE_HELP = request.env._(
-    "Código de la notaría en la que se concedió el poder de representación " "para esta persona."
-)
+REPRESENTATIVE_HELP = "Nombre y apellidos del representante"
+NOTARY_CODE_HELP = "Código de la notaría en la que se concedió el poder de representación " "para esta persona."
+
 
 
 class L10nEsAeatMod390Report(models.Model):
