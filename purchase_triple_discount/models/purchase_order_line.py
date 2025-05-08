@@ -46,9 +46,7 @@ class PurchaseOrderLine(models.Model):
                 for fname in self._get_multiple_discount_field_names()
             )
         )
-        # TODO: Replace this when https://github.com/OCA/account-invoicing/pull/1638 is merged for:
-        #       res.pop("discount")
-        res["discount"] = res.pop("discount1")
+        res.pop("discount")
         return res
 
     @api.model
