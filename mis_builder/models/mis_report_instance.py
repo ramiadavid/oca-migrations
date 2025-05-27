@@ -816,7 +816,7 @@ class MisReportInstance(models.Model):
 
     @api.model
     def _get_drilldown_views_and_orders(self):
-        return {"tree": 1, "form": 2, "pivot": 3, "graph": 4}
+        return {"list": 1, "form": 2, "pivot": 3, "graph": 4}
 
     @api.model
     def _get_drilldown_model_views(self, model_name):

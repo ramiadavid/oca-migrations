@@ -477,7 +477,7 @@ class TestMisReportInstance(common.HttpCase):
         self.assertEqual(action["view_mode"], "tree,form,pivot,graph")
         self.assertEqual(
             action["views"],
-            [[False, "tree"], [False, "form"], [False, "pivot"], [False, "graph"]],
+            [[False, "list"], [False, "form"], [False, "pivot"], [False, "graph"]],
         )
 
     def test_qweb(self):
