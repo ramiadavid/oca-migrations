@@ -16,7 +16,9 @@ class ResPartner(models.Model):
         res = super()._compute_aeat_sending_enabled()
         sii_enabled = any(self.env.companies.mapped("sii_enabled"))
         for partner in self:
-            sii_enabled = partner.company_id.sii_enabled if partner.company_id else sii_enabled
+            sii_enabled = (
+                partner.company_id.sii_enabled if partner.company_id else sii_enabled
+            )
             partner.sii_enabled = sii_enabled
             if sii_enabled:
                 partner.aeat_sending_enabled = True

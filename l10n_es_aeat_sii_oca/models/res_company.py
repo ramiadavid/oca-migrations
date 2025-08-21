@@ -33,17 +33,20 @@ class ResCompany(models.Model):
     sii_description = fields.Char(
         string="SII Description",
         size=500,
-        help="The description for invoices. Only used when the field SII " "Description Method is 'Fixed'.",
+        help="The description for invoices. Only used when the field SII "
+        "Description Method is 'Fixed'.",
     )
     sii_header_customer = fields.Char(
         string="SII Customer header",
         size=500,
-        help="An optional header description for customer invoices. " "Applied on all the SII description methods",
+        help="An optional header description for customer invoices. "
+        "Applied on all the SII description methods",
     )
     sii_header_supplier = fields.Char(
         string="SII Supplier header",
         size=500,
-        help="An optional header description for supplier invoices. " "Applied on all the SII description methods",
+        help="An optional header description for supplier invoices. "
+        "Applied on all the SII description methods",
     )
     sii_method = fields.Selection(
         string="Method",
@@ -52,6 +55,11 @@ class ResCompany(models.Model):
         help="By default, the invoice is sent/queued in validation process. "
         "With manual method, there's a button to send the invoice.",
     )
+    sii_start_date = fields.Date(
+        help="If this field is set, the sii won't be enabled on invoices with lower "
+        "invoice date. If not set, the sii can be enabled on all invoice dates"
+    )
+
     send_mode = fields.Selection(
         selection=[
             ("auto", "On validate"),
@@ -84,5 +92,9 @@ class ResCompany(models.Model):
             now = now.replace(hour=hour, minute=minute)
             return now
         else:
-            delay_time = 0.0 if self.send_mode == "auto" or not self.delay_time else self.delay_time
+            delay_time = (
+                0.0
+                if self.send_mode == "auto" or not self.delay_time
+                else self.delay_time
+            )
             return datetime.now() + timedelta(hours=delay_time)

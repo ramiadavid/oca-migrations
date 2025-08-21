@@ -34,17 +34,23 @@
     </record>
     <record id="aeat_sii_map_line_SFESISP" model="aeat.sii.map.lines">
         <field name="code">SFESISP</field>
-        <field name="tax_xmlid_ids" eval="[(6, 0, [
+        <field
+            name="tax_xmlid_ids"
+            eval="[(6, 0, [
                 ref('s_iva0_isp'),
-            ])]" />
+            ])]"
+        />
         <field name="sii_map_id" ref="aeat_sii_map" />
         <field name="name">SuministroFactEmitidas Sujetas ISP</field>
     </record>
     <record id="aeat_sii_map_line_SFENS" model="aeat.sii.map.lines">
         <field name="code">SFENS</field>
-        <field name="tax_xmlid_ids" eval="[(6, 0, [
+        <field
+            name="tax_xmlid_ids"
+            eval="[(6, 0, [
                 ref('s_iva_ns_b'),
-            ])]" />
+            ])]"
+        />
         <field name="sii_map_id" ref="aeat_sii_map" />
         <field name="name">SuministroFactEmitidas Bienes No Sujeta</field>
     </record>
@@ -163,9 +169,12 @@
     </record>
     <record id="aeat_sii_map_line_SFRSA" model="aeat.sii.map.lines">
         <field name="code">SFRSA</field>
-        <field name="tax_xmlid_ids" eval="[(6, 0, [
+        <field
+            name="tax_xmlid_ids"
+            eval="[(6, 0, [
                 ref('p_iva12_agr'),
-            ])]" />
+            ])]"
+        />
         <field name="sii_map_id" ref="aeat_sii_map" />
         <field name="name">SuministroFactRecibidas Sujetas Agricultura</field>
     </record>
@@ -305,7 +314,10 @@
         <field name="sii_map_id" ref="aeat_sii_map" />
         <field name="name">Impuestos no incluidos en ImporteTotal</field>
     </record>
-    <record id="aeat_sii_map_line_not_included_in_total_negative" model="aeat.sii.map.lines">
+    <record
+        id="aeat_sii_map_line_not_included_in_total_negative"
+        model="aeat.sii.map.lines"
+    >
         <field name="code">NotIncludedInTotalNegative</field>
         <field
             name="tax_xmlid_ids"
@@ -335,11 +347,17 @@
         <field name="sii_map_id" ref="aeat_sii_map" />
         <field name="name">Impuestos no incluidos en ImporteTotal (negativos)</field>
     </record>
-    <record id="aeat_sii_map_line_base_not_included_in_total" model="aeat.sii.map.lines">
+    <record
+        id="aeat_sii_map_line_base_not_included_in_total"
+        model="aeat.sii.map.lines"
+    >
         <field name="code">BaseNotIncludedInTotal</field>
-        <field name="tax_xmlid_ids" eval="[(6, 0, [
+        <field
+            name="tax_xmlid_ids"
+            eval="[(6, 0, [
           ref('s_iva0_ns'),
-        ])]" />
+        ])]"
+        />
         <field name="sii_map_id" ref="aeat_sii_map" />
         <field name="name">Bases no incluidas en ImporteTotal</field>
     </record>

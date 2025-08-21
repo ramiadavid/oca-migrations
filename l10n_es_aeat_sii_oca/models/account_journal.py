@@ -7,5 +7,7 @@ from odoo import fields, models
 class AccountJournal(models.Model):
     _inherit = "account.journal"
 
-    company_sii_enabled = fields.Boolean(related="company_id.sii_enabled", string="Company enable SII")
+    company_sii_enabled = fields.Boolean(
+        related="company_id.sii_enabled", string="Company enable SII"
+    )
     sii_enabled = fields.Boolean(string="Enable SII", default=True)

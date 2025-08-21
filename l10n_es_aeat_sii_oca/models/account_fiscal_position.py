@@ -9,7 +9,9 @@ class AccountFiscalPosition(models.Model):
 
     @api.model
     def _get_selection_sii_exempt_cause(self):
-        return self.env["product.template"].fields_get(allfields=["sii_exempt_cause"])["sii_exempt_cause"]["selection"]
+        return self.env["product.template"].fields_get(allfields=["sii_exempt_cause"])[
+            "sii_exempt_cause"
+        ]["selection"]
 
     @api.model
     def default_sii_exempt_cause(self):

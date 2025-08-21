@@ -13,11 +13,20 @@
                 <field name="sii_enabled" invisible="1" />
                 <group string="SII" name="group_sii" invisible="not sii_enabled">
                     <field name="aeat_active" />
-                    <field name="sii_registration_key_sale" invisible="not aeat_active" />
-                    <field name="sii_registration_key_purchase" invisible="not aeat_active" />
+                    <field
+                        name="sii_registration_key_sale"
+                        invisible="not aeat_active"
+                    />
+                    <field
+                        name="sii_registration_key_purchase"
+                        invisible="not aeat_active"
+                    />
                     <field name="sii_no_taxable_cause" invisible="not aeat_active" />
                     <field name="sii_exempt_cause" invisible="not aeat_active" />
-                    <field name="sii_partner_identification_type" invisible="not aeat_active" />
+                    <field
+                        name="sii_partner_identification_type"
+                        invisible="not aeat_active"
+                    />
                 </group>
             </xpath>
         </field>

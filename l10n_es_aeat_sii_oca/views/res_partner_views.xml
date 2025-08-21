@@ -7,7 +7,7 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="l10n_es_aeat.view_partner_form" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='aeat_simplified_invoice']" position="after">
+            <xpath expr="//field[@name='aeat_sending_enabled']" position="after">
                 <field name="sii_enabled" invisible="1" />
             </xpath>
         </field>

@@ -15,7 +15,7 @@
 import json
 import logging
 
-from odoo import api, exceptions, fields, models
+from odoo import _, api, exceptions, fields, models
 from odoo.modules.registry import Registry
 from odoo.osv.expression import AND, OR
 
@@ -66,7 +66,8 @@ class AccountMove(models.Model):
             ("2", "[2]-Real property located in the " "Basque Country or Navarra"),
             (
                 "3",
-                "[3]-Real property in any of the above situations " "but without cadastral code",
+                "[3]-Real property in any of the above situations "
+                "but without cadastral code",
             ),
             ("4", "[4]-Real property located in a foreign country"),
         ],
@@ -124,7 +125,7 @@ class AccountMove(models.Model):
 
     def _raise_exception_sii(self, field_name):
         raise exceptions.UserError(
-            self.env._(
+            _(
                 "You cannot change the %s of an invoice "
                 "already registered at the SII. You must cancel the "
                 "invoice and create a new one with the correct value"
@@ -136,22 +137,24 @@ class AccountMove(models.Model):
         """For supplier invoices the SII primary key is the supplier
         VAT/ID Otro and the supplier invoice number. Cannot let change these
         values in a SII registered supplier invoice"""
-        for invoice in self.filtered(lambda x: x.is_invoice() and x.aeat_state != "not_sent"):
+        for invoice in self.filtered(
+            lambda x: x.is_invoice() and x.aeat_state != "not_sent"
+        ):
             if "invoice_date" in vals:
-                self._raise_exception_sii(self.env._("invoice date"))
+                self._raise_exception_sii(_("invoice date"))
             elif "thirdparty_number" in vals:
-                self._raise_exception_sii(self.env._("third-party number"))
+                self._raise_exception_sii(_("third-party number"))
             if invoice.move_type in ["in_invoice", "in_refund"]:
                 if "partner_id" in vals:
                     correct_partners = invoice._aeat_get_partner()
                     correct_partners |= correct_partners.child_ids
                     if vals["partner_id"] not in correct_partners.ids:
-                        self._raise_exception_sii(self.env._("supplier"))
+                        self._raise_exception_sii(_("supplier"))
                 elif "ref" in vals:
-                    self._raise_exception_sii(self.env._("supplier invoice number"))
+                    self._raise_exception_sii(_("supplier invoice number"))
             elif invoice.move_type in ["out_invoice", "out_refund"]:
                 if "name" in vals:
-                    self._raise_exception_sii(self.env._("invoice number"))
+                    self._raise_exception_sii(_("invoice number"))
         return super().write(vals)
 
     def _filter_sii_unlink_not_possible(self):
@@ -168,10 +171,14 @@ class AccountMove(models.Model):
         """
         self.ensure_one()
         taxes_req = self._get_aeat_taxes_map(["RE"], self._get_document_fiscal_date())
-        re_lines = self.line_ids.filtered(lambda x: tax in x.tax_ids and x.tax_ids & taxes_req)
+        re_lines = self.line_ids.filtered(
+            lambda x: tax in x.tax_ids and x.tax_ids & taxes_req
+        )
         req_tax = re_lines.mapped("tax_ids") & taxes_req
         if len(req_tax) > 1:
-            raise exceptions.UserError(self.env._("There's a mismatch in taxes for RE. Check them."))
+            raise exceptions.UserError(
+                _("There's a mismatch in taxes for RE. Check them.")
+            )
         return req_tax
 
     @api.model
@@ -222,8 +229,12 @@ class AccountMove(models.Model):
         taxes_sfesse = self._get_aeat_taxes_map(["SFESSE"], self.date)
         taxes_sfesns = self._get_aeat_taxes_map(["SFESNS"], self.date)
         taxes_not_in_total = self._get_aeat_taxes_map(["NotIncludedInTotal"], self.date)
-        taxes_not_in_total_neg = self._get_aeat_taxes_map(["NotIncludedInTotalNegative"], self.date)
-        base_not_in_total = self._get_aeat_taxes_map(["BaseNotIncludedInTotal"], self.date)
+        taxes_not_in_total_neg = self._get_aeat_taxes_map(
+            ["NotIncludedInTotalNegative"], self.date
+        )
+        base_not_in_total = self._get_aeat_taxes_map(
+            ["BaseNotIncludedInTotal"], self.date
+        )
         not_in_amount_total = 0
         exempt_cause = self._get_sii_exempt_cause(taxes_sfesbe + taxes_sfesse)
         tax_lines = self._get_aeat_tax_info()
@@ -304,7 +315,9 @@ class AccountMove(models.Model):
                         "NoExenta",
                         {"TipoNoExenta": "S1", "DesgloseIVA": {"DetalleIVA": []}},
                     )
-                    sub = type_breakdown["PrestacionServicios"]["Sujeta"]["NoExenta"]["DesgloseIVA"]["DetalleIVA"]
+                    sub = type_breakdown["PrestacionServicios"]["Sujeta"]["NoExenta"][
+                        "DesgloseIVA"
+                    ]["DetalleIVA"]
                     sub.append(self._get_sii_tax_dict(tax_line, tax_lines))
                 if tax in taxes_sfesns:
                     nsub_dict = service_dict.setdefault(
@@ -317,7 +330,9 @@ class AccountMove(models.Model):
         # - Ciertos condicionantes obligan DesgloseTipoOperacion
         if self._is_sii_type_breakdown_required(taxes_dict):
             taxes_dict.setdefault("DesgloseTipoOperacion", {})
-            taxes_dict["DesgloseTipoOperacion"]["Entrega"] = taxes_dict["DesgloseFactura"]
+            taxes_dict["DesgloseTipoOperacion"]["Entrega"] = taxes_dict[
+                "DesgloseFactura"
+            ]
             del taxes_dict["DesgloseFactura"]
         return taxes_dict, not_in_amount_total
 
@@ -345,8 +360,12 @@ class AccountMove(models.Model):
         taxes_sfrnd = self._get_aeat_taxes_map(["SFRND"], self.date)
         taxes_sfrbi = self._get_aeat_taxes_map(["SFRBI"], self.date)
         taxes_not_in_total = self._get_aeat_taxes_map(["NotIncludedInTotal"], self.date)
-        taxes_not_in_total_neg = self._get_aeat_taxes_map(["NotIncludedInTotalNegative"], self.date)
-        base_not_in_total = self._get_aeat_taxes_map(["BaseNotIncludedInTotal"], self.date)
+        taxes_not_in_total_neg = self._get_aeat_taxes_map(
+            ["NotIncludedInTotalNegative"], self.date
+        )
+        base_not_in_total = self._get_aeat_taxes_map(
+            ["BaseNotIncludedInTotal"], self.date
+        )
         tax_amount = 0.0
         not_in_amount_total = 0.0
         tax_lines = self._get_aeat_tax_info()
@@ -397,9 +416,11 @@ class AccountMove(models.Model):
         res = super()._aeat_check_exceptions()
         is_simplified_invoice = self._is_aeat_simplified_invoice()
         if is_simplified_invoice and self.move_type[:2] == "in":
-            raise exceptions.UserError(self.env._("You can't make a supplier simplified invoice."))
+            raise exceptions.UserError(
+                _("You can't make a supplier simplified invoice.")
+            )
         if not self.ref and self.move_type in ["in_invoice", "in_refund"]:
-            raise exceptions.UserError(self.env._("The supplier number invoice is required"))
+            raise exceptions.UserError(_("The supplier number invoice is required"))
         return res
 
     def _get_sii_invoice_type(self):
@@ -426,11 +447,19 @@ class AccountMove(models.Model):
             inv_dict["FacturaExpedida"]["EmitidaPorTercerosODestinatario"] = "S"
         if self.sii_registration_key_additional1:
             inv_dict["FacturaExpedida"].update(
-                {"ClaveRegimenEspecialOTrascendenciaAdicional1": (self.sii_registration_key_additional1.code)}
+                {
+                    "ClaveRegimenEspecialOTrascendenciaAdicional1": (
+                        self.sii_registration_key_additional1.code
+                    )
+                }
             )
         if self.sii_registration_key_additional2:
             inv_dict["FacturaExpedida"].update(
-                {"ClaveRegimenEspecialOTrascendenciaAdicional2": (self.sii_registration_key_additional2.code)}
+                {
+                    "ClaveRegimenEspecialOTrascendenciaAdicional2": (
+                        self.sii_registration_key_additional2.code
+                    )
+                }
             )
         if self.sii_registration_key.code in ["12", "13"]:
             inv_dict["FacturaExpedida"]["DatosInmueble"] = {
@@ -446,7 +475,9 @@ class AccountMove(models.Model):
                 origin = self.refund_invoice_id
                 exp_dict["ImporteRectificacion"] = {
                     "BaseRectificada": abs(origin.amount_untaxed_signed),
-                    "CuotaRectificada": abs(origin.amount_total_signed - origin.amount_untaxed_signed),
+                    "CuotaRectificada": abs(
+                        origin.amount_total_signed - origin.amount_untaxed_signed
+                    ),
                 }
         return inv_dict
 
@@ -489,7 +520,9 @@ class AccountMove(models.Model):
         ident = self._get_sii_identifier()
         inv_dict["IDFactura"]["IDEmisorFactura"].update(ident)
         if cancel:
-            inv_dict["IDFactura"]["IDEmisorFactura"].update({"NombreRazon": partner.name[0:120]})
+            inv_dict["IDFactura"]["IDEmisorFactura"].update(
+                {"NombreRazon": partner.name[0:120]}
+            )
         else:
             invoice_type = self._get_sii_invoice_type()
             company_name = partner.name[0:120]
@@ -509,16 +542,26 @@ class AccountMove(models.Model):
                 "CuotaDeducible": tax_amount,
             }
             if not self.sii_dua_invoice:
-                inv_dict["FacturaRecibida"]["ImporteTotal"] = -self.amount_total_signed - not_in_amount_total
+                inv_dict["FacturaRecibida"]["ImporteTotal"] = (
+                    -self.amount_total_signed - not_in_amount_total
+                )
             if self.sii_macrodata:
                 inv_dict["FacturaRecibida"].update(Macrodato="S")
             if self.sii_registration_key_additional1:
                 inv_dict["FacturaRecibida"].update(
-                    {"ClaveRegimenEspecialOTrascendenciaAdicional1": (self.sii_registration_key_additional1.code)}
+                    {
+                        "ClaveRegimenEspecialOTrascendenciaAdicional1": (
+                            self.sii_registration_key_additional1.code
+                        )
+                    }
                 )
             if self.sii_registration_key_additional2:
                 inv_dict["FacturaRecibida"].update(
-                    {"ClaveRegimenEspecialOTrascendenciaAdicional2": (self.sii_registration_key_additional2.code)}
+                    {
+                        "ClaveRegimenEspecialOTrascendenciaAdicional2": (
+                            self.sii_registration_key_additional2.code
+                        )
+                    }
                 )
             # Uso condicional de IDOtro/NIF
             inv_dict["FacturaRecibida"]["Contraparte"].update(ident)
@@ -528,7 +571,9 @@ class AccountMove(models.Model):
                 if self.sii_refund_type == "S":
                     refund_tax_amount = self.refund_invoice_id._get_sii_in_taxes()[1]
                     rec_dict["ImporteRectificacion"] = {
-                        "BaseRectificada": abs(self.refund_invoice_id.amount_untaxed_signed),
+                        "BaseRectificada": abs(
+                            self.refund_invoice_id.amount_untaxed_signed
+                        ),
                         "CuotaRectificada": refund_tax_amount,
                     }
 
@@ -559,7 +604,10 @@ class AccountMove(models.Model):
         res = super()._post(soft=soft)
         for invoice in self.filtered(lambda x: x.sii_enabled and x.is_invoice()):
             invoice._aeat_check_exceptions()
-            if invoice.aeat_state in ["sent_modified", "sent"] and invoice._sii_invoice_dict_not_modified():
+            if (
+                invoice.aeat_state in ["sent_modified", "sent"]
+                and invoice._sii_invoice_dict_not_modified()
+            ):
                 if invoice.aeat_state == "sent_modified":
                     invoice.aeat_state = "sent"
                 continue
@@ -643,12 +691,14 @@ class AccountMove(models.Model):
     def cancel_sii(self):
         invoices = self.filtered(
             lambda i: (
-                i.sii_enabled and i.state in ["cancel"] and i.aeat_state in ["sent", "sent_w_errors", "sent_modified"]
+                i.sii_enabled
+                and i.state in ["cancel"]
+                and i.aeat_state in ["sent", "sent_w_errors", "sent_modified"]
             )
         )
         if not invoices._cancel_send_to_sii():
             raise exceptions.UserError(
-                self.env._(
+                _(
                     "You can not communicate the cancellation of this invoice "
                     "at this moment. Please, try again later."
                 )
@@ -670,7 +720,9 @@ class AccountMove(models.Model):
 
     def button_cancel(self):
         if not self._cancel_send_to_sii():
-            raise exceptions.UserError(self.env._("You cannot cancel this invoice. Please, try again later."))
+            raise exceptions.UserError(
+                _("You cannot cancel this invoice. Please, try again later.")
+            )
         res = super().button_cancel()
         for invoice in self.filtered(lambda x: x.sii_enabled):
             if invoice.aeat_state == "sent":
@@ -684,7 +736,10 @@ class AccountMove(models.Model):
     def button_draft(self):
         if not self._cancel_send_to_sii():
             raise exceptions.UserError(
-                self.env._("You can not set to draft this invoice because" " the SII trigger could not be cancelled.")
+                _(
+                    "You can not set to draft this invoice because"
+                    " the SII trigger could not be cancelled."
+                )
             )
         return super().button_draft()
 
@@ -725,7 +780,9 @@ class AccountMove(models.Model):
                 description = invoice.company_id.sii_header_supplier or ""
             method = invoice.company_id.sii_description_method
             if method == "fixed":
-                description = (description + invoice.company_id.sii_description) or default_description
+                description = (
+                    description + invoice.company_id.sii_description
+                ) or default_description
             elif method == "manual":
                 if invoice.sii_description != default_description:
                     # keep current content if not default
@@ -734,32 +791,53 @@ class AccountMove(models.Model):
                 if invoice.invoice_line_ids:
                     if description:
                         description += " | "
-                    names = invoice.mapped("invoice_line_ids.name") or invoice.mapped("invoice_line_ids.ref")
+                    names = invoice.mapped("invoice_line_ids.name") or invoice.mapped(
+                        "invoice_line_ids.ref"
+                    )
                     description += " - ".join(filter(None, names))
             invoice.sii_description = (description or "")[:500] or "/"
 
     @api.depends(
         "company_id",
         "company_id.sii_enabled",
+        "company_id.sii_start_date",
         "journal_id",
         "journal_id.sii_enabled",
         "move_type",
         "fiscal_position_id",
         "fiscal_position_id.aeat_active",
+        "invoice_date",
         "invoice_line_ids",
     )
     def _compute_sii_enabled(self):
         """Compute if the invoice is enabled for the SII"""
         for invoice in self:
             dua_sii_exempt_taxes = invoice._get_dua_sii_exempt_taxes()
-            if invoice.company_id.sii_enabled and invoice.journal_id.sii_enabled and invoice.is_invoice():
+            if (
+                invoice.company_id.sii_enabled
+                and invoice.journal_id.sii_enabled
+                and invoice.is_invoice()
+            ):
                 invoice.sii_enabled = (
-                    (invoice.fiscal_position_id and invoice.fiscal_position_id.aeat_active)
-                    or not invoice.fiscal_position_id
-                ) and (
-                    not dua_sii_exempt_taxes
-                    or not invoice.invoice_line_ids.filtered(
-                        lambda x, dua_taxes=dua_sii_exempt_taxes: any([tax.id in dua_taxes for tax in x.tax_ids])
+                    (
+                        (
+                            invoice.fiscal_position_id
+                            and invoice.fiscal_position_id.aeat_active
+                        )
+                        or not invoice.fiscal_position_id
+                    )
+                    and (
+                        not dua_sii_exempt_taxes
+                        or not invoice.invoice_line_ids.filtered(
+                            lambda x, dua_taxes=dua_sii_exempt_taxes: any(
+                                [tax.id in dua_taxes for tax in x.tax_ids]
+                            )
+                        )
+                    )
+                    and (
+                        not invoice.company_id.sii_start_date
+                        or not invoice.invoice_date
+                        or invoice.invoice_date >= invoice.company_id.sii_start_date
                     )
                 )
             else:
@@ -790,7 +868,9 @@ class AccountMove(models.Model):
             if move.sii_enabled:
                 extra_dict = {}
                 sii_refund_type = self.env.context.get("sii_refund_type", False)
-                supplier_invoice_number_refund = move.env.context.get("supplier_invoice_number", False)
+                supplier_invoice_number_refund = move.env.context.get(
+                    "supplier_invoice_number", False
+                )
                 if sii_refund_type:
                     extra_dict["sii_refund_type"] = sii_refund_type
                 if supplier_invoice_number_refund:
@@ -809,10 +889,14 @@ class AccountMove(models.Model):
     @api.model
     def _get_sii_batch(self):
         try:
-            return int(self.env["ir.config_parameter"].sudo().get_param("l10n_es_aeat_sii_oca.sii_batch", "50"))
+            return int(
+                self.env["ir.config_parameter"]
+                .sudo()
+                .get_param("l10n_es_aeat_sii_oca.sii_batch", "50")
+            )
         except ValueError as e:
             raise exceptions.UserError(
-                self.env._(
+                _(
                     "The value in l10n_es_aeat_sii_oca.sii_batch system"
                     " parameter must be an integer. Please, check the "
                     "value of the parameter."
@@ -869,4 +953,6 @@ class AccountMove(models.Model):
         # Manage remaining invoices
         if remaining_documents or remaining_cancel_documents:
             sii_send_cron = self.env.ref("l10n_es_aeat_sii_oca.invoice_send_to_sii")
-            self.env["ir.cron.trigger"].sudo().create({"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()})
+            self.env["ir.cron.trigger"].sudo().create(
+                {"cron_id": sii_send_cron.id, "call_at": fields.Datetime.now()}
+            )
