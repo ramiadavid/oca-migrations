@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 
 from odoo.tests import common
 
-from odoo.addons.base.models.ir_qweb import QWebException
 
 
 class TestReportQWebParameter(common.TransactionCase):
