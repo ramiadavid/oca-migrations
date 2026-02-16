@@ -8,7 +8,7 @@ class PurchaseOrderLine(models.Model):
     _name = "purchase.order.line"
     _inherit = ["purchase.triple.discount.mixin", "purchase.order.line"]
 
-    @api.depends("product_qty", "uom_id", "company_id")
+    @api.depends("product_qty", "product_uom_id", "company_id")
     def _compute_price_unit_and_date_planned_and_name(self):
         res = super()._compute_price_unit_and_date_planned_and_name()
         self._compute_discounts()
