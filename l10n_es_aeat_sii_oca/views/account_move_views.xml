@@ -160,7 +160,7 @@
         <field name="inherit_id" ref="account.view_account_invoice_filter" />
         <field name="arch" type="xml">
             <filter name="late" position="after">
-                <group string="SII filters">
+                <group >
                     <separator />
                     <filter
                         name="sii_not_sent"
