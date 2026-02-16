@@ -19,7 +19,6 @@ class MisCashFlow(models.Model):
     account_id = fields.Many2one(
         comodel_name="account.account",
         string="Account",
-        auto_join=True,
         index=True,
         readonly=True,
     )
@@ -29,13 +28,11 @@ class MisCashFlow(models.Model):
     move_line_id = fields.Many2one(
         comodel_name="account.move.line",
         string="Journal Item",
-        auto_join=True,
         readonly=True,
     )
     company_id = fields.Many2one(
         comodel_name="res.company",
         string="Company",
-        auto_join=True,
         readonly=True,
         index=True,
     )
