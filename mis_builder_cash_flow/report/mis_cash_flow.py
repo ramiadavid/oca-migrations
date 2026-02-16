@@ -108,7 +108,7 @@ class MisCashFlow(models.Model):
             FROM mis_cash_flow_forecast_line as fl
         """
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self._cr.execute(
+        self.env.cr.execute(
             "CREATE OR REPLACE VIEW %s AS (%s)", (AsIs(self._table), AsIs(query))
         )
 
