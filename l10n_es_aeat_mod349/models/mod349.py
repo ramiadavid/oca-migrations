@@ -11,9 +11,11 @@
 import math
 
 from odoo import api, exceptions, fields, models
-from odoo.fields import first
 from odoo.tools import float_is_zero, float_round
 
+def first(records):
+    """ Return the first record in ``records``, with the same prefetching. """
+    return next(iter(records)) if len(records) > 1 else records
 
 class Mod349(models.Model):
     _inherit = "l10n.es.aeat.report"
