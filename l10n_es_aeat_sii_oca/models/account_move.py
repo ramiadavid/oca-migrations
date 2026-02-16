@@ -870,7 +870,7 @@ class AccountMove(models.Model):
         conditions = [domain, condition_1, condition_2]
         if condition_3:
             conditions.append(condition_3)
-        return domain.AND[[("move_type", "in", invoice_types)], exp_condition(conditions)])
+        return domain.AND([[("move_type", "in", invoice_types)], exp_condition(conditions)])
 
     def _reverse_moves(self, default_values_list=None, cancel=False):
         # OVERRIDE
