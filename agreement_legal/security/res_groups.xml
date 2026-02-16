@@ -1,5 +1,5 @@
 <odoo>
-    <record id="module_agreement_legal_category" model="res.groups.privilege">
+    <record id="group_privilege_agreement_legal" model="res.groups.privilege">
         <field name="name">Agreement</field>
         <field name="sequence">17</field>
     </record>
@@ -9,7 +9,7 @@
         <field name="name">Read-Only Users</field>
         <field
             name="privilege_id"
-            ref="agreement_legal.module_agreement_legal_category"
+            ref="agreement_legal.group_privilege_agreement_legal"
         />
         <field
             name="implied_ids"
@@ -22,7 +22,7 @@
         <field name="name">User</field>
         <field
             name="privilege_id"
-            ref="agreement_legal.module_agreement_legal_category"
+            ref="agreement_legal.group_privilege_agreement_legal"
         />
         <field name="implied_ids" eval="[(4, ref('group_agreement_readonly'))]" />
     </record>
@@ -32,7 +32,7 @@
         <field name="name">Manager</field>
         <field
             name="privilege_id"
-            ref="agreement_legal.module_agreement_legal_category"
+            ref="agreement_legal.group_privilege_agreement_legal"
         />
         <field name="implied_ids" eval="[(4, ref('group_agreement_user'))]" />
         <field
