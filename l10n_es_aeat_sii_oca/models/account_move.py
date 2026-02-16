@@ -18,7 +18,7 @@ import logging
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.modules.registry import Registry
-from odoo.osv.expression import AND, OR
+from odoo.fields import Domain
 
 SII_VALID_INVOICE_STATES = ["posted"]
 _logger = logging.getLogger(__name__)
@@ -854,7 +854,7 @@ class AccountMove(models.Model):
         exp_condition = OR if search_ko else AND
         condition_3 = []
         if not search_ko:
-            condition_2 = OR([condition_2, [("fiscal_position_id", "=", False)]])
+            condition_2 = Domain.OR([condition_2, [("fiscal_position_id", "=", False)]])
             for company in self.env.companies.filtered("sii_enabled"):
                 if company.sii_start_date:
                     condition_3.append(
@@ -866,11 +866,11 @@ class AccountMove(models.Model):
                 else:
                     condition_3.append([("company_id", "=", company.id)])
             if condition_3:
-                condition_3 = OR(condition_3)
+                condition_3 = Domain.OR(condition_3)
         conditions = [domain, condition_1, condition_2]
         if condition_3:
             conditions.append(condition_3)
-        return AND([[("move_type", "in", invoice_types)], exp_condition(conditions)])
+        return domain.AND[[("move_type", "in", invoice_types)], exp_condition(conditions)])
 
     def _reverse_moves(self, default_values_list=None, cancel=False):
         # OVERRIDE
