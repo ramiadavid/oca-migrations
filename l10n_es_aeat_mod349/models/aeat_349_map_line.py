@@ -10,13 +10,7 @@ class Aeat349MapLines(models.Model):
     _description = "Aeat 349 Map Line"
     _rec_name = "operation_key"
 
-    _sql_constraints = [
-        (
-            "unique_operation_key",
-            "UNIQUE(operation_key)",
-            "There's already another record with the same operation key",
-        ),
-    ]
+    _constrains_unique_operation_key = models.Constraint('UNIQUE(operation_key)','There\'s already another record with the same operation key')
 
     def _selection_operation_key(self):
         return self.env["account.move.line"].fields_get(
