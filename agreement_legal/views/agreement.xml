@@ -22,6 +22,12 @@
     <record model="ir.ui.view" id="partner_agreement_form_view">
         <field name="name">Agreement Form</field>
         <field name="model">agreement</field>
+        <!-- Vista primaria. En versiones anteriores era heredada; limpiamos
+             inherit_id explícitamente para que el -u no conserve el valor
+             antiguo en BD (si no, V19 la valida como herencia y el match del
+             <form> raíz falla contra el agreement_form base). -->
+        <field name="inherit_id" eval="False" />
+        <field name="mode">primary</field>
         <field name="priority" eval="1" />
         <field name="arch" type="xml">
             <form js_class="agreement_template_form" string="Agreement">
