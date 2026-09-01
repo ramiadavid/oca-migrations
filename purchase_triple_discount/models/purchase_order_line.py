@@ -42,12 +42,12 @@ class PurchaseOrderLine(models.Model):
         res = super()._prepare_purchase_order_line(product_id, product_qty, product_uom, company_id, supplier, po)
         today = fields.Date.today()
         partner = supplier.partner_id
-        uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_po_id, rounding_method="HALF-UP")
+        uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_id, rounding_method="HALF-UP")
         seller = product_id.with_company(company_id)._select_seller(
             partner_id=partner,
             quantity=uom_po_qty,
             date=po.date_order and max(po.date_order.date(), today) or today,
-            uom_id=product_id.uom_po_id,
+            uom_id=product_id.uom_id,
         )
         res.update({fname: seller[fname] or 0.0 for fname in self._get_multiple_discount_field_names()})
         res.pop("discount")
