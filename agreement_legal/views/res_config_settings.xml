@@ -44,10 +44,7 @@
                         <setting invisible="module_agreement_sale != True">
                             <field name="module_agreement_sale_subscription" />
 
-                            <label
-                                for="module_agreement_sale_subscription"
-                                string="Sale Subscriptions"
-                            />
+                            <label for="module_agreement_sale_subscription" string="Sale Subscriptions" />
                             <div class="text-muted">
                                 Link your subscriptions to an agreement
                             </div>
@@ -55,10 +52,7 @@
                         <setting>
                             <field name="module_fieldservice_agreement" />
 
-                            <label
-                                for="module_fieldservice_agreement"
-                                string="Field Service"
-                            />
+                            <label for="module_fieldservice_agreement" string="Field Service" />
                             <div class="text-muted">
                                 Link your Field Service orders and equipments to an agreement
                             </div>
@@ -82,10 +76,7 @@
                         <setting>
                             <field name="module_agreement_maintenance" />
 
-                            <label
-                                for="module_agreement_maintenance"
-                                string="Maintenance"
-                            />
+                            <label for="module_agreement_maintenance" string="Maintenance" />
                             <div class="text-muted">
                                 Manage maintenance agreements and contracts
                             </div>

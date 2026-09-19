@@ -1,11 +1,11 @@
 {
     "name": "Queue Job Cron Jobrunner",
     "summary": "Run jobs without a dedicated JobRunner",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "development_status": "Alpha",
     "author": "Camptocamp SA, Odoo Community Association (OCA)",
     "maintainers": ["ivantodorovich"],
-    "website": "https://github.com/OCA/queue",
+    "website": "https://www.processcontrol.es",
     "license": "AGPL-3",
     "category": "Others",
     "depends": ["queue_job"],

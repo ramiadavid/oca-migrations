@@ -42,7 +42,10 @@ class ProjectAssignment(models.Model):
         ondelete="restrict",
     )
 
-    _constrains_nocompany_role_user_uniq = models.Constraint('EXCLUDE (role_id WITH =, user_id WITH =) WHERE (    project_id IS NULL AND company_id IS NULL)','User may be assigned per role only once!')
+    _constrains_nocompany_role_user_uniq = models.Constraint(
+        "EXCLUDE (role_id WITH =, user_id WITH =) WHERE (    project_id IS NULL AND company_id IS NULL)",
+        "User may be assigned per role only once!",
+    )
 
     @api.depends(
         "company_id.name",
@@ -78,16 +81,8 @@ class ProjectAssignment(models.Model):
                 ("role_id", "=", self.role_id.id),
                 ("user_id", "=", self.user_id.id),
             ]
-            + (
-                [("company_id", "in", [False, self.company_id.id])]
-                if self.company_id
-                else []
-            )
-            + (
-                [("project_id", "in", [False, self.project_id.id])]
-                if self.project_id
-                else []
-            )
+            + ([("company_id", "in", [False, self.company_id.id])] if self.company_id else [])
+            + ([("project_id", "in", [False, self.project_id.id])] if self.project_id else [])
         )
 
     @api.constrains("company_id", "project_id", "role_id", "user_id")
@@ -103,23 +98,15 @@ class ProjectAssignment(models.Model):
             )
             if conflicting_assignment:
                 raise ValidationError(
-                    _(
-                        "Assignment %(ASSIGNMENT)s conflicts with another assignment: "
-                        "%(OTHER_ASSIGNMENT)s"
-                    )
+                    _("Assignment %(ASSIGNMENT)s conflicts with another assignment: " "%(OTHER_ASSIGNMENT)s")
                     % {
                         "ASSIGNMENT": assignment.name,
                         "OTHER_ASSIGNMENT": conflicting_assignment.name,
                     }
                 )
-            if not assignment.role_id.can_assign(
-                assignment.user_id, assignment.project_id
-            ):
+            if not assignment.role_id.can_assign(assignment.user_id, assignment.project_id):
                 if assignment.project_id:
-                    error = _(
-                        "User %(USER)s can not be assigned to role %(ROLE)s on "
-                        "%(PROJECT)s."
-                    ) % {
+                    error = _("User %(USER)s can not be assigned to role %(ROLE)s on " "%(PROJECT)s.") % {
                         "USER": assignment.user_id.name,
                         "ROLE": assignment.role_id.name,
                         "PROJECT": assignment.project_id.name,

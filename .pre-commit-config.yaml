@@ -89,9 +89,11 @@ repos:
           - --settings=.
         exclude: /__init__\.py$
   - repo: https://github.com/ProcessControlOCA/setuptools-odoo
-    rev: 3.3.3
+    rev: 3.3.4-tmp
     hooks:
       - id: setuptools-odoo-get-requirements
+        additional_dependencies:
+          - setuptools<70
         args:
           - --output
           - requirements.txt

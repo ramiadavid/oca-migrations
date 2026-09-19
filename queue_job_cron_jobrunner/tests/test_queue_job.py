@@ -75,9 +75,7 @@ class TestQueueJob(TransactionCase):
             self.env["res.partner"].with_delay(priority=3).create({"name": "test"})
 
         with freeze_time("2024-01-01 10:02:01"):
-            job = (
-                self.env["res.partner"].with_delay(priority=1).create({"name": "test"})
-            )
+            job = self.env["res.partner"].with_delay(priority=1).create({"name": "test"})
 
         with freeze_time("2024-01-01 10:03:01"):
             self.env["res.partner"].with_delay(priority=2).create({"name": "test"})
@@ -86,9 +84,7 @@ class TestQueueJob(TransactionCase):
 
     def test_acquire_one_job_consume_the_oldest_first(self):
         with freeze_time("2024-01-01 10:01:01"):
-            job = (
-                self.env["res.partner"].with_delay(priority=30).create({"name": "test"})
-            )
+            job = self.env["res.partner"].with_delay(priority=30).create({"name": "test"})
 
         with freeze_time("2024-01-01 10:02:01"):
             self.env["res.partner"].with_delay(priority=30).create({"name": "test"})

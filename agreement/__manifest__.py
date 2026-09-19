@@ -1,0 +1,30 @@
+# © 2017 Akretion (Alexis de Lattre <alexis.delattre@akretion.com>)
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
+{
+    "name": "Agreements",
+    "summary": "Adds an agreement object",
+    "version": "20.0.2.1.0",
+    "category": "Contract",
+    "author": "Akretion, " "Yves Goldberg (Ygol Internetwork), " "Odoo Community Association (OCA)",
+    "website": "https://www.processcontrol.es",
+    "license": "AGPL-3",
+    "depends": ["mail"],
+    "data": [
+        "security/agreement_security.xml",
+        "views/agreement.xml",
+        "views/agreement_type.xml",
+        "views/res_config_settings.xml",
+        "views/agreement_menu.xml",
+        "views/res_partner.xml",
+        "security/ir.access.csv",
+    ],
+    "demo": ["demo/demo.xml"],
+    "development_status": "Beta",
+    "maintainers": [
+        "ygol",
+        "alexis-via",
+    ],
+    "installable": True,
+    "application": True,
+}

@@ -21,12 +21,7 @@
             <form>
                 <sheet>
                     <div class="oe_button_box" name="button_box" />
-                    <widget
-                        name="web_ribbon"
-                        title="Archived"
-                        bg_color="bg-danger"
-                        invisible="active"
-                    />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active" />
                     <field name="active" invisible="1" />
                     <group>
                         <field name="company_id" groups="base.group_multi_company" />
@@ -46,11 +41,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="active" />
-                <filter
-                    name="inactive"
-                    string="Archived"
-                    domain="[('active','=',False)]"
-                />
+                <filter name="inactive" string="Archived" domain="[('active','=',False)]" />
             </search>
         </field>
     </record>

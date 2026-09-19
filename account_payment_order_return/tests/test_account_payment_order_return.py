@@ -19,13 +19,9 @@ class TestAccountPaymentOrderReturn(AccountTestInvoicingCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env.ref("account_payment_order.group_account_payment").write(
-            {"users": [(4, cls.env.user.id)]}
-        )
+        cls.env.ref("account_payment_order.group_account_payment").write({"users": [(4, cls.env.user.id)]})
         cls.env = cls.env(context=dict(cls.env.context, **DISABLED_MAIL_CONTEXT))
-        cls.bank_journal = cls.env["account.journal"].create(
-            {"name": "Test Bank Journal", "type": "bank"}
-        )
+        cls.bank_journal = cls.env["account.journal"].create({"name": "Test Bank Journal", "type": "bank"})
         cls.invoice = cls.env["account.move"].create(
             {
                 "move_type": "out_invoice",
@@ -50,9 +46,7 @@ class TestAccountPaymentOrderReturn(AccountTestInvoicingCommon):
                 "name": "Test payment mode",
                 "fixed_journal_id": cls.bank_journal.id,
                 "bank_account_link": "fixed",
-                "payment_method_id": cls.env.ref(
-                    "account.account_payment_method_manual_in"
-                ).id,
+                "payment_method_id": cls.env.ref("account.account_payment_method_manual_in").id,
             }
         )
         cls.payment_order = cls.env["account.payment.order"].create(
@@ -91,9 +85,7 @@ class TestAccountPaymentOrderReturn(AccountTestInvoicingCommon):
         wizard.populate()
         self.assertEqual(len(wizard.move_line_ids), 1)
         payment_register = Form(
-            self.env["account.payment.register"].with_context(
-                active_model="account.move", active_ids=self.invoice.ids
-            )
+            self.env["account.payment.register"].with_context(active_model="account.move", active_ids=self.invoice.ids)
         )
         self.payment = payment_register.save()._create_payments()
         if self.payment.state != "posted":
@@ -104,9 +96,7 @@ class TestAccountPaymentOrderReturn(AccountTestInvoicingCommon):
         payment_return_form.journal_id = self.bank_journal
         with payment_return_form.line_ids.new() as line_form:
             line_form.move_line_ids.add(
-                self.payment.move_id.line_ids.filtered(
-                    lambda x: x.account_id.account_type == "asset_receivable"
-                )
+                self.payment.move_id.line_ids.filtered(lambda x: x.account_id.account_type == "asset_receivable")
             )
         self.payment_return = payment_return_form.save()
         self.payment_return.action_confirm()

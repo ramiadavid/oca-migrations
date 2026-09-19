@@ -1,0 +1,9 @@
+id,name,model_id,group_id/id,operation,domain
+access_model_aeat_sii_map_admin,aeat.sii.map admin,aeat.sii.map,base.group_system,crud,
+access_model_aeat_sii_map_aeat,aeat.sii.map aeat,aeat.sii.map,l10n_es_aeat.group_account_aeat,r,
+access_model_aeat_sii_map_lines_admin,aeat.sii.map.lines admin,aeat.sii.map.lines,base.group_system,crud,
+access_model_aeat_sii_map_lines_aeat,aeat.sii.map.lines aeat,aeat.sii.map.lines,l10n_es_aeat.group_account_aeat,r,
+access_model_aeat_sii_mapping_registration_keys_admin,aeat.sii.mapping.registration.keys admin,aeat.sii.mapping.registration.keys,base.group_system,crud,
+access_model_aeat_sii_mapping_registration_keys_aeat,aeat.sii.mapping.registration.keys aeat,aeat.sii.mapping.registration.keys,l10n_es_aeat.group_account_aeat,r,
+access_model_aeat_sii_mapping_registration_keys_aeat_account,aeat.sii.mapping.registration.keys aeat,aeat.sii.mapping.registration.keys,account.group_account_invoice,r,
+access_wizard_send_sii,access_wizard_send_sii,wizard.send.sii,l10n_es_aeat.group_account_aeat,crud,

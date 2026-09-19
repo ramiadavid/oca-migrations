@@ -4,19 +4,19 @@
 
 {
     "name": "MIS Builder Cash Flow",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "license": "AGPL-3",
     "author": "ADHOC SA, " "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/account-financial-reporting",
+    "website": "https://www.processcontrol.es",
     "depends": ["mis_builder"],
     "data": [
-        "security/mis_cash_flow_security.xml",
         "report/mis_cash_flow_views.xml",
         "views/mis_cash_flow_forecast_line_views.xml",
         "views/account_account_views.xml",
         "data/mis_report_style.xml",
         "data/mis_report.xml",
         "data/mis_report_instance.xml",
+        "security/ir.access.csv",
     ],
     "installable": True,
     "maintainers": ["jjscarafia"],

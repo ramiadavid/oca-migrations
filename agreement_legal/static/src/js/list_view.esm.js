@@ -1,14 +1,15 @@
 /** @odoo-module **/
 
+import {usePlugin} from "@odoo/owl";
+import {registry} from "@web/core/registry";
 import {ListController} from "@web/views/list/list_controller";
 import {listView} from "@web/views/list/list_view";
-import {registry} from "@web/core/registry";
-import {useService} from "@web/core/utils/hooks";
+import {ActionManagerPlugin} from "@web/webclient/actions/action_plugin";
 
 export class AgreementListController extends ListController {
     setup() {
         super.setup();
-        this.action = useService("action");
+        this.action = usePlugin(ActionManagerPlugin);
         this.canCreateTemplate = this.props.context.default_is_template || false;
     }
     onClickCreateFromTemplate() {

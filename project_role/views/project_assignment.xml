@@ -12,12 +12,7 @@
                 <header />
                 <sheet>
                     <div class="oe_button_box" name="button_box" />
-                    <widget
-                        name="web_ribbon"
-                        title="Archived"
-                        bg_color="bg-danger"
-                        invisible="active"
-                    />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active" />
                     <field name="active" invisible="1" />
                     <group>
                         <field name="company_id" groups="base.group_multi_company" />
@@ -27,11 +22,7 @@
                             invisible="context.get('default_project_id', False)"
                         />
                         <field name="role_id" options="{'no_create':True}" />
-                        <field
-                            name="user_id"
-                            domain="[('active', '=', True)]"
-                            options="{'no_create':True}"
-                        />
+                        <field name="user_id" domain="[('active', '=', True)]" options="{'no_create':True}" />
                     </group>
                     <notebook />
                 </sheet>
@@ -101,10 +92,7 @@
                                             <t t-esc="record.role_id.value" />
                                         </span>
                                     </div>
-                                    <div
-                                        class="text-muted"
-                                        invisible="context.get('default_project_id', False)"
-                                    >
+                                    <div class="text-muted" invisible="context.get('default_project_id', False)">
                                         <span>
                                             <t t-esc="record.project_id.value" />
                                         </span>
@@ -127,38 +115,14 @@
                 <field name="project_id" />
                 <field name="role_id" />
                 <field name="user_id" />
-                <filter
-                    string="My Assignments"
-                    name="my_assignments"
-                    domain="[('user_id','=',uid)]"
-                />
-                <filter
-                    string="Company-Wide"
-                    name="companywide"
-                    domain="[('project_id','=',False)]"
-                />
+                <filter string="My Assignments" name="my_assignments" domain="[('user_id','=',uid)]" />
+                <filter string="Company-Wide" name="companywide" domain="[('project_id','=',False)]" />
                 <separator />
-                <filter
-                    name="inactive"
-                    string="Archived"
-                    domain="[('active','=',False)]"
-                />
+                <filter name="inactive" string="Archived" domain="[('active','=',False)]" />
                 <group>
-                    <filter
-                        string="Project"
-                        name="groupby_project"
-                        context="{'group_by':'project_id'}"
-                    />
-                    <filter
-                        string="Role"
-                        name="groupby_role"
-                        context="{'group_by':'role_id'}"
-                    />
-                    <filter
-                        string="User"
-                        name="groupby_user"
-                        context="{'group_by':'user_id'}"
-                    />
+                    <filter string="Project" name="groupby_project" context="{'group_by':'project_id'}" />
+                    <filter string="Role" name="groupby_role" context="{'group_by':'role_id'}" />
+                    <filter string="User" name="groupby_user" context="{'group_by':'user_id'}" />
                     <filter
                         string="Company"
                         name="groupby_company"

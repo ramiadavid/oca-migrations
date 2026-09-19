@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <t t-name="mis_builder.AnnotationDialog">
+        <Dialog title="this.props.title" size="'md'">
+            <textarea
+                class="form-control"
+                rows='4'
+                placeholder="Insert note here"
+                t-custom-model="this.state.annotationText"
+            />
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="this.confirm">Confirm</button>
+                <button class="btn btn-secondary" t-on-click="this.remove" t-if="this.props.canRemove">Remove</button>
+                <button class="btn btn-secondary" t-on-click="this.props.close">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates xml:space="preserve">
+    <t t-name="sale_order_line_price_history.price_to_line_history_widget">
+        <div>
+            <a tabindex="0" t-on-click="this.setPriceHistory" class="fa fa-check p-1" title="Set Historic Price" />
+        </div>
+    </t>
+</templates>

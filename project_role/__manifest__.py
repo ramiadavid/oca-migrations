@@ -4,9 +4,9 @@
 
 {
     "name": "Project Roles",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Project",
-    "website": "https://github.com/OCA/project",
+    "website": "https://www.processcontrol.es",
     "author": "CorporateHub, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "installable": True,
@@ -14,12 +14,11 @@
     "summary": "Project role-based roster",
     "depends": ["project", "mail"],
     "data": [
-        "security/ir.model.access.csv",
-        "security/project_role.xml",
         "views/project_assignment.xml",
         "views/project_project.xml",
         "views/project_role.xml",
         "views/res_config_settings.xml",
+        "security/ir.access.csv",
     ],
     "maintainers": ["alexey-pelykh"],
 }

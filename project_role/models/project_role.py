@@ -30,9 +30,7 @@ class ProjectRole(models.Model):
         inverse_name="parent_id",
         copy=True,
     )
-    complete_name = fields.Char(
-        compute="_compute_complete_name", store=True, recursive=True
-    )
+    complete_name = fields.Char(compute="_compute_complete_name", store=True, recursive=True)
     name = fields.Char(
         translate=True,
         required=True,
@@ -48,7 +46,9 @@ class ProjectRole(models.Model):
     )
     color = fields.Char()
 
-    _constrains_name_nocompany_uniq = models.Constraint('EXCLUDE (name WITH =) WHERE (    company_id IS NULL)','Shared role with such name already exists!')
+    _constrains_name_nocompany_uniq = models.Constraint(
+        "EXCLUDE (name WITH =) WHERE (    company_id IS NULL)", "Shared role with such name already exists!"
+    )
 
     @api.constrains("name")
     def _check_name(self):
@@ -60,10 +60,7 @@ class ProjectRole(models.Model):
                 ],
                 limit=1,
             ):
-                raise ValidationError(
-                    _('Role "%s" conflicts with another role due to same name.')
-                    % (role.name,)
-                )
+                raise ValidationError(_('Role "%s" conflicts with another role due to same name.') % (role.name,))
 
     @api.depends("name", "parent_id.complete_name")
     def _compute_complete_name(self):
@@ -79,16 +76,8 @@ class ProjectRole(models.Model):
     @api.constrains("active")
     def _check_active(self):
         for role in self:
-            if (
-                role.active
-                and role.parent_id
-                and role.parent_id not in self
-                and not role.parent_id.active
-            ):
-                raise ValidationError(
-                    _("Please activate first parent role %s")
-                    % (role.parent_id.complete_name,)
-                )
+            if role.active and role.parent_id and role.parent_id not in self and not role.parent_id.active:
+                raise ValidationError(_("Please activate first parent role %s") % (role.parent_id.complete_name,))
 
     def can_assign(self, user_id, project_id):
         """Extension point to check if user can be assigned to this role"""
