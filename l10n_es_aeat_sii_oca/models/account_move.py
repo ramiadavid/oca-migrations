@@ -714,7 +714,7 @@ class AccountMove(models.Model):
     @api.model
     def _get_sii_batch(self):
         try:
-            return int(self.env["ir.config_parameter"].sudo().get_param("l10n_es_aeat_sii_oca.sii_batch", "50"))
+            return int(self.env["ir.config_parameter"].sudo().get_str("l10n_es_aeat_sii_oca.sii_batch", "50"))
         except ValueError as e:
             raise UserError(
                 self.env._(

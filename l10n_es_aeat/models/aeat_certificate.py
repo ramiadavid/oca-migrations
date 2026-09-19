@@ -160,8 +160,8 @@ class L10nEsAeatCertificate(models.Model):
             public_crt = aeat_certificate.public_key
             private_key = aeat_certificate.private_key
         else:
-            public_crt = self.env["ir.config_parameter"].get_param("l10n_es_aeat_certificate.publicCrt", False)
-            private_key = self.env["ir.config_parameter"].get_param("l10n_es_aeat_certificate.privateKey", False)
+            public_crt = self.env["ir.config_parameter"].get_str("l10n_es_aeat_certificate.publicCrt", False)
+            private_key = self.env["ir.config_parameter"].get_str("l10n_es_aeat_certificate.privateKey", False)
         if not public_crt or not private_key:
             raise exceptions.UserError(self.env._("Error! There aren't certificates."))
         return public_crt, private_key

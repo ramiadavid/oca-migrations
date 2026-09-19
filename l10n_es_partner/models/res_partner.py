@@ -20,7 +20,7 @@ class ResPartner(models.Model):
             ResPartner,
             self.with_context(display_commercial=not self.env.context.get("no_display_commercial", False)),
         )._compute_display_name()
-        name_pattern = self.env["ir.config_parameter"].sudo().get_param("l10n_es_partner.name_pattern", default="")
+        name_pattern = self.env["ir.config_parameter"].sudo().get_str("l10n_es_partner.name_pattern", default="")
         if not name_pattern:
             return
         for partner in self:
@@ -33,7 +33,7 @@ class ResPartner(models.Model):
     def _get_complete_name(self):
         name = super()._get_complete_name()
         if self.env.context.get("display_commercial") and self.comercial:
-            name_pattern = self.env["ir.config_parameter"].sudo().get_param("l10n_es_partner.name_pattern", default="")
+            name_pattern = self.env["ir.config_parameter"].sudo().get_str("l10n_es_partner.name_pattern", default="")
             if name_pattern:
                 name = name_pattern % {
                     "name": name,

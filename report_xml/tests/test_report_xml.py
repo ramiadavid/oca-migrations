@@ -5,7 +5,7 @@ import json
 
 from lxml import etree
 
-from odoo import http
+from odoo.http import requestlib
 from odoo.tests import common
 from odoo.tools import convert_file
 
@@ -66,6 +66,6 @@ class TestXmlReport(common.HttpCase):
             url="/report/download",
             data={
                 "data": json.dumps(["/report/xml/report_xml.demo_report_xml_view/1", "qweb-xml"]),
-                "csrf_token": http.Request.csrf_token(self),
+                "csrf_token": requestlib.Request.csrf_token(self),
             },
         )
