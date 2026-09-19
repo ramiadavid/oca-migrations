@@ -4,8 +4,8 @@
 import logging
 
 from odoo import api, fields, models
+from odoo.api import ormcache
 from odoo.fields import Domain
-from odoo.tools import ormcache
 
 _logger = logging.getLogger(__name__)
 

@@ -10,8 +10,8 @@ import datetime
 import re
 
 from odoo import api, fields, models
+from odoo.api import ormcache
 from odoo.exceptions import UserError
-from odoo.tools import ormcache
 
 
 class L10nEsVatBook(models.Model):

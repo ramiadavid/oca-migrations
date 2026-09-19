@@ -3,7 +3,6 @@
 
 import odoo.tests.common as common
 from odoo.fields import Domain
-from odoo.tools import test_reports
 
 from ..models.accounting_none import AccountingNone
 from ..models.mis_report import TYPE_STR, SubKPITupleLengthError, SubKPIUnknownTypeError
@@ -565,13 +564,10 @@ class TestMisReportInstance(common.HttpCase):
 
     def test_qweb(self):
         self.report_instance.print_pdf()  # get action
-        test_reports.try_report(
-            self.env.cr,
-            self.env.uid,
-            "mis_builder.report_mis_report_instance",
-            [self.report_instance.id],
-            report_type="qweb-pdf",
+        content, _content_type = self.env["ir.actions.report"]._render(
+            "mis_builder.report_mis_report_instance", [self.report_instance.id]
         )
+        self.assertTrue(content)
 
     def test_xlsx(self):
         self.report_instance.export_xls()  # get action

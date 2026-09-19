@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 from odoo import fields, models
-from odoo.tools import ormcache
+from odoo.api import ormcache
 
 
 def excel_col_number(col_name):

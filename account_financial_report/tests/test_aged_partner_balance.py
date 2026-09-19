@@ -2,7 +2,7 @@
 #  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo.tests import TransactionCase, tagged
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, test_reports
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
 @tagged("post_install", "-at_install")
@@ -59,14 +59,10 @@ class TestAgedPartnerBalance(TransactionCase):
         # Simulate web client behavior:
         # default value is a datetime.date but web client sends back strings
         data.update({"date_at": data["date_at"].strftime(DEFAULT_SERVER_DATE_FORMAT)})
-        result = test_reports.try_report(
-            self.env.cr,
-            self.env.uid,
-            "account_financial_report.aged_partner_balance",
-            wizard.ids,
-            data=data,
+        content, _content_type = self.env["ir.actions.report"]._render(
+            "account_financial_report.aged_partner_balance", wizard.ids, data=data
         )
-        self.assertTrue(result)
+        self.assertTrue(content)
         second_wizard = self.wizard_without_line_details
         second_wizard.onchange_type_accounts_only()
         data = second_wizard._prepare_report_data()
@@ -74,14 +70,10 @@ class TestAgedPartnerBalance(TransactionCase):
         # Simulate web client behavior:
         # default value is a datetime.date but web client sends back strings
         data.update({"date_at": data["date_at"].strftime(DEFAULT_SERVER_DATE_FORMAT)})
-        result = test_reports.try_report(
-            self.env.cr,
-            self.env.uid,
-            "account_financial_report.aged_partner_balance",
-            second_wizard.ids,
-            data=data,
+        content, _content_type = self.env["ir.actions.report"]._render(
+            "account_financial_report.aged_partner_balance", second_wizard.ids, data=data
         )
-        self.assertTrue(result)
+        self.assertTrue(content)
 
     def test_report_with_aged_report_configuration(self):
         """Check that report is produced correctly."""
@@ -94,14 +86,10 @@ class TestAgedPartnerBalance(TransactionCase):
         # Simulate web client behavior:
         # default value is a datetime.date but web client sends back strings
         data.update({"date_at": data["date_at"].strftime(DEFAULT_SERVER_DATE_FORMAT)})
-        result = test_reports.try_report(
-            self.env.cr,
-            self.env.uid,
-            "account_financial_report.aged_partner_balance",
-            wizard.ids,
-            data=data,
+        content, _content_type = self.env["ir.actions.report"]._render(
+            "account_financial_report.aged_partner_balance", wizard.ids, data=data
         )
-        self.assertTrue(result)
+        self.assertTrue(content)
 
         second_wizard = self.wizard_without_line_details
         second_wizard.age_partner_config_id = self.account_age_report_config.id
@@ -112,11 +100,7 @@ class TestAgedPartnerBalance(TransactionCase):
         # Simulate web client behavior:
         # default value is a datetime.date but web client sends back strings
         data.update({"date_at": data["date_at"].strftime(DEFAULT_SERVER_DATE_FORMAT)})
-        result = test_reports.try_report(
-            self.env.cr,
-            self.env.uid,
-            "account_financial_report.aged_partner_balance",
-            second_wizard.ids,
-            data=data,
+        content, _content_type = self.env["ir.actions.report"]._render(
+            "account_financial_report.aged_partner_balance", second_wizard.ids, data=data
         )
-        self.assertTrue(result)
+        self.assertTrue(content)
