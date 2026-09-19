@@ -7,7 +7,11 @@ from odoo.tools.translate import html_translate
 
 
 class ProjectRole(models.Model):
-    _name = "project.role"
+    # 20.0: el core de `project` ya define project.role (name, active, color,
+    # sequence, user_ids), asi que este modulo pasa a extenderlo en vez de
+    # declararlo; si lo declara, se pierde user_ids y revienta el related
+    # project.template.role.to.users.map.role_user_ids.
+    _inherit = "project.role"
     _description = "Project Role"
     _parent_name = "parent_id"
     _parent_store = True
@@ -44,7 +48,6 @@ class ProjectRole(models.Model):
         default=lambda self: self.env.company,
         ondelete="cascade",
     )
-    color = fields.Char()
 
     _constrains_name_nocompany_uniq = models.Constraint(
         "EXCLUDE (name WITH =) WHERE (    company_id IS NULL)", "Shared role with such name already exists!"

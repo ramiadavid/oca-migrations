@@ -10,7 +10,11 @@ from odoo import fields
 from odoo.tests.common import TransactionCase
 from odoo.tools import float_compare
 
-from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT
+from odoo.addons.base.tests.common import DISABLED_MAIL_CREATE_CONTEXT
+
+# 20.0 renombro DISABLED_MAIL_CONTEXT a DISABLED_MAIL_CREATE_CONTEXT y le quito
+# las claves de tracking, que siguen siendo validas en el contexto.
+DISABLED_MAIL_CONTEXT = {**DISABLED_MAIL_CREATE_CONTEXT, "tracking_disable": True, "mail_notrack": True}
 
 
 class TestSDDBase(TransactionCase):
