@@ -84,17 +84,17 @@
                                 <div class="col-10">
                                     <div>
                                         <strong>
-                                            <t t-esc="record.user_id.value" />
+                                            <t t-out="record.user_id.value" />
                                         </strong>
                                     </div>
                                     <div class="text-muted">
                                         <span>
-                                            <t t-esc="record.role_id.value" />
+                                            <t t-out="record.role_id.value" />
                                         </span>
                                     </div>
                                     <div class="text-muted" invisible="context.get('default_project_id', False)">
                                         <span>
-                                            <t t-esc="record.project_id.value" />
+                                            <t t-out="record.project_id.value" />
                                         </span>
                                     </div>
                                 </div>

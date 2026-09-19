@@ -6,9 +6,11 @@
         <field name="inherit_id" ref="account.view_account_journal_form" />
         <field name="arch" type="xml">
             <!-- better when related fields are readonly, otherwise the user
-                 doesn't understand that he is changing the bank_id
-                 on the underlying res.partner.bank object -->
-            <field name="bank_id" position="attributes">
+                 doesn't understand that he is changing the bank account
+                 on the underlying res.partner.bank object.
+                 20.0 quito bank_id del formulario; el related que queda a la
+                 vista es bank_bic. -->
+            <field name="bank_bic" position="attributes">
                 <attribute name="readonly">1</attribute>
             </field>
         </field>
