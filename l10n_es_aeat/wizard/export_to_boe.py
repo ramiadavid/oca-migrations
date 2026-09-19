@@ -153,7 +153,8 @@ class L10nEsAeatReportExportToBoe(models.TransientModel):
         attachment_obj.create(
             {
                 "name": file_name,
-                "datas": file,
+                # 20.0 quito ir.attachment.datas (base64); ahora es raw, en bytes
+                "raw": contents,
                 "res_model": report._name,
                 "res_id": report.id,
             }

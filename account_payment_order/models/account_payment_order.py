@@ -4,7 +4,6 @@
 # Copyright 2016-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
-import base64
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
@@ -350,7 +349,7 @@ class AccountPaymentOrder(models.Model):
                     "res_model": "account.payment.order",
                     "res_id": self.id,
                     "name": filename,
-                    "datas": base64.b64encode(payment_file_str),
+                    "raw": payment_file_str,
                 }
             )
             simplified_form_view = self.env.ref("account_payment_order.view_attachment_simplified_form")
