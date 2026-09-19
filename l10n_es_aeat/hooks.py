@@ -16,14 +16,14 @@ def create_column_thirdparty_invoice(cr):
             cr=cr,
             tablename="account_move",
             columnname="thirdparty_invoice",
-            columntype="boolean",
+            columntype="bool",
             comment="Third-party invoice",
         )
         create_column(
             cr=cr,
             tablename="account_journal",
             columnname="thirdparty_invoice",
-            columntype="boolean",
+            columntype="bool",
             comment="Third-party invoice",
         )
         cr.execute("UPDATE account_move SET thirdparty_invoice = False")
