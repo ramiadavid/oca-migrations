@@ -11,7 +11,10 @@
     "author": "Akretion, Tecnativa,Odoo Community Association (OCA)",
     "website": "https://www.processcontrol.es",
     "category": "Banking addons",
-    "depends": ["account"],
+    # 20.0 elimino el modelo res.bank; base_res_bank lo restituye y el demo
+    # de este modulo lo necesita (sin el fallaba entero y se quedaban sin
+    # crear los modos de pago).
+    "depends": ["account", "base_res_bank"],
     "data": [
         "security/account_payment_partner_security.xml",
         "views/res_partner_view.xml",
