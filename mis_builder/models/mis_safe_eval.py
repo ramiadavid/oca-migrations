@@ -3,7 +3,11 @@
 
 import traceback
 
-from odoo.tools.safe_eval import _BUILTINS, _SAFE_OPCODES, assert_valid_codeobj, compile_codeobj
+from odoo.tools.safe_eval import _BUILTINS, _SAFE_OPCODES, assert_valid_codeobj
+
+# 20.0 dejo compile_codeobj fuera del __all__ de odoo.tools.safe_eval, asi que
+# ya no se reexporta y hay que cogerlo del submodulo.
+from odoo.tools.safe_eval.evaluation import compile_codeobj
 
 from .data_error import DataError, NameDataError
 
