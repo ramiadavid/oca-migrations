@@ -6,6 +6,9 @@ from odoo import fields, models
 
 
 class SaleReport(models.Model):
+    """20.0 cambio _select_additional_fields() (cadenas SQL) por
+    _select_dict(table) ({campo: SQL} sobre una TableSQL de sale.order.line)."""
+
     _inherit = "sale.report"
 
     payment_mode_id = fields.Many2one(
@@ -14,7 +17,7 @@ class SaleReport(models.Model):
         readonly=True,
     )
 
-    def _select_additional_fields(self):
-        res = super()._select_additional_fields()
-        res["payment_mode_id"] = "s.payment_mode_id"
-        return res
+    def _select_dict(self, table):
+        return super()._select_dict(table) | {
+            "payment_mode_id": table.order_id.payment_mode_id,
+        }

@@ -2,7 +2,6 @@
 # Copyright 2018-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import base64
 
 from lxml import etree
 
@@ -312,7 +311,8 @@ class TestSDDBase(TransactionCase):
         self.assertEqual(action["res_model"], "ir.attachment")
         attachment = self.attachment_model.browse(action["res_id"])
         self.assertEqual(attachment.name[-4:], ".xml")
-        xml_file = base64.b64decode(attachment.datas)
+        # 20.0 quito ir.attachment.datas (base64): ahora es raw, en bytes
+        xml_file = attachment.raw
         xml_root = etree.fromstring(xml_file)
         namespaces = xml_root.nsmap
         namespaces["p"] = xml_root.nsmap[None]
