@@ -5,7 +5,7 @@
 {
     "name": "Purchase order lines with discounts",
     "author": "Tiny, " "Acysos S.L., " "Tecnativa, " "ACSONE SA/NV," "GRAP," "Odoo Community Association (OCA)",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Purchase Management",
     "website": "https://www.processcontrol.es",
     "depends": ["purchase_stock"],

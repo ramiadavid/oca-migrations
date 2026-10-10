@@ -29,23 +29,7 @@ class TripleDiscountMixin(models.AbstractModel):
         digits="Discount",
     )
 
-    _sql_constraints = [
-        (
-            "discount1_limit",
-            "CHECK (discount1 <= 100.0)",
-            "Discount 1 must be lower than 100%.",
-        ),
-        (
-            "discount2_limit",
-            "CHECK (discount2 <= 100.0)",
-            "Discount 2 must be lower than 100%.",
-        ),
-        (
-            "discount3_limit",
-            "CHECK (discount3 <= 100.0)",
-            "Discount 3 must be lower than 100%.",
-        ),
-    ]
+    _constrains_discount3_limit = models.Constraint('CHECK (discount3 <= 100.0)','Discount 3 must be lower than 100%.')
 
     @api.depends(lambda self: self._get_multiple_discount_field_names())
     def _compute_discount(self):
