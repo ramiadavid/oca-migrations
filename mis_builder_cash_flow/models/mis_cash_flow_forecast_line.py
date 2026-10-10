@@ -1,6 +1,6 @@
 # Copyright 2019 ADHOC SA
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -25,6 +25,12 @@ class MisCashFlowForecastLine(models.Model):
         default=lambda self: self.env.company,
         index=True,
     )
+    cash_flow_plan_id = fields.Many2one(
+        "mis.cash.flow.plan",
+        string="Origin Cash Flow Plan",
+        ondelete="cascade",
+        index=True,
+    )
 
     @api.constrains("company_id", "account_id")
     def _check_company_id_account_id(self):
@@ -36,7 +42,7 @@ class MisCashFlowForecastLine(models.Model):
                 and line.company_id not in line.account_id.company_ids
             ):
                 raise ValidationError(
-                    _(
+                    self.env._(
                         "The forecast line company must be one of the "
                         "account's companies."
                     )

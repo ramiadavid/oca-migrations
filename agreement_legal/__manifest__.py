@@ -8,10 +8,10 @@
     "Open Source Integrators, "
     "Yves Goldberg (Ygol Internetwork), "
     "Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/agreement",
+    "website": "https://www.processcontrol.es",
     "category": "Partner",
     "license": "AGPL-3",
-    "version": "19.0.1.0.1",
+    "version": "20.0.1.0.1",
     "depends": ["contacts", "agreement", "product", "web"],
     "data": [
         "data/cron.xml",
@@ -19,7 +19,6 @@
         "data/agreement_stage.xml",
         "data/agreement_type.xml",
         "security/res_groups.xml",
-        "security/ir.model.access.csv",
         "report/agreement.xml",
         "views/res_config_settings.xml",
         "views/agreement_appendix.xml",
@@ -32,6 +31,7 @@
         "views/agreement.xml",
         "views/menu.xml",
         "wizards/create_agreement_wizard.xml",
+        "security/ir.access.csv",
     ],
     "demo": ["demo/demo.xml"],
     "assets": {

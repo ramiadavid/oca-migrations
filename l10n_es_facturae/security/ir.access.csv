@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,operation,domain
+access_l10n_es_facturae_attachment,access_l10n_es_facturae_attachment,model_l10n_es_facturae_attachment,base.group_user,r,
+manage_l10n_es_facturae_attachment,manage_l10n_es_facturae_attachment,model_l10n_es_facturae_attachment,account.group_account_invoice,crud,
+access_create_facturae,access_create_facturae,model_create_facturae,account.group_account_invoice,cru,

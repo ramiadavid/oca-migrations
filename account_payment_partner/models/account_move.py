@@ -9,9 +9,7 @@ from odoo import api, fields, models
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    payment_mode_filter_type_domain = fields.Char(
-        compute="_compute_payment_mode_filter_type_domain"
-    )
+    payment_mode_filter_type_domain = fields.Char(compute="_compute_payment_mode_filter_type_domain")
     partner_bank_filter_type_domain = fields.Many2one(
         comodel_name="res.partner", compute="_compute_partner_bank_filter_type_domain"
     )
@@ -60,39 +58,21 @@ class AccountMove(models.Model):
                 move.payment_mode_id = False
             if move.partner_id:
                 partner = move.with_company(move.company_id.id).partner_id
-                if (
-                    move.move_type in ["in_invoice", "in_receipt"]
-                    and partner.supplier_payment_mode_id
-                ):
+                if move.move_type in ["in_invoice", "in_receipt"] and partner.supplier_payment_mode_id:
                     move.payment_mode_id = partner.supplier_payment_mode_id
-                elif (
-                    move.move_type in ["out_invoice", "out_receipt"]
-                    and partner.customer_payment_mode_id
-                ):
+                elif move.move_type in ["out_invoice", "out_receipt"] and partner.customer_payment_mode_id:
                     move.payment_mode_id = partner.customer_payment_mode_id
                 elif (
                     move.move_type in ["out_refund", "in_refund"]
                     and move.reversed_entry_id
                     and move.reversed_entry_id.payment_mode_id.refund_payment_mode_id
                 ):
-                    move.payment_mode_id = (
-                        move.reversed_entry_id.payment_mode_id.refund_payment_mode_id
-                    )
+                    move.payment_mode_id = move.reversed_entry_id.payment_mode_id.refund_payment_mode_id
                 elif not move.reversed_entry_id:
-                    if (
-                        move.move_type == "out_refund"
-                        and partner.customer_payment_mode_id.refund_payment_mode_id
-                    ):
-                        move.payment_mode_id = (
-                            partner.customer_payment_mode_id.refund_payment_mode_id
-                        )
-                    elif (
-                        move.move_type == "in_refund"
-                        and partner.supplier_payment_mode_id.refund_payment_mode_id
-                    ):
-                        move.payment_mode_id = (
-                            partner.supplier_payment_mode_id.refund_payment_mode_id
-                        )
+                    if move.move_type == "out_refund" and partner.customer_payment_mode_id.refund_payment_mode_id:
+                        move.payment_mode_id = partner.customer_payment_mode_id.refund_payment_mode_id
+                    elif move.move_type == "in_refund" and partner.supplier_payment_mode_id.refund_payment_mode_id:
+                        move.payment_mode_id = partner.supplier_payment_mode_id.refund_payment_mode_id
 
     @api.depends("bank_partner_id", "payment_mode_id")
     def _compute_partner_bank_id(self):
@@ -109,13 +89,8 @@ class AccountMove(models.Model):
                     continue
                 elif move.move_type in ["out_invoice", "out_receipt"]:
                     if payment_mode.payment_method_id.bank_account_required:
-                        if (
-                            payment_mode.bank_account_link == "fixed"
-                            and payment_mode.fixed_journal_id.bank_account_id
-                        ):
-                            move.partner_bank_id = (
-                                payment_mode.fixed_journal_id.bank_account_id
-                            )
+                        if payment_mode.bank_account_link == "fixed" and payment_mode.fixed_journal_id.bank_account_id:
+                            move.partner_bank_id = payment_mode.fixed_journal_id.bank_account_id
                             continue
                     else:
                         move.partner_bank_id = False
@@ -127,26 +102,20 @@ class AccountMove(models.Model):
     def _compute_has_reconciled_items(self):
         for record in self:
             lines_to_consider = record.line_ids.filtered(
-                lambda x: x.account_id.account_type
-                in ("asset_receivable", "liability_payable")
+                lambda x: x.account_id.account_type in ("asset_receivable", "liability_payable")
             )
             record.has_reconciled_items = bool(
-                lines_to_consider.matched_credit_ids
-                + lines_to_consider.matched_debit_ids
+                lines_to_consider.matched_credit_ids + lines_to_consider.matched_debit_ids
             )
 
     def _reverse_moves(self, default_values_list=None, cancel=False):
         if not default_values_list:
             default_values_list = [{} for _ in self]
         for move, default_values in zip(self, default_values_list, strict=True):
-            default_values["payment_mode_id"] = (
-                move.payment_mode_id.refund_payment_mode_id.id
-            )
+            default_values["payment_mode_id"] = move.payment_mode_id.refund_payment_mode_id.id
             if move.move_type == "in_invoice":
                 default_values["partner_bank_id"] = move.partner_bank_id.id
-        return super()._reverse_moves(
-            default_values_list=default_values_list, cancel=cancel
-        )
+        return super()._reverse_moves(default_values_list=default_values_list, cancel=cancel)
 
     def partner_banks_to_show(self):
         self.ensure_one()
@@ -156,9 +125,7 @@ class AccountMove(models.Model):
             if self.payment_mode_id.bank_account_link == "fixed":
                 return self.payment_mode_id.fixed_journal_id.bank_account_id
             else:
-                return self.payment_mode_id.variable_journal_ids.mapped(
-                    "bank_account_id"
-                )
+                return self.payment_mode_id.variable_journal_ids.mapped("bank_account_id")
         # Return this as empty recordset
         return self.partner_bank_id
 

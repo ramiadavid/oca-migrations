@@ -12,16 +12,14 @@ class ResPartner(models.Model):
         comodel_name="account.payment.mode",
         company_dependent=True,
         check_company=True,
-        domain="[('payment_type', '=', 'outbound'),"
-        "('company_id', '=', current_company_id)]",
+        domain="[('payment_type', '=', 'outbound')," "('company_id', '=', current_company_id)]",
         help="Select the default payment mode for this supplier.",
     )
     customer_payment_mode_id = fields.Many2one(
         comodel_name="account.payment.mode",
         company_dependent=True,
         check_company=True,
-        domain="[('payment_type', '=', 'inbound'),"
-        "('company_id', '=', current_company_id)]",
+        domain="[('payment_type', '=', 'inbound')," "('company_id', '=', current_company_id)]",
         help="Select the default payment mode for this customer.",
     )
 

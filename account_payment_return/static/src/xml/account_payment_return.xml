@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2016 Tecnativa - Carlos Dauden
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl-3). -->
+<templates xml:space="preserve">
+
+    <t t-inherit="account.AccountPaymentField" t-inherit-mode="extension">
+        <xpath expr="//a[hasclass('js_payment_info')]" position="attributes">
+            <attribute
+                name="t-att-data-icon"
+            >line.returned ? 'warning' : 'info'</attribute>
+            <attribute name="title">Payment Info</attribute>
+        </xpath>
+
+        <xpath expr="//i[hasclass('o_payment_label')]" position="replace">
+            <i class="o_field_widget text-start o_payment_label">
+                <t t-out="line.returned and 'Returned on ' or 'Paid on '" />
+                <t t-out="line.formattedDate" />
+            </i>
+        </xpath>
+    </t>
+</templates>

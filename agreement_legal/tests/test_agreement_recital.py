@@ -10,9 +10,7 @@ class TestAgreementRectical(TransactionCase):
     def setUp(self):
         super().setUp()
         self.test_customer = self.env["res.partner"].create({"name": "TestCustomer"})
-        self.agreement_type = self.env["agreement.type"].create(
-            {"name": "Test Agreement Type", "domain": "sale"}
-        )
+        self.agreement_type = self.env["agreement.type"].create({"name": "Test Agreement Type", "domain": "sale"})
         self.test_agreement = self.env["agreement"].create(
             {
                 "name": "TestAgreement",
@@ -35,9 +33,7 @@ class TestAgreementRectical(TransactionCase):
     # TEST 01: Set 'Field' for dynamic placeholder, test onchange method
     def test_onchange_copyvalue(self):
         recital_01 = self.test_recital
-        field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement.recital"), ("name", "=", "active")]
-        )
+        field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement.recital"), ("name", "=", "active")])
         recital_01.field_id = field_01.id
         recital_01.onchange_copyvalue()
         self.assertEqual(recital_01.copyvalue, "{{object.active or ''}}")
@@ -49,9 +45,7 @@ class TestAgreementRectical(TransactionCase):
         field_01 = self.env["ir.model.fields"].search(
             [("model", "=", "agreement.recital"), ("name", "=", "agreement_id")]
         )
-        sub_field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement"), ("name", "=", "active")]
-        )
+        sub_field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement"), ("name", "=", "active")])
         recital_01.field_id = field_01.id
         recital_01.onchange_copyvalue()
         self.assertEqual(recital_01.sub_object_id.model, "agreement")

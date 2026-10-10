@@ -13,12 +13,7 @@
                     </group>
                 </group>
                 <footer>
-                    <button
-                        name="create_agreement"
-                        string="Create Agreement"
-                        class="btn-primary"
-                        type="object"
-                    />
+                    <button name="create_agreement" string="Create Agreement" class="btn-primary" type="object" />
                     <button string="Cancel" class="btn-default" special="cancel" />
                 </footer>
             </form>

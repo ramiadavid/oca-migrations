@@ -21,15 +21,12 @@ class AccountPaymentMode(models.Model):
         help="Show in invoices partial or full bank account number",
     )
     show_bank_account_from_journal = fields.Boolean(string="Bank account from journals")
-    show_bank_account_chars = fields.Integer(
-        string="# of digits for customer bank account"
-    )
+    show_bank_account_chars = fields.Integer(string="# of digits for customer bank account")
     refund_payment_mode_id = fields.Many2one(
         comodel_name="account.payment.mode",
         domain="[('payment_type', '!=', payment_type)]",
         string="Payment mode for refunds",
-        help="This payment mode will be used when doing "
-        "refunds coming from the current payment mode.",
+        help="This payment mode will be used when doing " "refunds coming from the current payment mode.",
     )
 
     @api.constrains("company_id")
