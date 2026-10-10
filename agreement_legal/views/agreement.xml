@@ -56,18 +56,9 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box" />
-                    <widget
-                        name="web_ribbon"
-                        title="Template"
-                        bg_color="bg-info"
-                        invisible="is_template == False"
-                    />
+                    <widget name="web_ribbon" title="Template" bg_color="bg-info" invisible="is_template == False" />
                     <div class="oe_title">
-                        <label
-                            for="name"
-                            class="oe_edit_only"
-                            string="Agreement Name"
-                        />
+                        <label for="name" class="oe_edit_only" string="Agreement Name" />
                         <h1>
                             <field name="name" />
                         </h1>
@@ -75,19 +66,12 @@
                     <group string="General">
                         <group>
                             <field name="code" readonly="1" />
-                            <field
-                                name="parent_agreement_id"
-                                domain="[('partner_id', '=', partner_id)]"
-                            />
+                            <field name="parent_agreement_id" domain="[('partner_id', '=', partner_id)]" />
                             <field name="is_template" invisible="1" />
                             <field name="template_id" invisible="is_template == True" />
                         </group>
                         <group>
-                            <field
-                                name="agreement_type_id"
-                                widget="selection"
-                                required="True"
-                            />
+                            <field name="agreement_type_id" widget="selection" required="True" />
                             <field
                                 name="agreement_subtype_id"
                                 widget="selection"
@@ -130,17 +114,13 @@
                             <li>Select the agreement field</li>
                             <li>Select the sub-field</li>
                             <li>Enter the default value if the field is empty</li>
-                            <li
-                            >Copy and paste the placeholder expression in the description or the special terms</li>
+                            <li>Copy and paste the placeholder expression in the description or the special terms</li>
                         </ol>
                         </p>
                     </group>
                     <group name="parties" string="Parties">
                         <group name="cust_parties">
-                            <field
-                                name="use_parties_content"
-                                string="Use custom content"
-                            />
+                            <field name="use_parties_content" string="Use custom content" />
                         </group>
                         <!--                        <group name="cust_parties">-->
                         <p>
@@ -178,20 +158,8 @@
                                 nolabel="1"
                                 colspan="2"
                             />
-                            <field
-                                name="partner_contact_phone"
-                                widget="phone"
-                                readonly="1"
-                                nolabel="1"
-                                colspan="2"
-                            />
-                            <field
-                                name="partner_contact_email"
-                                widget="email"
-                                readonly="1"
-                                nolabel="1"
-                                colspan="2"
-                            />
+                            <field name="partner_contact_phone" widget="phone" readonly="1" nolabel="1" colspan="2" />
+                            <field name="partner_contact_email" widget="email" readonly="1" nolabel="1" colspan="2" />
                         </group>
                         <group name="contact_right" string="Primary Contact">
                             <field
@@ -200,45 +168,18 @@
                                 nolabel="1"
                                 colspan="2"
                             />
-                            <field
-                                name="company_contact_phone"
-                                widget="phone"
-                                readonly="1"
-                                nolabel="1"
-                                colspan="2"
-                            />
-                            <field
-                                name="company_contact_email"
-                                widget="email"
-                                readonly="1"
-                                nolabel="1"
-                                colspan="2"
-                            />
+                            <field name="company_contact_phone" widget="phone" readonly="1" nolabel="1" colspan="2" />
+                            <field name="company_contact_email" widget="email" readonly="1" nolabel="1" colspan="2" />
                         </group>
                     </group>
-                    <group
-                        name="parties_content"
-                        string="Parties Content"
-                        invisible="use_parties_content == False"
-                    >
+                    <group name="parties_content" string="Parties Content" invisible="use_parties_content == False">
                         <field name="parties" nolabel="1" colspan="2" />
                     </group>
                     <group name="term_information">
                         <group name="termdates_left" string="Term Dates">
-                            <field
-                                name="signature_date"
-                                invisible="is_template == True"
-                            />
-                            <field
-                                name="start_date"
-                                required="is_template == False"
-                                invisible="is_template == True"
-                            />
-                            <field
-                                name="end_date"
-                                required="is_template == False"
-                                invisible="is_template == True"
-                            />
+                            <field name="signature_date" invisible="is_template == True" />
+                            <field name="start_date" required="is_template == False" invisible="is_template == True" />
+                            <field name="end_date" required="is_template == False" invisible="is_template == True" />
                             <field
                                 name="to_review_date"
                                 required="is_template == False and end_date != False"
@@ -302,22 +243,13 @@
                             <group>
                                 <group string="Partner">
                                     <field name="partner_signed_date" />
-                                    <field
-                                        name="partner_signed_user_id"
-                                        domain="[('parent_id', '=', partner_id)]"
-                                    />
+                                    <field name="partner_signed_user_id" domain="[('parent_id', '=', partner_id)]" />
                                 </group>
                                 <group string="Company">
                                     <field name="company_signed_date" />
                                     <field name="company_signed_user_id" />
-                                    <field
-                                        name="signed_contract"
-                                        filename="signed_contract_filename"
-                                    />
-                                    <field
-                                        name="signed_contract_filename"
-                                        invisible="1"
-                                    />
+                                    <field name="signed_contract" filename="signed_contract_filename" />
+                                    <field name="signed_contract_filename" invisible="1" />
                                 </group>
                             </group>
                         </page>
@@ -341,11 +273,7 @@
                             </field>
                         </page>
                         <page name="old_versions" string="Revisions">
-                            <field
-                                name="previous_version_agreements_ids"
-                                string="Previouse Versions"
-                                readonly="1"
-                            >
+                            <field name="previous_version_agreements_ids" string="Previouse Versions" readonly="1">
                                 <list default_order="version desc">
                                     <field name="name" />
                                     <field name="version" />
@@ -362,42 +290,24 @@
                     <separator string="Administration" />
                     <!--                    <group string="Administration">-->
                     <div name="Administration">
-                        <p class="oe_inline">Reviewed by <field
-                            name="reviewed_user_id"
-                            class="oe_inline"
-                        /> on <field name="reviewed_date" class="oe_inline" />.</p>
-                        <p>Approved by <field
-                            name="approved_user_id"
-                            class="oe_inline"
-                        /> on <field name="approved_date" class="oe_inline" />.</p>
+                        <p class="oe_inline">Reviewed by <field name="reviewed_user_id" class="oe_inline" /> on <field
+                                name="reviewed_date"
+                                class="oe_inline"
+                            />.</p>
+                        <p>Approved by <field name="approved_user_id" class="oe_inline" /> on <field
+                                name="approved_date"
+                                class="oe_inline"
+                            />.</p>
                     </div>
                     <!--                    </group>-->
                     <p name="footer">
-                        Version: <field name="version" readonly="True" />.<field
-                        name="revision"
-                        readonly="True"
-                    />
+                        Version: <field name="version" readonly="True" />.<field name="revision" readonly="True" />
                         |  Created By:
-                        <field
-                        name="create_uid"
-                        readonly="True"
-                        invisible="parent_agreement_id != False"
-                    />
-                        <field
-                        name="create_uid_parent"
-                        invisible="parent_agreement_id == False"
-                    />
+                        <field name="create_uid" readonly="True" invisible="parent_agreement_id != False" />
+                        <field name="create_uid_parent" invisible="parent_agreement_id == False" />
                         |  Created On:
-                        <field
-                        name="create_date"
-                        readonly="True"
-                        invisible="parent_agreement_id != False"
-                    />
-                        <field
-                        name="create_date_parent"
-                        readonly="True"
-                        invisible="parent_agreement_id == False"
-                    />
+                        <field name="create_date" readonly="True" invisible="parent_agreement_id != False" />
+                        <field name="create_date_parent" readonly="True" invisible="parent_agreement_id == False" />
                     </p>
                 </sheet>
                 <chatter />
@@ -425,9 +335,7 @@
                                             <field name="name" />
                                         </strong>
                                         <br />
-                                        <div
-                                            class="o_kanban_record_subtitle text-muted"
-                                        >
+                                        <div class="o_kanban_record_subtitle text-muted">
                                             <field name="partner_id" />
                                             <t
                                                 t-if="record.end_date.raw_value and record.end_date.raw_value lt (new Date())"
@@ -440,56 +348,30 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div
-                                        class="o_dropdown_kanban dropdown"
-                                        groups="base.group_user"
-                                    >
-                                        <a
-                                            role="button"
-                                            class="dropdown-toggle btn"
-                                            data-toggle="dropdown"
-                                            href="#"
-                                        >
-                                            <span
-                                                class="fa fa-ellipsis-v"
-                                                aria-hidden="true"
-                                                title="Icon"
-                                            />
+                                    <div class="o_dropdown_kanban dropdown" groups="base.group_user">
+                                        <a role="button" class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+                                            <span class="fa fa-ellipsis-v" aria-hidden="true" title="Icon" />
                                         </a>
-                                        <ul
-                                            class="dropdown-menu"
-                                            role="menu"
-                                            aria-labelledby="dLabel"
-                                        >
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                             <li t-if="widget.editable">
                                                 <a type="edit">Edit</a>
                                             </li>
                                             <li class="divider" />
-                                            <li
-                                                class="dropdown-header"
-                                            >Record's Colour</li>
+                                            <li class="dropdown-header">Record's Colour</li>
                                             <li>
-                                                <ul
-                                                    class="oe_kanban_colorpicker"
-                                                    data-field="color"
-                                                />
+                                                <ul class="oe_kanban_colorpicker" data-field="color" />
                                             </li>
                                         </ul>
                                     </div>
                                 </div>
                                 <div class="o_kanban_record_body">
-                                    <field name="agreement_type_id" /> - <field
-                                    name="agreement_subtype_id"
-                                />
+                                    <field name="agreement_type_id" /> - <field name="agreement_subtype_id" />
                                 </div>
                                 <div class="o_kanban_record_bottom">
                                     <div class="oe_kanban_bottom_left">
                                         V: <field name="version" />
                                     </div>
-                                    <div
-                                        class="oe_kanban_bottom_right"
-                                        t-if="record.assigned_user_id.raw_value"
-                                    >
+                                    <div class="oe_kanban_bottom_right" t-if="record.assigned_user_id.raw_value">
                                         <img
                                             t-att-src="'/web/image/res.users/' + record.assigned_user_id.raw_value + '/avatar_128'"
                                             alt="user &amp; picture"
@@ -522,11 +404,7 @@
                     string="Non-Templates"
                     domain="[('active','=',True),('is_template', '=', False)]"
                 />
-                <filter
-                    name="filter_inactive"
-                    string="Archived"
-                    domain="[('active','=',False)]"
-                />
+                <filter name="filter_inactive" string="Archived" domain="[('active','=',False)]" />
                 <filter
                     name="filter_templates"
                     string="Templates"
@@ -555,12 +433,7 @@
                     icon="terp-partner"
                     context="{'group_by':'agreement_subtype_id'}"
                 />
-                <filter
-                    name="group_status"
-                    string="Status"
-                    icon="terp-partner"
-                    context="{'group_by':'stage_id'}"
-                />
+                <filter name="group_status" string="Status" icon="terp-partner" context="{'group_by':'stage_id'}" />
             </search>
         </field>
     </record>
@@ -598,9 +471,7 @@
         <field name="name">Agreements</field>
         <field name="res_model">agreement</field>
         <field name="domain">[('is_template', '=', False)]</field>
-        <field
-            name="context"
-        >{'default_is_template': False, 'default_model': True}</field>
+        <field name="context">{'default_is_template': False, 'default_model': True}</field>
         <field name="view_mode">kanban,list,form</field>
     </record>
 

@@ -1,14 +1,15 @@
 /** @odoo-module **/
 
+import {usePlugin} from "@odoo/owl";
+import {registry} from "@web/core/registry";
 import {FormController} from "@web/views/form/form_controller";
 import {formView} from "@web/views/form/form_view";
-import {registry} from "@web/core/registry";
-import {useService} from "@web/core/utils/hooks";
+import {ActionManagerPlugin} from "@web/webclient/actions/action_plugin";
 
 export class AgreementFormController extends FormController {
     setup() {
         super.setup();
-        this.action = useService("action");
+        this.action = usePlugin(ActionManagerPlugin);
         this.canCreateTemplate = this.props.context.default_is_template || false;
     }
     onClickCreateFromTemplate() {

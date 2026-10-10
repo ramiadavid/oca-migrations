@@ -22,9 +22,7 @@ class MisCashFlow(models.Model):
         index=True,
         readonly=True,
     )
-    partner_id = fields.Many2one(
-        comodel_name="res.partner", string="Partner", readonly=True
-    )
+    partner_id = fields.Many2one(comodel_name="res.partner", string="Partner", readonly=True)
     move_line_id = fields.Many2one(
         comodel_name="account.move.line",
         string="Journal Item",
@@ -40,16 +38,12 @@ class MisCashFlow(models.Model):
     debit = fields.Float(readonly=True)
     date = fields.Date(readonly=True, index=True)
     reconciled = fields.Boolean(readonly=True)
-    full_reconcile_id = fields.Many2one(
-        "account.full.reconcile", string="Matching Number", readonly=True, index=True
-    )
+    full_reconcile_id = fields.Many2one("account.full.reconcile", string="Matching Number", readonly=True, index=True)
     account_type = fields.Selection(related="account_id.account_type", readonly=True)
     parent_state = fields.Selection(selection="_selection_parent_state")
 
     def _selection_parent_state(self):
-        return self.env["account.move"].fields_get(allfields=["state"])["state"][
-            "selection"
-        ]
+        return self.env["account.move"].fields_get(allfields=["state"])["state"]["selection"]
 
     def init(self):
         query = """
@@ -105,17 +99,11 @@ class MisCashFlow(models.Model):
             FROM mis_cash_flow_forecast_line as fl
         """
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute(
-            "CREATE OR REPLACE VIEW %s AS (%s)", (AsIs(self._table), AsIs(query))
-        )
+        self.env.cr.execute("CREATE OR REPLACE VIEW %s AS (%s)", (AsIs(self._table), AsIs(query)))
 
     def action_open_related_line(self):
         self.ensure_one()
         if self.line_type == "move_line":
             return self.move_line_id.get_formview_action()
         else:
-            return (
-                self.env["mis.cash_flow.forecast_line"]
-                .browse(self.id)
-                .get_formview_action()
-            )
+            return self.env["mis.cash_flow.forecast_line"].browse(self.id).get_formview_action()

@@ -11,12 +11,7 @@
         action="agreement_legal.agreement_dashboard_agreement"
     />
     <!-- Dashboard -->
-    <menuitem
-        name="Dashboard"
-        id="agreement_dashboard"
-        parent="agreement.agreement_menu"
-        sequence="10"
-    />
+    <menuitem name="Dashboard" id="agreement_dashboard" parent="agreement.agreement_menu" sequence="10" />
     <menuitem
         name="Agreements"
         id="dashboard_agreements"
@@ -26,12 +21,7 @@
     />
 
     <!-- Operations -->
-    <menuitem
-        name="Operations"
-        id="agreement_operations"
-        parent="agreement.agreement_menu"
-        sequence="20"
-    />
+    <menuitem name="Operations" id="agreement_operations" parent="agreement.agreement_menu" sequence="20" />
     <menuitem
         name="Agreements"
         id="operations_agreements"
@@ -41,18 +31,8 @@
     />
 
     <!-- Master Data -->
-    <menuitem
-        name="Master Data"
-        id="agreement_masterdata"
-        parent="agreement.agreement_menu"
-        sequence="30"
-    />
-    <menuitem
-        name="Contents"
-        id="agreement_data_contents"
-        parent="agreement_masterdata"
-        sequence="10"
-    />
+    <menuitem name="Master Data" id="agreement_masterdata" parent="agreement.agreement_menu" sequence="30" />
+    <menuitem name="Contents" id="agreement_data_contents" parent="agreement_masterdata" sequence="10" />
     <menuitem
         name="Recitals"
         id="agreement_recitals"

@@ -10,8 +10,6 @@ class ResUsers(models.Model):
     subscribe_job = fields.Boolean(
         "Job Notifications",
         default=True,
-        help="If this flag is checked and the "
-        "user is Connector Manager, he will "
-        "receive job notifications.",
+        help="If this flag is checked and the " "user is Connector Manager, he will " "receive job notifications.",
         index=True,
     )

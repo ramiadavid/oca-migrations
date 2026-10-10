@@ -22,16 +22,12 @@ class TestAccountPaymentPartner(BaseCommon):
         # Refs
         cls.company = cls.env.ref("base.main_company")
         cls.company_2 = cls.env["res.company"].create({"name": "Company 2"})
-        chart = cls.env["account.chart.template"]._guess_chart_template(
-            cls.company.country_id
-        )
+        chart = cls.env["account.chart.template"]._guess_chart_template(cls.company.country_id)
         if not chart:
             raise ValidationError(_("No Chart of Account Template has been defined !"))
         cls.env.user.company_ids = [(4, cls.company_2.id)]
         cls.env.ref("base.user_admin").company_ids = [(4, cls.company_2.id)]
-        cls.env["account.chart.template"].try_loading(
-            "generic_coa", company=cls.company_2, install_demo=False
-        )
+        cls.env["account.chart.template"].try_loading("generic_coa", company=cls.company_2, install_demo=False)
         # refs
         cls.manual_out = cls.env.ref("account.account_payment_method_manual_out")
         cls.manual_out.bank_account_required = True
@@ -102,9 +98,7 @@ class TestAccountPaymentPartner(BaseCommon):
                 "variable_journal_ids": [(6, 0, [cls.journal_c1.id])],
             }
         )
-        cls.supplier_payment_mode.write(
-            {"refund_payment_mode_id": cls.customer_payment_mode.id}
-        )
+        cls.supplier_payment_mode.write({"refund_payment_mode_id": cls.customer_payment_mode.id})
         cls.customer = (
             cls.env["res.partner"]
             .with_company(cls.company.id)
@@ -127,13 +121,11 @@ class TestAccountPaymentPartner(BaseCommon):
         )
         cls.supplier_bank = cls.env["res.partner.bank"].create(
             {
-                "acc_number": "5345345",
+                "account_number": "5345345",
                 "partner_id": cls.supplier.id,
             }
         )
-        cls.supplier.with_company(
-            cls.company_2.id
-        ).supplier_payment_mode_id = cls.supplier_payment_mode_c2
+        cls.supplier.with_company(cls.company_2.id).supplier_payment_mode_id = cls.supplier_payment_mode_c2
         cls.invoice_account = cls.env["account.account"].search(
             [
                 ("account_type", "=", "liability_payable"),
@@ -165,7 +157,7 @@ class TestAccountPaymentPartner(BaseCommon):
         cls.journal_bank = cls.env["res.partner.bank"].create(
             {
                 "bank_id": bank.id,
-                "acc_number": "GB95LOYD87430237296288",
+                "account_number": "GB95LOYD87430237296288",
                 "partner_id": cls.env.user.company_id.partner_id.id,
             }
         )
@@ -193,9 +185,7 @@ class TestAccountPaymentPartner(BaseCommon):
         )
 
     def _create_invoice(self, default_move_type, partner):
-        move_form = Form(
-            self.env["account.move"].with_context(default_move_type=default_move_type)
-        )
+        move_form = Form(self.env["account.move"].with_context(default_move_type=default_move_type))
         move_form.partner_id = partner
         move_form.invoice_date = fields.Date.today()
         with move_form.invoice_line_ids.new() as line_form:
@@ -228,9 +218,7 @@ class TestAccountPaymentPartner(BaseCommon):
 
     def test_partner_id_changes_compute_partner_bank(self):
         # Test _compute_partner_bank is executed when partner_id changes
-        move_form = Form(
-            self.env["account.move"].with_context(default_move_type="out_invoice")
-        )
+        move_form = Form(self.env["account.move"].with_context(default_move_type="out_invoice"))
         self.assertFalse(move_form.partner_bank_id)
         move_form.partner_id = self.customer
         self.assertEqual(move_form.payment_mode_id, self.customer_payment_mode)
@@ -254,13 +242,9 @@ class TestAccountPaymentPartner(BaseCommon):
         self.assertFalse(invoice.partner_bank_id)
 
     def test_invoice_create_in_invoice(self):
-        invoice = self._create_invoice(
-            default_move_type="in_invoice", partner=self.supplier
-        )
+        invoice = self._create_invoice(default_move_type="in_invoice", partner=self.supplier)
         invoice.action_post()
-        aml = invoice.line_ids.filtered(
-            lambda x: x.account_id.account_type == "liability_payable"
-        )
+        aml = invoice.line_ids.filtered(lambda x: x.account_id.account_type == "liability_payable")
         self.assertEqual(invoice.payment_mode_id, aml[0].payment_mode_id)
         # Test payment mode change on aml
         mode = self.supplier_payment_mode.copy()
@@ -272,20 +256,14 @@ class TestAccountPaymentPartner(BaseCommon):
         self.assertEqual(aml.payment_mode_id, self.supplier_payment_mode)
 
     def test_invoice_create_out_invoice(self):
-        invoice = self._create_invoice(
-            default_move_type="out_invoice", partner=self.customer
-        )
+        invoice = self._create_invoice(default_move_type="out_invoice", partner=self.customer)
         invoice.action_post()
-        aml = invoice.line_ids.filtered(
-            lambda x: x.account_id.account_type == "asset_receivable"
-        )
+        aml = invoice.line_ids.filtered(lambda x: x.account_id.account_type == "asset_receivable")
         self.assertEqual(invoice.payment_mode_id, aml[0].payment_mode_id)
 
     def test_invoice_create_out_refund(self):
         self.manual_out.bank_account_required = False
-        invoice = self._create_invoice(
-            default_move_type="out_refund", partner=self.customer
-        )
+        invoice = self._create_invoice(default_move_type="out_refund", partner=self.customer)
         invoice.action_post()
         self.assertEqual(
             invoice.payment_mode_id,
@@ -294,9 +272,7 @@ class TestAccountPaymentPartner(BaseCommon):
 
     def test_invoice_create_in_refund(self):
         self.manual_in.bank_account_required = False
-        invoice = self._create_invoice(
-            default_move_type="in_refund", partner=self.supplier
-        )
+        invoice = self._create_invoice(default_move_type="in_refund", partner=self.supplier)
         invoice.action_post()
         self.assertEqual(
             invoice.payment_mode_id,
@@ -304,13 +280,9 @@ class TestAccountPaymentPartner(BaseCommon):
         )
 
     def test_invoice_create_in_receipt(self):
-        invoice = self._create_invoice(
-            default_move_type="in_receipt", partner=self.supplier
-        )
+        invoice = self._create_invoice(default_move_type="in_receipt", partner=self.supplier)
         invoice.action_post()
-        aml = invoice.line_ids.filtered(
-            lambda x: x.account_id.account_type == "liability_payable"
-        )
+        aml = invoice.line_ids.filtered(lambda x: x.account_id.account_type == "liability_payable")
         self.assertEqual(invoice.payment_mode_id, aml[0].payment_mode_id)
         # Test payment mode change on aml
         mode = self.supplier_payment_mode.copy()
@@ -322,13 +294,9 @@ class TestAccountPaymentPartner(BaseCommon):
         self.assertEqual(aml.payment_mode_id, self.supplier_payment_mode)
 
     def test_invoice_create_out_receipt(self):
-        invoice = self._create_invoice(
-            default_move_type="out_receipt", partner=self.supplier
-        )
+        invoice = self._create_invoice(default_move_type="out_receipt", partner=self.supplier)
         invoice.action_post()
-        aml = invoice.line_ids.filtered(
-            lambda x: x.account_id.account_type == "asset_receivable"
-        )
+        aml = invoice.line_ids.filtered(lambda x: x.account_id.account_type == "asset_receivable")
         self.assertEqual(invoice.payment_mode_id, aml[0].payment_mode_id)
         # Test payment mode change on aml
         mode = self.supplier_payment_mode.copy()
@@ -397,9 +365,7 @@ class TestAccountPaymentPartner(BaseCommon):
             self.supplier_payment_mode.company_id = self.company_2
 
     def test_invoice_in_refund(self):
-        invoice = self._create_invoice(
-            default_move_type="in_invoice", partner=self.supplier
-        )
+        invoice = self._create_invoice(default_move_type="in_invoice", partner=self.supplier)
         invoice.partner_bank_id = False
         invoice.action_post()
         # Lets create a refund invoice for invoice_1.
@@ -420,9 +386,7 @@ class TestAccountPaymentPartner(BaseCommon):
                 }
             )
         )
-        refund_invoice = self.move_model.browse(
-            refund_invoice_wizard.reverse_moves()["res_id"]
-        )
+        refund_invoice = self.move_model.browse(refund_invoice_wizard.reverse_moves()["res_id"])
         self.assertEqual(
             refund_invoice.payment_mode_id,
             invoice.payment_mode_id.refund_payment_mode_id,
@@ -430,9 +394,7 @@ class TestAccountPaymentPartner(BaseCommon):
         self.assertEqual(refund_invoice.partner_bank_id, invoice.partner_bank_id)
 
     def test_invoice_out_refund(self):
-        invoice = self._create_invoice(
-            default_move_type="out_invoice", partner=self.customer
-        )
+        invoice = self._create_invoice(default_move_type="out_invoice", partner=self.customer)
         invoice.partner_bank_id = False
         invoice.action_post()
         # Lets create a refund invoice for invoice_1.
@@ -453,9 +415,7 @@ class TestAccountPaymentPartner(BaseCommon):
                 }
             )
         )
-        refund_invoice = self.move_model.browse(
-            refund_invoice_wizard.reverse_moves()["res_id"]
-        )
+        refund_invoice = self.move_model.browse(refund_invoice_wizard.reverse_moves()["res_id"])
 
         self.assertEqual(
             refund_invoice.payment_mode_id,
@@ -465,14 +425,10 @@ class TestAccountPaymentPartner(BaseCommon):
 
     def test_partner(self):
         self.customer.write({"customer_payment_mode_id": self.customer_payment_mode.id})
-        self.assertEqual(
-            self.customer.customer_payment_mode_id, self.customer_payment_mode
-        )
+        self.assertEqual(self.customer.customer_payment_mode_id, self.customer_payment_mode)
 
     def test_partner_onchange(self):
-        customer_invoice = self.move_model.create(
-            {"partner_id": self.customer.id, "move_type": "out_invoice"}
-        )
+        customer_invoice = self.move_model.create({"partner_id": self.customer.id, "move_type": "out_invoice"})
         self.assertEqual(customer_invoice.payment_mode_id, self.customer_payment_mode)
 
         self.assertEqual(self.supplier_invoice.partner_bank_id, self.supplier_bank)
@@ -516,7 +472,7 @@ class TestAccountPaymentPartner(BaseCommon):
         self.supplier_invoice.partner_bank_id = self.supplier_bank.id
         report = self.env.ref("account.account_invoices")
         res = str(report._render_qweb_html(report.id, self.supplier_invoice.ids)[0])
-        # self.assertIn(self.supplier_bank.acc_number, res)
+        # self.assertIn(self.supplier_bank.account_number, res)
         payment_mode = self.supplier_payment_mode
         payment_mode.show_bank_account_from_journal = True
         self.supplier_invoice.payment_mode_id = payment_mode.id
@@ -526,7 +482,7 @@ class TestAccountPaymentPartner(BaseCommon):
         payment_mode.bank_account_link = "variable"
         payment_mode.variable_journal_ids = [(6, 0, self.journal.ids)]
         res = str(report._render_qweb_html(report.id, self.supplier_invoice.ids)[0])
-        self.assertIn(self.journal_bank.acc_number, res)
+        self.assertIn(self.journal_bank.account_number, res)
 
     def test_filter_type_domain(self):
         in_invoice = self.move_model.create(
@@ -538,9 +494,7 @@ class TestAccountPaymentPartner(BaseCommon):
             }
         )
         self.assertEqual(in_invoice.payment_mode_filter_type_domain, "outbound")
-        self.assertEqual(
-            in_invoice.partner_bank_filter_type_domain, in_invoice.commercial_partner_id
-        )
+        self.assertEqual(in_invoice.partner_bank_filter_type_domain, in_invoice.commercial_partner_id)
         out_refund = self.move_model.create(
             {
                 "partner_id": self.customer.id,
@@ -549,9 +503,7 @@ class TestAccountPaymentPartner(BaseCommon):
             }
         )
         self.assertEqual(out_refund.payment_mode_filter_type_domain, "outbound")
-        self.assertEqual(
-            out_refund.partner_bank_filter_type_domain, out_refund.commercial_partner_id
-        )
+        self.assertEqual(out_refund.partner_bank_filter_type_domain, out_refund.commercial_partner_id)
         in_refund = self.move_model.create(
             {
                 "partner_id": self.supplier.id,
@@ -560,9 +512,7 @@ class TestAccountPaymentPartner(BaseCommon):
             }
         )
         self.assertEqual(in_refund.payment_mode_filter_type_domain, "inbound")
-        self.assertEqual(
-            in_refund.partner_bank_filter_type_domain, in_refund.bank_partner_id
-        )
+        self.assertEqual(in_refund.partner_bank_filter_type_domain, in_refund.bank_partner_id)
         out_invoice = self.move_model.create(
             {
                 "partner_id": self.customer.id,
@@ -571,9 +521,7 @@ class TestAccountPaymentPartner(BaseCommon):
             }
         )
         self.assertEqual(out_invoice.payment_mode_filter_type_domain, "inbound")
-        self.assertEqual(
-            out_invoice.partner_bank_filter_type_domain, out_invoice.bank_partner_id
-        )
+        self.assertEqual(out_invoice.partner_bank_filter_type_domain, out_invoice.bank_partner_id)
         in_receipt = self.move_model.create(
             {
                 "partner_id": self.supplier.id,
@@ -582,9 +530,7 @@ class TestAccountPaymentPartner(BaseCommon):
             }
         )
         self.assertEqual(in_receipt.payment_mode_filter_type_domain, "outbound")
-        self.assertEqual(
-            in_receipt.partner_bank_filter_type_domain, in_receipt.bank_partner_id
-        )
+        self.assertEqual(in_receipt.partner_bank_filter_type_domain, in_receipt.bank_partner_id)
         out_receipt = self.move_model.create(
             {
                 "partner_id": self.customer.id,
@@ -593,9 +539,7 @@ class TestAccountPaymentPartner(BaseCommon):
             }
         )
         self.assertEqual(out_receipt.payment_mode_filter_type_domain, "inbound")
-        self.assertEqual(
-            out_receipt.partner_bank_filter_type_domain, out_receipt.bank_partner_id
-        )
+        self.assertEqual(out_receipt.partner_bank_filter_type_domain, out_receipt.bank_partner_id)
 
     def test_account_move_payment_mode_id_default(self):
         payment_mode = self.env["account.payment.mode"].create(
@@ -603,9 +547,7 @@ class TestAccountPaymentPartner(BaseCommon):
                 "name": "Direct Debit of customers",
                 "company_id": self.env.ref("base.main_company").id,
                 "bank_account_link": "variable",
-                "payment_method_id": self.env.ref(
-                    "account.account_payment_method_manual_in"
-                ).id,
+                "payment_method_id": self.env.ref("account.account_payment_method_manual_in").id,
             }
         )
         field = self.env["ir.model.fields"].search(
@@ -615,14 +557,14 @@ class TestAccountPaymentPartner(BaseCommon):
             ]
         )
         move_form = Form(
-            self.move_model.with_context(
-                default_name="Invoice test", default_move_type="out_invoice"
-            ).with_company(self.env.ref("base.main_company").id)
+            self.move_model.with_context(default_name="Invoice test", default_move_type="out_invoice").with_company(
+                self.env.ref("base.main_company").id
+            )
         )
         self.assertFalse(move_form.payment_mode_id)
-        self.env["ir.default"].with_company(
-            self.env.ref("base.main_company").id
-        ).create({"field_id": field.id, "json_value": payment_mode.id})
+        self.env["ir.default"].with_company(self.env.ref("base.main_company").id).create(
+            {"field_id": field.id, "json_value": payment_mode.id}
+        )
         move_form = Form(
             self.move_model.with_context(
                 default_name="Invoice test",

@@ -10,19 +10,14 @@ class AgreementAppendix(models.Model):
     _order = "sequence"
 
     name = fields.Char(required=True)
-    title = fields.Char(
-        required=True, help="The title is displayed on the PDF. The name is not."
-    )
+    title = fields.Char(required=True, help="The title is displayed on the PDF. The name is not.")
     sequence = fields.Integer(default=10)
     content = fields.Html()
-    dynamic_content = fields.Html(
-        compute="_compute_dynamic_content", help="compute dynamic Content"
-    )
+    dynamic_content = fields.Html(compute="_compute_dynamic_content", help="compute dynamic Content")
     agreement_id = fields.Many2one("agreement", string="Agreement", ondelete="cascade")
     active = fields.Boolean(
         default=True,
-        help="If unchecked, it will allow you to hide this appendix without "
-        "removing it.",
+        help="If unchecked, it will allow you to hide this appendix without " "removing it.",
     )
 
     # Dynamic field editor
@@ -46,9 +41,7 @@ class AgreementAppendix(models.Model):
          field lets you select the target field within the destination document
           model (sub-model).""",
     )
-    default_value = fields.Char(
-        help="Optional value to use if the target field is empty."
-    )
+    default_value = fields.Char(help="Optional value to use if the target field is empty.")
     copyvalue = fields.Char(
         string="Placeholder Expression",
         help="""Final placeholder expression, to be copy-pasted in the desired
@@ -60,14 +53,10 @@ class AgreementAppendix(models.Model):
         self.sub_object_id = False
         self.copyvalue = False
         if self.field_id and not self.field_id.relation:
-            self.copyvalue = "{{{{object.{} or {}}}}}".format(
-                self.field_id.name, self.default_value or "''"
-            )
+            self.copyvalue = "{{{{object.{} or {}}}}}".format(self.field_id.name, self.default_value or "''")
             self.sub_model_object_field_id = False
         if self.field_id and self.field_id.relation:
-            self.sub_object_id = self.env["ir.model"].search(
-                [("model", "=", self.field_id.relation)]
-            )[0]
+            self.sub_object_id = self.env["ir.model"].search([("model", "=", self.field_id.relation)])[0]
         if self.sub_model_object_field_id:
             self.copyvalue = "{{{{object.{}.{} or {}}}}}".format(
                 self.field_id.name,
@@ -79,11 +68,7 @@ class AgreementAppendix(models.Model):
     def _compute_dynamic_content(self):
         MailTemplates = self.env["mail.template"]
         for appendix in self:
-            lang = (
-                appendix.agreement_id
-                and appendix.agreement_id.partner_id.lang
-                or "en_US"
-            )
+            lang = appendix.agreement_id and appendix.agreement_id.partner_id.lang or "en_US"
             content = MailTemplates.with_context(lang=lang)._render_template(
                 appendix.content, "agreement.appendix", [appendix.id]
             )[appendix.id]

@@ -57,9 +57,7 @@ class TestJobSubscribe(common.TransactionCase):
         # Test 1: All users are followers
         #################################
         stored = self._create_failed_job()
-        users = self.env["res.users"].search(
-            [("groups_id", "=", self.ref("queue_job.group_queue_job_manager"))]
-        )
+        users = self.env["res.users"].search([("groups_id", "=", self.ref("queue_job.group_queue_job_manager"))])
         self.assertEqual(len(stored.message_follower_ids), len(users))
         expected_partners = [u.partner_id for u in users]
         self.assertSetEqual(

@@ -22,16 +22,12 @@ class ProjectProject(models.Model):
 
     @api.model
     def _default_inherit_assignments(self):
-        company = self.env["res.company"].browse(
-            self.env.context.get("company_id", self.env.user.company_id.id)
-        )
+        company = self.env["res.company"].browse(self.env.context.get("company_id", self.env.user.company_id.id))
         return company.project_inherit_assignments
 
     @api.model
     def _default_limit_role_to_assignments(self):
-        company = self.env["res.company"].browse(
-            self.env.context.get("company_id", self.env.user.company_id.id)
-        )
+        company = self.env["res.company"].browse(self.env.context.get("company_id", self.env.user.company_id.id))
         return company.project_limit_role_to_assignments
 
     def _project_role_create_assignment_values(self, vals_list):
@@ -41,16 +37,12 @@ class ProjectProject(models.Model):
         for values in vals_list:
             company = None
             if values.get("company_id"):
-                company = companies.filtered(
-                    lambda c, v=values: c.id == v["company_id"]
-                )
+                company = companies.filtered(lambda c, v=values: c.id == v["company_id"])
             if company and "inherit_assignments" not in values:
                 values["inherit_assignments"] = company.project_inherit_assignments
 
             if company and "limit_role_to_assignments" not in values:
-                values["limit_role_to_assignments"] = (
-                    company.project_limit_role_to_assignments
-                )
+                values["limit_role_to_assignments"] = company.project_limit_role_to_assignments
         return vals_list
 
     @api.model_create_multi

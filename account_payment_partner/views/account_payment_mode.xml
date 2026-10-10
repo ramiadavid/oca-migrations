@@ -13,10 +13,7 @@
                 <group string="Show bank account in invoice report">
                     <group>
                         <field name="show_bank_account" />
-                        <field
-                            name="show_bank_account_from_journal"
-                            invisible="show_bank_account == 'no'"
-                        />
+                        <field name="show_bank_account_from_journal" invisible="show_bank_account == 'no'" />
                         <field
                             name="show_bank_account_chars"
                             string="# of chars"
