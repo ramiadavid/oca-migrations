@@ -6,9 +6,5 @@ from openupgradelib import openupgrade, openupgrade_180
 
 @openupgrade.migrate()
 def migrate(env, version):
-    openupgrade_180.convert_company_dependent(
-        env, "res.partner", "supplier_payment_mode_id"
-    )
-    openupgrade_180.convert_company_dependent(
-        env, "res.partner", "customer_payment_mode_id"
-    )
+    openupgrade_180.convert_company_dependent(env, "res.partner", "supplier_payment_mode_id")
+    openupgrade_180.convert_company_dependent(env, "res.partner", "customer_payment_mode_id")

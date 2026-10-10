@@ -35,9 +35,7 @@ class TestProjectRole(common.TransactionCase):
         )
         project = self.Project.create({"name": "Project"})
         role = self.Role.create({"name": "Role"})
-        self.Assignment.create(
-            {"project_id": project.id, "role_id": role.id, "user_id": user.id}
-        )
+        self.Assignment.create({"project_id": project.id, "role_id": role.id, "user_id": user.id})
 
         self.assertEqual(self.Role.get_available_roles(user, project).ids, role.ids)
 
@@ -52,14 +50,10 @@ class TestProjectRole(common.TransactionCase):
         )
         project = self.Project.create({"name": "Project"})
         role = self.Role.create({"name": "Role"})
-        self.Assignment.create(
-            {"project_id": project.id, "role_id": role.id, "user_id": user.id}
-        )
+        self.Assignment.create({"project_id": project.id, "role_id": role.id, "user_id": user.id})
 
         with self.assertRaises(IntegrityError), mute_logger("odoo.sql_db"):
-            self.Assignment.create(
-                {"project_id": project.id, "role_id": role.id, "user_id": user.id}
-            )
+            self.Assignment.create({"project_id": project.id, "role_id": role.id, "user_id": user.id})
 
     def test_restrict_assign(self):
         user = self.ResUsers.sudo().create(
@@ -78,13 +72,9 @@ class TestProjectRole(common.TransactionCase):
             return_value=False,
         ):
             with self.assertRaises(ValidationError):
-                self.Assignment.create(
-                    {"project_id": project.id, "role_id": role.id, "user_id": user.id}
-                )
+                self.Assignment.create({"project_id": project.id, "role_id": role.id, "user_id": user.id})
             with self.assertRaises(ValidationError):
-                self.Assignment.create(
-                    {"role_id": role.id, "user_id": user.id, "company_id": company_1.id}
-                )
+                self.Assignment.create({"role_id": role.id, "user_id": user.id, "company_id": company_1.id})
             with self.assertRaises(ValidationError):
                 self.Assignment.create(
                     {
@@ -115,9 +105,7 @@ class TestProjectRole(common.TransactionCase):
 
     def test_child_role(self):
         parent_role = self.Role.create({"name": "Parent Role"})
-        child_role = self.Role.create(
-            {"name": "Child Role", "parent_id": parent_role.id}
-        )
+        child_role = self.Role.create({"name": "Child Role", "parent_id": parent_role.id})
 
         self.assertTrue(child_role.complete_name, "Parent Role / Child Role")
 
@@ -161,9 +149,7 @@ class TestProjectRole(common.TransactionCase):
         self.Assignment.create({"role_id": role_1.id, "user_id": user.id})
 
         with self.assertRaises(ValidationError):
-            self.Assignment.create(
-                {"role_id": role_1.id, "user_id": user.id, "project_id": project.id}
-            )
+            self.Assignment.create({"role_id": role_1.id, "user_id": user.id, "project_id": project.id})
 
         self.Assignment.create({"role_id": role_2.id, "user_id": user.id})
 
@@ -194,9 +180,7 @@ class TestProjectRole(common.TransactionCase):
         )
         role = self.Role.create({"name": "Role", "company_id": False})
 
-        self.Assignment.create(
-            {"role_id": role.id, "user_id": user.id, "company_id": False}
-        )
+        self.Assignment.create({"role_id": role.id, "user_id": user.id, "company_id": False})
 
         with self.assertRaises(ValidationError):
             self.Assignment.with_context(
@@ -215,9 +199,7 @@ class TestProjectRole(common.TransactionCase):
         role = self.Role.create({"name": "Role", "company_id": False})
         project = self.Project.create({"name": "Project"})
 
-        self.Assignment.create(
-            {"role_id": role.id, "user_id": user.id, "company_id": False}
-        )
+        self.Assignment.create({"role_id": role.id, "user_id": user.id, "company_id": False})
 
         with self.assertRaises(ValidationError):
             self.Assignment.with_context(
@@ -236,9 +218,7 @@ class TestProjectRole(common.TransactionCase):
         role_1 = self.Role.create({"name": "Role 1", "company_id": False})
         role_2 = self.Role.create({"name": "Role 2", "company_id": False})
 
-        self.Assignment.create(
-            {"role_id": role_1.id, "user_id": user.id, "company_id": False}
-        )
+        self.Assignment.create({"role_id": role_1.id, "user_id": user.id, "company_id": False})
 
         self.Assignment.with_context(
             company_id=self.company_id.id,
@@ -266,9 +246,7 @@ class TestProjectRole(common.TransactionCase):
             }
         )
         role = self.Role.create({"name": "Role"})
-        project = self.Project.create(
-            {"name": "Project", "limit_role_to_assignments": True}
-        )
+        project = self.Project.create({"name": "Project", "limit_role_to_assignments": True})
         self.Assignment.create({"role_id": role.id, "user_id": user.id})
 
         self.assertEqual(self.Role.get_available_roles(user, project).ids, role.ids)
@@ -304,9 +282,5 @@ class TestProjectRole(common.TransactionCase):
         project = self.Project.create({"name": "Project", "company_id": company.id})
         self.Role.create({"name": "Role"})
         self.assertEqual(project.company_id.id, company.id)
-        self.assertEqual(
-            project.inherit_assignments, company.project_inherit_assignments
-        )
-        self.assertEqual(
-            project.limit_role_to_assignments, company.project_limit_role_to_assignments
-        )
+        self.assertEqual(project.inherit_assignments, company.project_inherit_assignments)
+        self.assertEqual(project.limit_role_to_assignments, company.project_limit_role_to_assignments)

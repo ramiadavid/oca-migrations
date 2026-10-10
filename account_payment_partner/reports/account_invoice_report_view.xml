@@ -13,11 +13,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
                 <field name="payment_mode_id" />
             </field>
             <filter name="category_product" position="after">
-                <filter
-                    string="Payment Mode"
-                    name="payment_mode_id"
-                    context="{'group_by': 'payment_mode_id'}"
-                />
+                <filter string="Payment Mode" name="payment_mode_id" context="{'group_by': 'payment_mode_id'}" />
             </filter>
         </field>
     </record>

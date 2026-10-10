@@ -31,21 +31,11 @@ class MisCashFlowForecastLine(models.Model):
         for line in self:
             # In Odoo 18, account.account uses company_ids (Many2many)
             # Check if the forecast line's company is in the account's companies
-            if (
-                line.account_id.company_ids
-                and line.company_id not in line.account_id.company_ids
-            ):
-                raise ValidationError(
-                    _(
-                        "The forecast line company must be one of the "
-                        "account's companies."
-                    )
-                )
+            if line.account_id.company_ids and line.company_id not in line.account_id.company_ids:
+                raise ValidationError(_("The forecast line company must be one of the " "account's companies."))
 
     @api.onchange("company_id")
     def _onchange_company_id(self):
         """Filter accounts based on the selected company"""
         if self.company_id:
-            return {
-                "domain": {"account_id": [("company_ids", "in", self.company_id.id)]}
-            }
+            return {"domain": {"account_id": [("company_ids", "in", self.company_id.id)]}}

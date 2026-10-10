@@ -1,14 +1,15 @@
 /** @odoo-module **/
 
+import {usePlugin} from "@odoo/owl";
+import {registry} from "@web/core/registry";
 import {KanbanController} from "@web/views/kanban/kanban_controller";
 import {kanbanView} from "@web/views/kanban/kanban_view";
-import {registry} from "@web/core/registry";
-import {useService} from "@web/core/utils/hooks";
+import {ActionManagerPlugin} from "@web/webclient/actions/action_plugin";
 
 export class AgreementKanbanController extends KanbanController {
     setup() {
         super.setup();
-        this.action = useService("action");
+        this.action = usePlugin(ActionManagerPlugin);
         this.canCreateTemplate = this.props.context.default_is_template || false;
     }
     onClickCreateFromTemplate() {

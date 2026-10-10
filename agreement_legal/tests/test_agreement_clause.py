@@ -10,9 +10,7 @@ class TestAgreementClauses(TransactionCase):
     def setUp(self):
         super().setUp()
         self.test_customer = self.env["res.partner"].create({"name": "TestCustomer"})
-        self.agreement_type = self.env["agreement.type"].create(
-            {"name": "Test Agreement Type", "domain": "sale"}
-        )
+        self.agreement_type = self.env["agreement.type"].create({"name": "Test Agreement Type", "domain": "sale"})
         self.test_agreement = self.env["agreement"].create(
             {
                 "name": "TestAgreement",
@@ -35,9 +33,7 @@ class TestAgreementClauses(TransactionCase):
     # TEST 01: Set 'Field' for dynamic placeholder, test onchange method
     def test_onchange_copyvalue(self):
         clause_01 = self.test_clause
-        field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement.clause"), ("name", "=", "active")]
-        )
+        field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement.clause"), ("name", "=", "active")])
         clause_01.field_id = field_01.id
         clause_01.onchange_copyvalue()
         self.assertEqual(clause_01.copyvalue, "{{object.active or ''}}")
@@ -49,9 +45,7 @@ class TestAgreementClauses(TransactionCase):
         field_01 = self.env["ir.model.fields"].search(
             [("model", "=", "agreement.clause"), ("name", "=", "agreement_id")]
         )
-        sub_field_01 = self.env["ir.model.fields"].search(
-            [("model", "=", "agreement"), ("name", "=", "active")]
-        )
+        sub_field_01 = self.env["ir.model.fields"].search([("model", "=", "agreement"), ("name", "=", "active")])
         clause_01.field_id = field_01.id
         clause_01.onchange_copyvalue()
         self.assertEqual(clause_01.sub_object_id.model, "agreement")
