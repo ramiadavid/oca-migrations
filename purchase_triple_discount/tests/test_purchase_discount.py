@@ -2,10 +2,44 @@
 # Copyright 2019 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from odoo import Command
 from odoo.tests import Form, common
 
 
 class TestPurchaseOrder(common.TransactionCase):
+    @classmethod
+    def _complete_supplier(cls, partner):
+        """pc_supplier_validation no deja confirmar un pedido a un proveedor con la
+        ficha incompleta: NIF, contacto, direccion, posicion fiscal, forma y modo de
+        pago. El pais no es Espana para no arrastrar la validacion del NIF."""
+        payment_mode = cls.env["account.payment.mode"].create(
+            {
+                "name": "Test supplier transfer",
+                "company_id": cls.env.company.id,
+                "payment_method_id": cls.env.ref("account.account_payment_method_manual_out").id,
+                "bank_account_link": "variable",
+                # Transferencia ("04") obligaria ademas a tener cuenta bancaria.
+                "facturae_code": "01",
+            }
+        )
+        partner.write(
+            {
+                # Unico por proveedor: el NIF repetido salta como duplicado.
+                "vat": "TEST%s" % partner.id,
+                "email": "mrs.odoo@example.org",
+                "phone": "+1 555 0100",
+                "street": "1 Test Street",
+                "zip": "10001",
+                "city": "Test City",
+                "country_id": cls.env.ref("base.us").id,
+                "property_account_position_id": cls.env["account.fiscal.position"]
+                .create({"name": "Test fiscal position", "company_id": cls.env.company.id})
+                .id,
+                "property_supplier_payment_term_id": cls.env.ref("account.account_payment_term_immediate").id,
+                "supplier_payment_mode_id": payment_mode.id,
+            }
+        )
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -16,11 +50,13 @@ class TestPurchaseOrder(common.TransactionCase):
                 "name": "Mr. Odoo",
             }
         )
+        cls._complete_supplier(cls.partner)
         cls.partner2 = cls.env["res.partner"].create(
             {
                 "name": "Mrs. Odoo",
             }
         )
+        cls._complete_supplier(cls.partner2)
         cls.product1 = cls.env["product.product"].create(
             {
                 "name": "Test Product 1",
@@ -79,8 +115,8 @@ class TestPurchaseOrder(common.TransactionCase):
                 "date_planned": "2018-01-19 00:00:00",
                 "name": "Line 1",
                 "product_qty": 1.0,
-                "product_uom": cls.product1.uom_id.id,
-                "taxes_id": [(6, 0, [cls.tax.id])],
+                "uom_id": cls.product1.uom_id.id,
+                "tax_ids": [Command.set([cls.tax.id])],
                 "price_unit": 600.0,
             }
         )
@@ -91,8 +127,8 @@ class TestPurchaseOrder(common.TransactionCase):
                 "date_planned": "2018-01-19 00:00:00",
                 "name": "Line 2",
                 "product_qty": 10.0,
-                "product_uom": cls.product2.uom_id.id,
-                "taxes_id": [(6, 0, [cls.tax.id])],
+                "uom_id": cls.product2.uom_id.id,
+                "tax_ids": [Command.set([cls.tax.id])],
                 "price_unit": 60.0,
             }
         )
@@ -103,8 +139,8 @@ class TestPurchaseOrder(common.TransactionCase):
                 "date_planned": "2020-01-01 00:00:00",
                 "name": "Line 1",
                 "product_qty": 1.0,
-                "product_uom": cls.product1.uom_id.id,
-                "taxes_id": [(6, 0, [cls.tax.id])],
+                "uom_id": cls.product1.uom_id.id,
+                "tax_ids": [Command.set([cls.tax.id])],
                 "price_unit": 600.0,
             }
         )
@@ -118,7 +154,7 @@ class TestPurchaseOrder(common.TransactionCase):
         self.assertEqual(self.order.amount_untaxed, 450.0)
         self.assertEqual(self.order.amount_tax, 67.5)
         # Mix taxed and untaxed:
-        self.po_line1.taxes_id = False
+        self.po_line1.tax_ids = False
         self.assertEqual(self.order.amount_tax, 22.5)
 
     def test_02_purchase_order_simple_triple_discount(self):
@@ -170,7 +206,9 @@ class TestPurchaseOrder(common.TransactionCase):
         self.invoice.purchase_id = self.order.id
         self.invoice._onchange_purchase_auto_complete()
 
-        self.assertEqual(self.po_line1.discount1, self.invoice.invoice_line_ids[0].discount)
+        self.assertEqual(self.po_line1.discount1, self.invoice.invoice_line_ids[0].discount1)
+        # El descuento unico de la factura es el agregado de los tres, no el primero.
+        self.assertEqual(self.invoice.invoice_line_ids[0].discount, 87.5)
         self.assertEqual(self.po_line1.discount2, self.invoice.invoice_line_ids[0].discount2)
         self.assertEqual(self.po_line1.discount3, self.invoice.invoice_line_ids[0].discount3)
         self.assertEqual(self.po_line2.discount3, self.invoice.invoice_line_ids[1].discount3)
@@ -187,7 +225,10 @@ class TestPurchaseOrder(common.TransactionCase):
             self.assertFalse(line.discount2)
             self.assertEqual(line.discount3, 50)
 
-    def test_06_supplierinfo_from_purchaseorder(self):
+    def test_06_supplierinfo_not_created_from_purchaseorder(self):
+        """20.0 retiro la sincronizacion pedido -> tarifa del proveedor: confirmar un
+        pedido ya no crea ni actualiza el product.supplierinfo, asi que tampoco le
+        lleva los descuentos. Antes este test comprobaba justo lo contrario."""
         self.order2.order_line.create(
             {
                 "order_id": self.order2.id,
@@ -195,8 +236,8 @@ class TestPurchaseOrder(common.TransactionCase):
                 "date_planned": "2020-01-01 00:00:00",
                 "name": "Line 2",
                 "product_qty": 1.0,
-                "product_uom": self.product2.uom_id.id,
-                "taxes_id": [(6, 0, [self.tax.id])],
+                "uom_id": self.product2.uom_id.id,
+                "tax_ids": [Command.set([self.tax.id])],
                 "price_unit": 999.0,
                 "discount1": 11.11,
                 "discount2": 22.22,
@@ -210,7 +251,4 @@ class TestPurchaseOrder(common.TransactionCase):
                 ("product_tmpl_id", "=", self.product2.product_tmpl_id.id),
             ]
         )
-        self.assertTrue(seller)
-        self.assertEqual(seller.discount1, 11.11)
-        self.assertEqual(seller.discount2, 22.22)
-        self.assertEqual(seller.discount3, 33.33)
+        self.assertFalse(seller)

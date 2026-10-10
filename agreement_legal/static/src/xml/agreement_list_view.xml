@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates>
-    <t
-        t-name="agreement_legal.ListView"
-        t-inherit="web.ListView.Buttons"
-        t-inherit-mode="primary"
-    >
-        <xpath expr="//div[hasclass('o_list_buttons')]" position="attributes">
-            <attribute name="t-if">canCreateTemplate</attribute>
+    <!-- 20.0: web.ListView.Buttons son botones sueltos, ya no hay div.o_list_buttons
+         que envuelva el bloque; el t-if va sobre el propio boton "Nuevo". -->
+    <t t-name="agreement_legal.ListView" t-inherit="web.ListView.Buttons" t-inherit-mode="primary">
+        <xpath expr="//button[hasclass('o_list_button_add')]" position="attributes">
+            <attribute
+                name="t-if"
+            >!this.env.inDialog and !this.editedRecord and this.activeActions.create and this.canCreateTemplate</attribute>
         </xpath>
-        <xpath expr="//div[hasclass('o_list_buttons')]" position="after">
+        <xpath expr="//button[hasclass('o_list_button_add')]" position="after">
             <t t-call="agreement_legal.TemplateButton" />
         </xpath>
     </t>

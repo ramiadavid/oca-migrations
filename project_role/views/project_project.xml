@@ -14,7 +14,7 @@
                     class="oe_stat_button"
                     name="%(project_assignment_view_project_action)d"
                     type="action"
-                    icon="fa-users"
+                    icon="group"
                     string="Assignments"
                 />
             </div>

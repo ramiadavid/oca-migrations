@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates>
-    <t t-inherit="web.FormView" t-inherit-mode="extension">
-        <xpath
-            expr="//*[@class='btn btn-outline-primary o_form_button_create']"
-            position="after"
-        >
-            <t t-if="props.resModel === 'agreement'">
-                <t t-call="agreement_legal.TemplateButton" />
-            </t>
+    <!-- 20.0 saco los botones de la vista a una plantilla propia: el boton "Nuevo"
+         ya no esta en web.FormView sino en web.FormView.Buttons. Ademas esto heredaba
+         en modo extension, asi que su t-if se aplicaba al boton "Nuevo" de TODOS los
+         formularios; ahora es una plantilla propia que solo usa la vista de acuerdos,
+         como ya hacian las de kanban y lista. -->
+    <t t-name="agreement_legal.FormViewButtons" t-inherit="web.FormView.Buttons" t-inherit-mode="primary">
+        <xpath expr="//button[hasclass('o_form_button_create')]" position="attributes">
+            <attribute name="t-if">this.canCreateTemplate</attribute>
         </xpath>
-        <xpath
-            expr="//*[@class='btn btn-outline-primary o_form_button_create']"
-            position="attributes"
-        >
-            <attribute name="t-if">canCreateTemplate</attribute>
+        <xpath expr="//button[hasclass('o_form_button_create')]" position="after">
+            <t t-call="agreement_legal.TemplateButton" />
         </xpath>
     </t>
 </templates>

@@ -1,0 +1,4 @@
+id,name,model_id,group_id/id,operation,domain
+access_payment_return,payment.return,payment.return,account.group_account_invoice,crud,
+access_payment_return_line,payment.return.line,payment.return.line,account.group_account_invoice,crud,
+access_payment_return_reason,payment.return.reason,payment.return.reason,account.group_account_invoice,crud,

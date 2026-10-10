@@ -4,10 +4,10 @@
 
 {
     "name": "Account Payment Order Return",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "category": "Banking addons",
     "author": "Tecnativa, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/bank-payment",
+    "website": "https://www.processcontrol.es",
     "depends": ["account_payment_return", "account_payment_order"],
     "data": ["wizards/account_payment_line_create_view.xml"],
     "license": "AGPL-3",

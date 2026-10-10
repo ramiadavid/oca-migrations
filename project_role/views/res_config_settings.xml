@@ -18,7 +18,7 @@
                             <div class="o_setting_right_pane">
                                 <span class="o_form_label">Project Roles</span>
                                 <span
-                                    class="fa fa-lg fa-building-o"
+                                    class="oi oi-lg" data-icon="business"
                                     title="Values set here are company-specific."
                                     role="img"
                                     aria-label="Values set here are company-specific."
@@ -34,7 +34,7 @@
                                             string="Setup project roles"
                                             type="action"
                                             class="btn-link"
-                                            icon="fa-arrow-right"
+                                            icon="arrow_forward"
                                         />
                                     </div>
                                 </div>
@@ -52,7 +52,7 @@
                                     string="Projects inherit Company assignments"
                                 />
                                 <span
-                                    class="fa fa-lg fa-building-o"
+                                    class="oi oi-lg" data-icon="business"
                                     title="Values set here are company-specific."
                                     role="img"
                                     aria-label="Values set here are company-specific."
@@ -73,7 +73,7 @@
                                     string="Limit Project Role to Assignments"
                                 />
                                 <span
-                                    class="fa fa-lg fa-building-o"
+                                    class="oi oi-lg" data-icon="business"
                                     title="Values set here are company-specific."
                                     role="img"
                                     aria-label="Values set here are company-specific."

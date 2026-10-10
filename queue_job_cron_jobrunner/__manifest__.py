@@ -1,7 +1,7 @@
 {
     "name": "Queue Job Cron Jobrunner",
     "summary": "Run jobs without a dedicated JobRunner",
-    "version": "19.0.1.0.0",
+    "version": "20.0.1.0.0",
     "development_status": "Alpha",
     "author": "Camptocamp SA, Odoo Community Association (OCA)",
     "maintainers": ["ivantodorovich"],

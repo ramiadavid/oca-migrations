@@ -20,12 +20,7 @@
         <field name="arch" type="xml">
             <form string="Agreements Stage Form">
                 <sheet>
-                    <widget
-                        name="web_ribbon"
-                        title="Archived"
-                        bg_color="bg-danger"
-                        invisible="active == True"
-                    />
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active == True" />
                     <div class="oe_title">
                         <label for="name" class="oe_edit_only" />
                         <h1>
@@ -52,17 +47,9 @@
             <search string="Agreements Stage Search">
                 <field name="name" />
                 <separator />
-                <filter
-                    name="archived"
-                    string="Archived"
-                    domain="[('active', '=', False)]"
-                />
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]" />
                 <group name="groupby">
-                    <filter
-                        name="type_groupby"
-                        string="Type"
-                        context="{'group_by': 'stage_type'}"
-                    />
+                    <filter name="type_groupby" string="Type" context="{'group_by': 'stage_type'}" />
                 </group>
             </search>
         </field>

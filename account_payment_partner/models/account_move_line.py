@@ -31,12 +31,7 @@ class AccountMoveLine(models.Model):
         """Propagate up to the move the payment mode if applies."""
         if "payment_mode_id" in vals:
             for record in self:
-                move = (
-                    self.env["account.move"].browse(vals.get("move_id", 0))
-                    or record.move_id
-                )
-                if move.payment_mode_id.id != vals[
-                    "payment_mode_id"
-                ] and move.is_invoice(include_receipts=True):
+                move = self.env["account.move"].browse(vals.get("move_id", 0)) or record.move_id
+                if move.payment_mode_id.id != vals["payment_mode_id"] and move.is_invoice(include_receipts=True):
                     move.payment_mode_id = vals["payment_mode_id"]
         return super().write(vals)

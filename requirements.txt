@@ -1,7 +1,11 @@
 # generated from manifests external_dependencies
 lxml
+openupgradelib
 pycountry
 requests
+schwifty==2024.4.0
 unidecode
+xlrd
+xlsxwriter
 xmlsig
 zeep
